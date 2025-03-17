@@ -1,5 +1,5 @@
 # Stop/Start (SS) Simulation
-This project consists of a application that simulates the behaviour of an automotive stop/start system.
+This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
 ## Requirements  
 - Ubuntu or another Linux system compatible with SocketCAN
