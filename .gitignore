@@ -1,3 +1,18 @@
+# Build artifacts
+bin/
+build/
+test/obj/
+
+# Editor and temporary files
+.vscode/
+.idea/
+*.swp
+
+# Log and backup files
+*.log
+*.tmp
+*.bak
+
 # Prerequisites
 *.d
 
