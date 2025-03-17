@@ -1,0 +1,7 @@
+Checks: >
+  -*,
+  misra-c2012-*,
+  readability-*,
+  bugprone-*,
+  performance-*
+WarningsAsErrors: "*"
