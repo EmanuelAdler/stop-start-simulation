@@ -3,10 +3,7 @@ repos:
     hooks:
       - id: clang-tidy
         name: clang-tidy
-        entry: clang-tidy
-        language: system
+        entry: ./run_clang_tidy.sh
+        language: script
         pass_filenames: true
         files: \.(c|h)$
-        args:
-          - "--"
-          - "-std=c99"
