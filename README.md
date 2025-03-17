@@ -43,14 +43,19 @@ sudo apt-get update
 sudo apt-get install clang-tidy -y
 ```
 
-## 3. Enable Pre-Commit in Your Repository
+## 3. Give execution permission to the script
+```sh
+chmod +x run_clang_tidy.sh
+```
+
+## 4. Enable Pre-Commit in Your Repository
 In the repository’s root folder, run:
 ```sh
 pre-commit install
 ```
 This installs the Git hook so that every time a commit is made, pre-commit executes clang-tidy on staged files.
 
-## 4. Testing the Hook
+## 5. Testing the Hook
 Try committing a file with some intentional lint issues.
 If clang-tidy finds problems, it will block the commit until the issues are resolved or bypassed.
 
