@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <pthread.h>
 #include <signal.h>
+#include <math.h>
 
 /***** Speed sensor data *****/
 
@@ -38,6 +39,11 @@ float curr_vehicle_angle = 0;
 
 /***** Engine coolant sensor data *****/
 
+#define FATOR_ACELERACAO 0.1
+#define FATOR_RESFRIAMENTO_AR 0.05
+#define MAX_TEMP_MOTOR 140
+#define BASE_TEMP 80
+
 // Current engine coolant temperature
 float curr_cool_temp = 0;
 
@@ -64,3 +70,12 @@ float set_temp = 23;
 
 // Any door opened | 0 - no | 1 - yes |
 int opened_door = 0;
+
+/***** Calculate engine temperature *****/
+
+float calculate_engine_temp(float velocidade, int rpm) {
+    float temp_rise = rpm/10 * FATOR_ACELERACAO;
+    float cooling_effect = velocidade * FATOR_RESFRIAMENTO_AR;
+    float temp = BASE_TEMP + temp_rise - cooling_effect;
+    return fminf(MAX_TEMP_MOTOR, temp);
+}
