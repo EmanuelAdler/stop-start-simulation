@@ -1,5 +1,5 @@
-#ifndef SENSORS_H
-#define SENSORS_H
+#ifndef SIMU_SENSORS_H
+#define SIMU_SENSORS_H
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -11,4 +11,4 @@
 
 extern pthread_mutex_t mutex_sensors;
 
-#endif // SENSORS_H
+#endif // SIMU_SENSORS_H
