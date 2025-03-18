@@ -3,13 +3,13 @@
 /***** Speed sensor data *****/
 
 // constant to convert vehicle speed from rad/s to m/s
-float dois_pi_sobre_60 = 3.1415/30;
+#define PI_OVER_30 3.1415/30;
 
 // wheel radius, in meters
-float r_w  = 0.326;
+#define WHEEL_RADIUS 0.326;
 
 // 1/(differential ratio)
-float um_sobre_n_d  = 0.2817;
+#define ONE_OVER_PI 0.2817;
 
 // 1/(current gear ratio)
 float um_sobre_n_g_atual = 0.00;
@@ -33,8 +33,8 @@ float curr_vehicle_angle = 0;
 
 /***** Engine coolant sensor data *****/
 
-#define FATOR_ACELERACAO 0.1
-#define FATOR_RESFRIAMENTO_AR 0.05
+#define ACCEL_FACTOR 0.1
+#define AIR_COOL_FACTOR 0.05
 #define MAX_TEMP_MOTOR 140
 #define BASE_TEMP 80
 
@@ -68,8 +68,8 @@ int opened_door = 0;
 /***** Calculate engine temperature *****/
 
 float calculate_engine_temp(float velocidade, int rpm) {
-    float temp_rise = rpm/10 * FATOR_ACELERACAO;
-    float cooling_effect = velocidade * FATOR_RESFRIAMENTO_AR;
+    float temp_rise = rpm/10 * ACCEL_FACTOR;
+    float cooling_effect = velocidade * AIR_COOL_FACTOR;
     float temp = BASE_TEMP + temp_rise - cooling_effect;
     return fminf(MAX_TEMP_MOTOR, temp);
 }
