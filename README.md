@@ -144,3 +144,9 @@ or
 ```sh
 make coverage
 ```
+
+## Checking the logs:
+When the container is running, execute:
+```sh
+docker exec -it <container> cat /app/logs/diagnostics.log
+```
