@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -D_GNU_SOURCE
 BIN_DIR = ../bin
 SRC_DIR = .
-OBJ = $(BIN_DIR)/can_socket.o
+OBJ = $(BIN_DIR)/can_socket.o $(BIN_DIR)/logging.o
 LDLFLAGS = -lssl -lcrypto
 
 # Executables
@@ -17,10 +17,13 @@ $(shell mkdir -p $(BIN_DIR))
 $(BIN_DIR)/can_socket.o: $(SRC_DIR)/can_socket.c $(SRC_DIR)/can_socket.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/can_socket.c -o $(BIN_DIR)/can_socket.o
 
-$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c $(SRC_DIR)/can_socket.h
+$(BIN_DIR)/logging.o: $(SRC_DIR)/logging.c $(SRC_DIR)/logging.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/logging.c -o $(BIN_DIR)/logging.o
+
+$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c $(SRC_DIR)/can_socket.h $(SRC_DIR)/logging.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/sender.c -o $(BIN_DIR)/sender.o
 
-$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c $(SRC_DIR)/can_socket.h
+$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c $(SRC_DIR)/can_socket.h $(SRC_DIR)/logging.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)/receiver.c -o $(BIN_DIR)/receiver.o
 
 # Build rules for executables
