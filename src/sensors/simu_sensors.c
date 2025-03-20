@@ -31,9 +31,13 @@ static float one_over_curr_ng = 0.0F;
 /* Current speed */
 static float vel_atual = 0.0F;
 
+/***** Accelerator pedal sensor data *****/
+
+static bool is_accelerating = true;
+
 /***** Brake sensor data *****/
 
-static int is_braking = 0;
+static bool is_braking = false;
 
 /***** Gear sensor data *****/
 
@@ -46,16 +50,17 @@ static int is_braking = 0;
 #define NG_5    1.00F
 
 typedef enum {
+    GEAR_P = 0,
     GEAR_1 = 1,
-    GEAR_2,
-    GEAR_3,
-    GEAR_4,
-    GEAR_5,
+    GEAR_2 = 2,
+    GEAR_3 = 3,
+    GEAR_4 = 4,
+    GEAR_5 = 5,
     GEAR_INVALID
 } Gear;
 
 /* Current gear */
-static Gear gear = GEAR_1;
+static Gear gear = GEAR_P;
 
 /* Current engine RPM */
 static int curr_RPM = 0;
@@ -95,7 +100,7 @@ static float curr_cool_temp = 0.0F;
 /***** Battery sensor data *****/
 
 #define DEFAULT_BATTERY_VOLTAGE     12.0F
-#define DEFAULT_BATTERY_SOC        80.0F
+#define DEFAULT_BATTERY_SOC         80.0F
 
 static float bat_voltage = DEFAULT_BATTERY_VOLTAGE;
 static float bat_soc = DEFAULT_BATTERY_SOC;
@@ -112,7 +117,7 @@ static float set_temp = DEFAULT_SET_TEMP;
 
 /***** Door sensor data *****/
 
-/* Any door opened | false - no | true - yes | */
+/* Any door opened */
 static bool opened_door = false;
 
 /***** Calculate engine temperature *****/
@@ -127,7 +132,7 @@ static float calculate_engine_temp(struct engine_temp etemp)
 
 /***** Calculate speed *****/
 
-static void *sensor_speed(void *arg) 
+static void *simu_sensor_speed(void *arg) 
 {
     float *speed = (float *)arg;
 
@@ -136,7 +141,6 @@ static void *sensor_speed(void *arg)
         int lock_result = pthread_mutex_lock(&mutex_sensors);
         if (lock_result != 0) 
         {
-            /* Handle error - example: log and exit */
             return NULL;
         }
 
@@ -162,13 +166,18 @@ static void *sensor_speed(void *arg)
                 break;
         }
 
-        *speed = ((float)curr_RPM * WHEEL_RADIUS * one_over_curr_ng * 
+        if(gear == GEAR_P){
+            *speed = 0.00F;
+        }
+        else{
+            *speed = ((float)curr_RPM * WHEEL_RADIUS * one_over_curr_ng * 
                  ONE_OVER_ND * PI_OVER_30 * M_S_KM_H_RATIO);
+        }
+        
 
         int unlock_result = pthread_mutex_unlock(&mutex_sensors);
         if (unlock_result != 0) 
         {
-            /* Handle error */
             return NULL;
         }
 
@@ -179,7 +188,7 @@ static void *sensor_speed(void *arg)
 
 /***** Calculate RPM *****/
 
-static void *sensor_gear_pos(void *arg) 
+static void *simu_sensor_gear_pos(void *arg) 
 {
     int *rpm = (int *)arg;
 
@@ -193,18 +202,18 @@ static void *sensor_gear_pos(void *arg)
 
         if (curr_step == num_sim_steps) 
         {
-            if (is_braking) 
-            {
-                if (gear > GEAR_1) 
-                {
-                    gear--;
-                }
-            } 
-            else 
+            if ((is_accelerating && !is_braking) == true) 
             {
                 if (gear < GEAR_5) 
                 {
                     gear++;
+                }
+            } 
+            else 
+            {
+                if (gear > GEAR_P) 
+                {
+                    gear--;
                 }
             }
             curr_step = 1;
