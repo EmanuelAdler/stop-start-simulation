@@ -32,4 +32,5 @@ int receive_can_frame(int sock, struct can_frame *frame);
 //define functions used in data encryption
 void encrypt_data(const unsigned char *input, unsigned char *output, int *output_len);
 void decrypt_data(const unsigned char *input, char *output, int input_len);
+void send_encrypted_message(int sock, const char *message, int can_id);
 #endif

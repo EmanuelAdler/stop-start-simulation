@@ -1,10 +1,10 @@
 version: '3'
 services:
-  can_sender:
+  ecu_dashboard:
     build: .
-    container_name: can_sender
+    container_name: dashboard
     network_mode: "host"
-    command: ["./bin/sender"]
+    command: ["./bin/dashboard"]
     volumes:
       - ss_logs_volume:/app/logs
 
@@ -20,7 +20,7 @@ services:
     build: .
     container_name: instrument_cluster
     network_mode: "host"
-    command: ["./bin/receiver"]
+    command: ["./bin/instrument_cluster"]
     volumes:
       - ss_logs_volume:/app/logs
 
