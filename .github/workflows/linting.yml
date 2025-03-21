@@ -24,4 +24,4 @@ jobs:
           echo 'WarningsAsErrors: "*"' >> .clang-tidy
       - name: Run Clang-Tidy on Source Files
         run: |
-          clang-tidy src/*.c test/*.c -- -std=c99
+          clang-tidy $(find src -name '*.c') $(find test -name '*.c') -- -std=c99
