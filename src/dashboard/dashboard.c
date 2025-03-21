@@ -19,7 +19,7 @@ typedef struct {
 
 Actuators actuators = {0};
 
-bool check_is_valid_can_id(int can_id)
+bool check_is_valid_can_id(canid_t can_id)
 {
     bool is_valid = false;
     
