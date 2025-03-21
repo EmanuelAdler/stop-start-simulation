@@ -1,4 +1,4 @@
-#include "simu_sensors.h"
+#include "bcm.h"
 
 #define SLEEP_TIME_US           (100000U)
 #define MICROSECS_IN_ONESEC     (1000000L)
