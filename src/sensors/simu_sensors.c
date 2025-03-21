@@ -238,3 +238,47 @@ static void *sensor_gear_pos(void *arg)
     }
     return NULL;
 }
+
+/***** Battery sensor data *****/
+
+/* Battery voltage and state of charge */
+float bat_voltage = DEFAULT_BATTERY_VOLTAGE;
+float bat_soc = DEFAULT_BATTERY_SOC;
+
+/* Update battery SOC based on vehicle state */
+void update_battery_soc(float vehicle_speed) {
+    pthread_mutex_lock(&mutex_sensors);
+    if (vehicle_speed > 0.0) {
+        // When vehicle is moving, battery charges
+        bat_soc += BATTERY_SOC_INCREMENT;
+        if (bat_soc > MAX_BATTERY_SOC) {
+            bat_soc = MAX_BATTERY_SOC;
+        }
+    } else {
+        // When vehicle is stationary, battery discharges
+        bat_soc -= BATTERY_SOC_DECREMENT;
+        if (bat_soc < 0) {
+            bat_soc = 0;
+        }
+    }
+    
+    // Calculate voltage based on battery SOC (linear relationship)
+    bat_voltage = (0.01125 * bat_soc) + 11.675;
+    
+    pthread_mutex_unlock(&mutex_sensors);
+}
+
+/* Battery sensor thread function */
+void* sensor_battery(void *arg) {
+    float *vehicle_speed = (float *)arg;
+
+    while (true) {
+        // Update battery based on current vehicle speed
+        update_battery_soc(*vehicle_speed);
+        
+        // Sleep for update interval (100ms as per SWR4.1)
+        sleep_microseconds(SLEEP_TIME_US);
+    }
+    
+    return NULL;
+}
