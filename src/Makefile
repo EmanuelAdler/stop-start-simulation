@@ -5,7 +5,7 @@ LDLFLAGS = -lssl -lcrypto
 # Directories
 SRC_DIR = .
 COMMON_DIR = $(SRC_DIR)/common_includes
-BIN_DIR = bin
+BIN_DIR = ../bin
 
 # Ensure bin directory exists
 $(shell mkdir -p $(BIN_DIR))
