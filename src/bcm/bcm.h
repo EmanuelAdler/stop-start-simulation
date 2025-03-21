@@ -1,5 +1,5 @@
-#ifndef SIMU_SENSORS_H
-#define SIMU_SENSORS_H
+#ifndef SIMU_BCM_H
+#define SIMU_BCM_H
 
 #include <time.h>
 #include <unistd.h>
@@ -11,11 +11,8 @@
 #include <math.h>
 #include <stdbool.h>
 
-extern pthread_mutex_t mutex_sensors;
+extern pthread_mutex_t mutex_bcm;
 
-struct engine_temp{
-    int engine_rpm;
-    float vehicle_speed;
-};
 
-#endif // SIMU_SENSORS_H
+
+#endif // SIMU_BCM_H
