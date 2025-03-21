@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g --coverage
 LDFLAGS = -lcunit -lssl -lcrypto --coverage
 
-SRC = ../src/can_socket.c test_can_socket.c
+SRC = ../src/common_includes/can_socket.c test_can_socket.c
 OBJ_DIR = obj
 BIN_DIR = bin
 TARGET = $(BIN_DIR)/test_can_socket
@@ -29,7 +29,7 @@ test: all
 	./$(TARGET)
 
 coverage: test
-	gcov -o $(OBJ_DIR) ../src/can_socket.c
+	gcov -o $(OBJ_DIR) ../src/common_includes/can_socket.c
 	lcov --rc branch_coverage=1 --capture --directory $(OBJ_DIR) --output-file coverage.info
 	genhtml --branch-coverage coverage.info --output-directory coverage_report
 	@echo "Open coverage_report/index.html to view coverage results."
