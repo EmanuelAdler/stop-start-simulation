@@ -13,7 +13,11 @@
 #define SUCCESS_CODE       (0)
 #define ERROR_CODE         (1)
 
-static bool start_stop_active = false;
+typedef struct {
+    bool start_stop_active; // 0 = off, 1 = on
+} Actuators;
+
+Actuators actuators = {0};
 
 bool check_is_valid_can_id(int can_id)
 {
@@ -31,13 +35,20 @@ bool check_is_valid_can_id(int can_id)
     return is_valid;
 }
 
+void print_dashboard_status() {
+    (void)printf("\n=== Dashboard Status ===\n");
+    (void)printf("Stop/Start button: %d\n", actuators.start_stop_active);
+    (void)printf("=============================\n");
+    (void)fflush(stdout);
+}
+
 void parse_input_received(char* input)
 {
     if (strcmp(input, "press_start_stop") == 0)
     {
-        start_stop_active = !start_stop_active;
+        actuators.start_stop_active = !actuators.start_stop_active;
 
-        if (start_stop_active) 
+        if (actuators.start_stop_active) 
         {
             log_toggle_event("[INFO] System Activated");
         } 
@@ -45,6 +56,10 @@ void parse_input_received(char* input)
         {
             log_toggle_event("[INFO] System Deactivated");
         }
+    }
+    else if (strcmp(input, "show_dashboard") == 0)
+    {
+        print_dashboard_status();
     }
 }
 

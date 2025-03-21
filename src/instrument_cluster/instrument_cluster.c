@@ -52,6 +52,10 @@ void check_input_command(char* option, int socket)
         send_encrypted_message(socket, option, CAN_ID_COMMAND);
         log_toggle_event("[INFO] System button toggled");
     }
+    if (strcmp(option, "show_dashboard") == 0)
+    {
+        send_encrypted_message(socket, option, CAN_ID_COMMAND);
+    }
     else
     {
         printf("Invalid input. Try again.\n");
