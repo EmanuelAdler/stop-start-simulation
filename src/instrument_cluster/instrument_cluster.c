@@ -10,40 +10,9 @@
 #include <unistd.h>
 
 #define CAN_INTERFACE      ("vcan0")
-#define CAN_DLC            (8U)
-#define CAN_MAX_PAD        (16U)
 #define PERMISSIONS        (0666)
-#define LOG_MESSAGE_SIZE   (50)
 #define ERROR_CODE         (1)
 #define FIFO_PATH "/tmp/command_pipe"
-
-void send_encrypted_message(int sock, const char *message, int can_id) 
-{
-    struct can_frame frame;
-    unsigned char encrypted_data[AES_BLOCK_SIZE] = {0};
-
-    char padded_message[AES_BLOCK_SIZE + CAN_MAX_PAD] = {0};
-    int encrypted_len = 0;
-    strncpy(padded_message, message, AES_BLOCK_SIZE);
-
-    encrypt_data((unsigned char*)padded_message, encrypted_data, &encrypted_len);
-
-    if (encrypted_len != AES_BLOCK_SIZE) 
-    {
-        printf("Unexpected encrypted data length: %d\n", encrypted_len);
-        fflush(stdout);
-        return;
-    }
-
-    frame.can_id = can_id;
-    frame.can_dlc = CAN_DLC;
-    memcpy(frame.data, encrypted_data, CAN_DLC);
-    send_can_frame(sock, &frame);
-
-    frame.can_dlc = CAN_DLC;
-    memcpy(frame.data, encrypted_data + CAN_DLC, CAN_DLC);
-    send_can_frame(sock, &frame);
-}
 
 void check_input_command(char* option, int socket)
 {
