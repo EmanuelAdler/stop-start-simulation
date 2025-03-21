@@ -52,7 +52,7 @@ void check_input_command(char* option, int socket)
         send_encrypted_message(socket, option, CAN_ID_COMMAND);
         log_toggle_event("[INFO] System button toggled");
     }
-    if (strcmp(option, "show_dashboard") == 0)
+    else if (strcmp(option, "show_dashboard") == 0)
     {
         send_encrypted_message(socket, option, CAN_ID_COMMAND);
     }
@@ -97,6 +97,10 @@ int main(void)
         memset(input, 0, sizeof(input));
         read(fifo_fd, input, AES_BLOCK_SIZE);
         close(fifo_fd);
+        
+        // Remove any trailing newline
+        input[strcspn(input, "\r\n")] = '\0';
+
         (void)printf("%s\n", input);
         (void)fflush(stdout);
 
