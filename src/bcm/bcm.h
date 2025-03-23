@@ -16,7 +16,7 @@
 
 extern pthread_mutex_t mutex_bcm;
 
-// Variable that receives simulation controls (stop, run and pause)
-int simu_order;
+/* Function that receives an array of 2 elements (simulation order, pointer to current speed) */
+static void *simu_speed(void *arg[]);
 
 #endif // SIMU_BCM_H
