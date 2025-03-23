@@ -150,6 +150,7 @@ void check_order(int simu_order)
             {
                 memset(speed_array, 0, sizeof(speed_array)); // delete current simulation speed data set
                 simu_curr_step = 0;                          // reset the current simulation step
+                cleanup_logging_system();                    // stops logging speed
                 simu_state = STATE_STOPPED;
             }
 
@@ -159,7 +160,8 @@ void check_order(int simu_order)
 
             if (simu_state == STATE_STOPPED)
             {
-                read_csv(); // acquire new set of speed data to simulate from start
+                read_csv();            // acquire new set of speed data to simulate from start
+                init_logging_system(); // starts logging speed
                 simu_state = STATE_RUNNING;
             }
             if (STATE_PAUSED)
@@ -191,6 +193,8 @@ static void *simu_speed(void *arg[])
     int *simu_order = (int *)arg[0];
     double *speed = (double *)arg[1];
 
+#define MAX_SPEED_LOG_SIZE 50
+
     while (true)
     {
         int lock_result = pthread_mutex_lock(&mutex_bcm);
@@ -208,7 +212,15 @@ static void *simu_speed(void *arg[])
         if (simu_state == STATE_RUNNING)
         {
             *speed = speed_array[simu_curr_step];
-            printf("([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
+            char simu_log[MAX_SPEED_LOG_SIZE] = {0};
+            snprintf(simu_log, MAX_SPEED_LOG_SIZE, "([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
+            log_toggle_event(simu_log);
+
+            if (simu_curr_step + 1 == data_size)
+            {
+                simu_state = STATE_STOPPED;
+            }
+
             simu_curr_step++;
         }
 
