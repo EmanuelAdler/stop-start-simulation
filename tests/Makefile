@@ -2,7 +2,7 @@
 # Compiler and Flags
 #===============================================================================
 CC       = gcc
-CFLAGS   = -Wall -Wextra -g --coverage
+CFLAGS   = -Wall -Wextra -g --coverage -DUNIT_TEST
 LDFLAGS  = -lcunit -lssl -lcrypto -lpthread --coverage
 
 #===============================================================================
@@ -108,7 +108,7 @@ $(OBJ_DIR)/%.o: %.c
 $(UNIT_TEST_LOGGING): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(OBJ_DIR)/test_logging.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(UNIT_TEST_DASHBOARD): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(OBJ_DIR)/test_dashboard.o
+$(UNIT_TEST_DASHBOARD): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(OBJ_DIR)/test_dashboard.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # But for test_instrument_cluster, we *stub* out can_socket:
@@ -150,4 +150,4 @@ coverage: test
 #===============================================================================
 .PHONY: clean
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(BIN_DIR)/* coverage.info coverage_report *.gcno *.gcda
+	rm -rf $(OBJ_DIR)/* $(BIN_DIR)/* coverage.info coverage_report *.gcno *.gcda
