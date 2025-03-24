@@ -35,9 +35,6 @@ static int simu_order = ORDER_STOP;
 /* Current speed */
 static double curr_speed = 0.0F;
 
-/* Current speed array */
-static double speed_array[SPEED_ARRAY_MAX_SIZE] = {0}; // Initialize array with zeros
-
 /* Number of data points in csv file */
 static int data_size = 0;
 
@@ -79,62 +76,86 @@ static bool opened_door = false;
 
 /***** Function to get data from csv file *****/
 
+#define MAX_LINE_SIZE 256
+
+/* Vehicle data structure*/
+
+VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
+
 void read_csv()
 {
-#define MAX_LINE_SIZE 100
-#define MAX_SPEED_STRING_SIZE 20
-
-    FILE *file = fopen("ftp75.csv", "r");
+    FILE *file = fopen("full_simu.csv", "r");
     if (!file)
     {
         perror("Error opening file");
+        return;
     }
 
-    int speed_filled[SPEED_ARRAY_MAX_SIZE] = {0}; // Auxiliary array to track filled indexs
-    int index;
-    char read_string_value[MAX_SPEED_STRING_SIZE];
-    double final_value;
-    char file_line[MAX_LINE_SIZE];
+    char line[MAX_LINE_SIZE];
+    char temp_line[MAX_LINE_SIZE];
+    char *token;
+    int line_count = 0;
 
-    data_size = 0;
+    // Bypass csv header
+    fgets(line, sizeof(line), file);
 
-    // Skip the header line
-    fgets(file_line, sizeof(file_line), file);
-
-    // Read the file line by line
-    while (fgets(file_line, sizeof(file_line), file))
+    while (fgets(line, sizeof(line), file) && data_size < SPEED_ARRAY_MAX_SIZE)
     {
-        // Parse index and value from the line
-        if (sscanf(file_line, "%d,%[^\n]", &index, read_string_value) == 2)
+        // Copy content for extraction
+        strncpy(temp_line, line, sizeof(temp_line));
+        temp_line[strcspn(temp_line, "\n")] = 0; // Remove newline
+
+        // Extract each field
+        int field = 0;
+        char *saveptr;
+        token = strtok_r(temp_line, ",", &saveptr);
+
+        while (token != NULL && field < 6)
         {
-            // Check if the value is enclosed in quotes
-            if (read_string_value[0] == '"' && read_string_value[strlen(read_string_value) - 2] == '"')
+            // Remove "" if exists
+            char clean_token[50];
+            strncpy(clean_token, token, sizeof(clean_token));
+            if (clean_token[0] == '"' && clean_token[strlen(clean_token) - 1] == '"')
             {
-                // Remove quotes
-                memmove(read_string_value, read_string_value + 1, strlen(read_string_value)); // Remove first quote
-                read_string_value[strlen(read_string_value) - 1] = '\0';                      // Remove last quote
-
-                // Replace comma with dot for proper decimal conversion
-                for (char *rep = read_string_value; *rep; rep++)
-                {
-                    if (*rep == ',')
-                    {
-                        *rep = '.';
-                    }
-                }
+                memmove(clean_token, clean_token + 1, strlen(clean_token) - 1);
+                clean_token[strlen(clean_token) - 1] = '\0';
             }
 
-            final_value = atof(read_string_value); // Convert to double
-
-            // Store the value in the array if the index is valid
-            if (index >= 0 && index < SPEED_ARRAY_MAX_SIZE)
+            // Substituir vírgula decimal por ponto
+            for (char *p = clean_token; *p; p++)
             {
-                speed_array[index] = final_value;
-                speed_filled[index] = 1; // Mark the index as filled
-                data_size++;
-                // printf("current speed = %lf\n", speed_array[index] );
+                if (*p == ',')
+                    *p = '.';
             }
+
+            // Atribuir aos campos da estrutura
+            switch (field)
+            {
+            case 0:
+                vehicle_data[data_size].time = atof(clean_token);
+                break;
+            case 1:
+                vehicle_data[data_size].speed = atof(clean_token);
+                break;
+            case 2:
+                vehicle_data[data_size].tilt_angle = atof(clean_token);
+                break;
+            case 3:
+                vehicle_data[data_size].internal_temp = atoi(clean_token);
+                break;
+            case 4:
+                vehicle_data[data_size].external_temp = atoi(clean_token);
+                break;
+            case 5:
+                vehicle_data[data_size].door_open = atoi(clean_token);
+                break;
+            }
+
+            token = strtok_r(NULL, ",", &saveptr);
+            field++;
         }
+
+        data_size++;
     }
 
     fclose(file);
@@ -151,8 +172,8 @@ void check_order(int simu_order)
 
             if (simu_state == (STATE_RUNNING || STATE_PAUSED))
             {
-                memset(speed_array, 0, sizeof(speed_array)); // delete current simulation speed data set
-                simu_curr_step = 0;                          // reset the current simulation step
+                memset(vehicle_data, 0, sizeof(vehicle_data)); // delete current simulation speed data set
+                simu_curr_step = 0;                            // reset the current simulation step
                 simu_state = STATE_STOPPED;
             }
 
@@ -218,7 +239,7 @@ static void *simu_speed(void *arg)
 
             if (simu_curr_step + 1 != data_size)
             {
-                if (speed_array[simu_curr_step + 1] - speed_array[simu_curr_step] > 0)
+                if (vehicle_data[simu_curr_step+1].speed - vehicle_data[simu_curr_step].speed > 0)
                 {
                     is_accelerating = true;
                     is_braking = false;
@@ -231,14 +252,22 @@ static void *simu_speed(void *arg)
             }
 
             /* Assign speed to pointer */
-            *speed = speed_array[simu_curr_step];
+            *speed = vehicle_data[simu_curr_step].speed;
 
             /* Logging */
-            char simu_log[MAX_SPEED_LOG_SIZE] = {0};
+            /* char simu_log[MAX_SPEED_LOG_SIZE] = {0};
             snprintf(simu_log, MAX_SPEED_LOG_SIZE, "([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
-            log_toggle_event(simu_log);
+            log_toggle_event(simu_log); */
 
-            printf("([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
+            printf("Time: %d, Speed: %.1f, Int. Temp: %d, Ext. Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d\n",
+                vehicle_data[simu_curr_step].time,
+                vehicle_data[simu_curr_step].speed,
+                vehicle_data[simu_curr_step].internal_temp,
+                vehicle_data[simu_curr_step].external_temp,
+                vehicle_data[simu_curr_step].door_open,
+                vehicle_data[simu_curr_step].tilt_angle,
+                is_accelerating,
+                is_braking);
 
             if (simu_curr_step + 1 == data_size)
             {
@@ -285,9 +314,8 @@ static void *comms(void *arg)
 int main()
 {
 
-    init_logging_system(); // starts logging
+    //init_logging_system(); // starts logging
 
-    printf("teste!\n");
     simu_order = ORDER_RUN;
 
     struct speed_data s_d = {0};
@@ -307,7 +335,7 @@ int main()
 
     pthread_mutex_destroy(&mutex_bcm);
 
-    cleanup_logging_system(); // stops logging
+    //cleanup_logging_system(); // stops logging
 
     return 0;
 }

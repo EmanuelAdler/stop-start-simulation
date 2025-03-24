@@ -18,6 +18,16 @@
 
 pthread_mutex_t mutex_bcm;
 
+// Vehicle simulation data
+typedef struct {
+    int time;
+    double speed;
+    int internal_temp;
+    int external_temp;
+    int door_open;
+    double tilt_angle;
+} VehicleData;
+
 struct speed_data{
 
     int *simu_order;

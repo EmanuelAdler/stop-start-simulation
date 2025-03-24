@@ -12,7 +12,7 @@ df['Speed (km/h)'] = df['Speed (km/h)'].str.replace(',', '.').astype(float)
 INTERNAL_TEMP_RANGE = (21, 24)
 EXTERNAL_TEMP_RANGE = (26, 31)
 CHANGE_PROBABILITY = 0.01
-MAX_TILT_CHANGE = 0.5  # Máxima variação por segundo (graus)
+MAX_TILT_CHANGE = 1.5  # Máxima variação por segundo (graus)
 
 # Estado global para manter os valores atuais
 current_internal = np.random.randint(*INTERNAL_TEMP_RANGE)
