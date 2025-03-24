@@ -28,6 +28,14 @@ static int simu_state = STATE_STOPPED;
 
 static int simu_order = ORDER_STOP;
 
+/***** Gear data *****/
+
+#define PARKING 0
+#define DRIVE   1
+
+/* Current gear | 0 - Parking | 1 - Drive | */
+static bool curr_gear = PARKING;
+
 /***** Speed sensor data *****/
 
 #define SPEED_ARRAY_MAX_SIZE 5000
@@ -78,16 +86,16 @@ static bool opened_door = false;
 
 #define MAX_LINE_SIZE 256
 
-#define CASE_TIME   0
-#define CASE_SPEED  1
-#define CASE_TILT   2
+#define CASE_TIME 0
+#define CASE_SPEED 1
+#define CASE_TILT 2
 #define CASE_INTEMP 3
 #define CASE_EXTEMP 4
-#define CASE_DOOR   5
+#define CASE_DOOR 5
 
-#define CLEAN_STRING_SIZE   50
+#define CLEAN_STRING_SIZE 50
 
-#define MAX_FIELD   6
+#define MAX_FIELD 6
 
 /* Vehicle data structure*/
 
@@ -135,10 +143,10 @@ void read_csv()
             // Substituir vírgula decimal por ponto
             for (char *rep = clean_token; *rep; rep++)
             {
-                if (*rep == ','){
+                if (*rep == ',')
+                {
                     *rep = '.';
                 }
-                    
             }
 
             // Atribuir aos campos da estrutura
@@ -255,14 +263,18 @@ static void *simu_speed(void *arg)
 
             if (simu_curr_step + 1 != data_size)
             {
-                if (vehicle_data[simu_curr_step+1].speed - vehicle_data[simu_curr_step].speed > 0)
+                if (vehicle_data[simu_curr_step + 1].speed - vehicle_data[simu_curr_step].speed > 0)
                 {
                     is_accelerating = true;
+                    curr_gear = DRIVE;
+
                     is_braking = false;
                 }
                 else
                 {
                     is_accelerating = false;
+                    curr_gear = PARKING;
+
                     is_braking = true;
                 }
             }
@@ -276,14 +288,14 @@ static void *simu_speed(void *arg)
             log_toggle_event(simu_log); */
 
             printf("Time: %d, Speed: %.1f, Int. Temp: %d, Ext. Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d\n",
-                vehicle_data[simu_curr_step].time,
-                vehicle_data[simu_curr_step].speed,
-                vehicle_data[simu_curr_step].internal_temp,
-                vehicle_data[simu_curr_step].external_temp,
-                vehicle_data[simu_curr_step].door_open,
-                vehicle_data[simu_curr_step].tilt_angle,
-                is_accelerating,
-                is_braking);
+                   vehicle_data[simu_curr_step].time,
+                   vehicle_data[simu_curr_step].speed,
+                   vehicle_data[simu_curr_step].internal_temp,
+                   vehicle_data[simu_curr_step].external_temp,
+                   vehicle_data[simu_curr_step].door_open,
+                   vehicle_data[simu_curr_step].tilt_angle,
+                   is_accelerating,
+                   is_braking);
 
             if (simu_curr_step + 1 == data_size)
             {
@@ -330,7 +342,7 @@ static void *comms(void *arg)
 int main()
 {
 
-    //init_logging_system(); // starts logging
+    // init_logging_system(); // starts logging
 
     simu_order = ORDER_RUN;
 
@@ -351,7 +363,7 @@ int main()
 
     pthread_mutex_destroy(&mutex_bcm);
 
-    //cleanup_logging_system(); // stops logging
+    // cleanup_logging_system(); // stops logging
 
     return 0;
 }
