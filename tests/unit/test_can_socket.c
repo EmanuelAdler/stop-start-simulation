@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <CUnit/Basic.h>
-#include "../src/common_includes/can_socket.h"
+#include "../../src/common_includes/can_socket.h"
 
 #define TEST_INTERFACE ("vcan0")
 #define INVALID_INTERFACE ("any_if")
