@@ -10,10 +10,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+    bool start_stop_active; // 0 = off, 1 = on
+} Actuators;
+
+extern Actuators actuators;
+
 void process_received_frame(int sock);
 bool check_is_valid_can_id(canid_t can_id);
 void print_dashboard_status();
 void parse_input_received(char* input);
-// and other functions
 
 #endif

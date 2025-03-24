@@ -8,15 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CAN_INTERFACE      ("vcan0")
 #define CAN_DATA_LENGTH    (8)
-#define LOG_MESSAGE_SIZE   (50)
-#define SUCCESS_CODE       (0)
-#define ERROR_CODE         (1)
-
-typedef struct {
-    bool start_stop_active; // 0 = off, 1 = on
-} Actuators;
 
 Actuators actuators = {0};
 
@@ -71,9 +63,12 @@ void process_received_frame(int sock)
     unsigned char encrypted_data[AES_BLOCK_SIZE];
     char decrypted_message[AES_BLOCK_SIZE];
     int received_bytes = 0;
-    char message_log[LOG_MESSAGE_SIZE];
 
-    for(;;)
+    #ifdef UNIT_TEST
+    while (true)
+    #else
+    for (;;)
+    #endif
     {
         if (receive_can_frame(sock, &frame) == 0) 
         {
@@ -106,5 +101,11 @@ void process_received_frame(int sock)
                 }
             }
         }
+        #ifdef UNIT_TEST
+        else
+        {
+            break;
+        }
+        #endif
     }
 }
