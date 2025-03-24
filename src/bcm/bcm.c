@@ -78,6 +78,17 @@ static bool opened_door = false;
 
 #define MAX_LINE_SIZE 256
 
+#define CASE_TIME   0
+#define CASE_SPEED  1
+#define CASE_TILT   2
+#define CASE_INTEMP 3
+#define CASE_EXTEMP 4
+#define CASE_DOOR   5
+
+#define CLEAN_STRING_SIZE   50
+
+#define MAX_FIELD   6
+
 /* Vehicle data structure*/
 
 VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
@@ -110,10 +121,10 @@ void read_csv()
         char *saveptr;
         token = strtok_r(temp_line, ",", &saveptr);
 
-        while (token != NULL && field < 6)
+        while (token != NULL && field < MAX_FIELD)
         {
             // Remove "" if exists
-            char clean_token[50];
+            char clean_token[CLEAN_STRING_SIZE];
             strncpy(clean_token, token, sizeof(clean_token));
             if (clean_token[0] == '"' && clean_token[strlen(clean_token) - 1] == '"')
             {
@@ -122,32 +133,37 @@ void read_csv()
             }
 
             // Substituir vírgula decimal por ponto
-            for (char *p = clean_token; *p; p++)
+            for (char *rep = clean_token; *rep; rep++)
             {
-                if (*p == ',')
-                    *p = '.';
+                if (*rep == ','){
+                    *rep = '.';
+                }
+                    
             }
 
             // Atribuir aos campos da estrutura
             switch (field)
             {
-            case 0:
-                vehicle_data[data_size].time = atof(clean_token);
+            case CASE_TIME:
+                vehicle_data[data_size].time = atoi(clean_token);
                 break;
-            case 1:
+            case CASE_SPEED:
                 vehicle_data[data_size].speed = atof(clean_token);
                 break;
-            case 2:
+            case CASE_TILT:
                 vehicle_data[data_size].tilt_angle = atof(clean_token);
                 break;
-            case 3:
+            case CASE_INTEMP:
                 vehicle_data[data_size].internal_temp = atoi(clean_token);
                 break;
-            case 4:
+            case CASE_EXTEMP:
                 vehicle_data[data_size].external_temp = atoi(clean_token);
                 break;
-            case 5:
+            case CASE_DOOR:
                 vehicle_data[data_size].door_open = atoi(clean_token);
+                break;
+
+            default:
                 break;
             }
 
