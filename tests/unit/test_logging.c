@@ -14,6 +14,12 @@
 #define BUFFER_SIZE    (64)
 
 //-------------------------------------
+// Setup the CUnit Suite
+//-------------------------------------
+static int init_suite(void)   { return 0; }
+static int clean_suite(void)  { return 0; }
+
+//-------------------------------------
 // Test 1: Successful Initialization
 //-------------------------------------
 void test_logging_init_success(void)
@@ -143,12 +149,6 @@ void test_logging_after_cleanup(void)
     CU_ASSERT_TRUE(file_contains_substring(log_path, first_message));
     CU_ASSERT_FALSE(file_contains_substring(log_path, second_message));
 }
-
-//-------------------------------------
-// Setup the CUnit Suite
-//-------------------------------------
-static int init_suite(void)   { return 0; }
-static int clean_suite(void)  { return 0; }
 
 int main(void)
 {
