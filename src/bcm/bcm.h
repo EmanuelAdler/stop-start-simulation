@@ -16,9 +16,13 @@
 
 #include "../common_includes/logging.h"
 
-extern pthread_mutex_t mutex_bcm;
+pthread_mutex_t mutex_bcm;
 
-/* Function that should receive an array of 2 elements (simulation order, pointer to current speed) */
-static void *simu_speed(void *arg[]);
+struct speed_data{
+
+    int *simu_order;
+    double *speed;
+
+};
 
 #endif // SIMU_BCM_H

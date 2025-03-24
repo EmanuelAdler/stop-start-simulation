@@ -26,12 +26,14 @@ static int simu_curr_step = 0;
 
 static int simu_state = STATE_STOPPED;
 
+static int simu_order = ORDER_STOP;
+
 /***** Speed sensor data *****/
 
 #define SPEED_ARRAY_MAX_SIZE 5000
 
 /* Current speed */
-// static double curr_speed = 0.0F;
+static double curr_speed = 0.0F;
 
 /* Current speed array */
 static double speed_array[SPEED_ARRAY_MAX_SIZE] = {0}; // Initialize array with zeros
@@ -88,8 +90,8 @@ void read_csv()
         perror("Error opening file");
     }
 
-    int speed_filled[SPEED_ARRAY_MAX_SIZE] = {0}; // Auxiliary array to track filled indices
-    int indice;
+    int speed_filled[SPEED_ARRAY_MAX_SIZE] = {0}; // Auxiliary array to track filled indexs
+    int index;
     char read_string_value[MAX_SPEED_STRING_SIZE];
     double final_value;
     char file_line[MAX_LINE_SIZE];
@@ -103,10 +105,10 @@ void read_csv()
     while (fgets(file_line, sizeof(file_line), file))
     {
         // Parse index and value from the line
-        if (sscanf(file_line, "%d,%[^\n]", &indice, read_string_value) == 2)
+        if (sscanf(file_line, "%d,%[^\n]", &index, read_string_value) == 2)
         {
             // Check if the value is enclosed in quotes
-            if (read_string_value[0] == '"' && read_string_value[strlen(read_string_value) - 1] == '"')
+            if (read_string_value[0] == '"' && read_string_value[strlen(read_string_value) - 2] == '"')
             {
                 // Remove quotes
                 memmove(read_string_value, read_string_value + 1, strlen(read_string_value)); // Remove first quote
@@ -125,11 +127,12 @@ void read_csv()
             final_value = atof(read_string_value); // Convert to double
 
             // Store the value in the array if the index is valid
-            if (indice >= 0 && indice < SPEED_ARRAY_MAX_SIZE)
+            if (index >= 0 && index < SPEED_ARRAY_MAX_SIZE)
             {
-                speed_array[indice] = final_value;
-                speed_filled[indice] = 1; // Mark the index as filled
+                speed_array[index] = final_value;
+                speed_filled[index] = 1; // Mark the index as filled
                 data_size++;
+                // printf("current speed = %lf\n", speed_array[index] );
             }
         }
     }
@@ -150,7 +153,6 @@ void check_order(int simu_order)
             {
                 memset(speed_array, 0, sizeof(speed_array)); // delete current simulation speed data set
                 simu_curr_step = 0;                          // reset the current simulation step
-                cleanup_logging_system();                    // stops logging speed
                 simu_state = STATE_STOPPED;
             }
 
@@ -160,8 +162,8 @@ void check_order(int simu_order)
 
             if (simu_state == STATE_STOPPED)
             {
-                read_csv();            // acquire new set of speed data to simulate from start
-                init_logging_system(); // starts logging speed
+                read_csv(); // acquire new set of speed data to simulate from start
+
                 simu_state = STATE_RUNNING;
             }
             if (STATE_PAUSED)
@@ -188,10 +190,11 @@ void check_order(int simu_order)
 
 /***** Simulate speed *****/
 
-static void *simu_speed(void *arg[])
+static void *simu_speed(void *arg)
 {
-    int *simu_order = (int *)arg[0];
-    double *speed = (double *)arg[1];
+    struct speed_data *ptr_s_d = (struct speed_data *)arg;
+    int *simu_order = ptr_s_d->simu_order;
+    double *speed = ptr_s_d->speed;
 
 #define MAX_SPEED_LOG_SIZE 50
 
@@ -211,10 +214,31 @@ static void *simu_speed(void *arg[])
 
         if (simu_state == STATE_RUNNING)
         {
+            /* Check if car is accelerating or braking */
+
+            if (simu_curr_step + 1 != data_size)
+            {
+                if (speed_array[simu_curr_step + 1] - speed_array[simu_curr_step] > 0)
+                {
+                    is_accelerating = true;
+                    is_braking = false;
+                }
+                else
+                {
+                    is_accelerating = false;
+                    is_braking = true;
+                }
+            }
+
+            /* Assign speed to pointer */
             *speed = speed_array[simu_curr_step];
+
+            /* Logging */
             char simu_log[MAX_SPEED_LOG_SIZE] = {0};
             snprintf(simu_log, MAX_SPEED_LOG_SIZE, "([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
             log_toggle_event(simu_log);
+
+            printf("([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
 
             if (simu_curr_step + 1 == data_size)
             {
@@ -233,4 +257,57 @@ static void *simu_speed(void *arg[])
         sleep_microseconds(SLEEP_TIME_US);
     }
     return NULL;
+}
+
+/* to do */
+static void *comms(void *arg)
+{
+
+    while (true)
+    {
+        int lock_result = pthread_mutex_lock(&mutex_bcm);
+        if (lock_result != 0)
+        {
+            return NULL;
+        }
+
+        int unlock_result = pthread_mutex_unlock(&mutex_bcm);
+        if (unlock_result != 0)
+        {
+            return NULL;
+        }
+
+        sleep_microseconds(SLEEP_TIME_US);
+    }
+    return NULL;
+}
+
+int main()
+{
+
+    init_logging_system(); // starts logging
+
+    printf("teste!\n");
+    simu_order = ORDER_RUN;
+
+    struct speed_data s_d = {0};
+    s_d.simu_order = &simu_order;
+    s_d.speed = &curr_speed;
+
+    pthread_mutex_init(&mutex_bcm, NULL);
+
+    pthread_t thread_speed;
+    pthread_t thread_comms;
+
+    pthread_create(&thread_speed, NULL, simu_speed, &s_d);
+    pthread_create(&thread_comms, NULL, comms, NULL);
+
+    pthread_join(thread_speed, NULL);
+    pthread_join(thread_comms, NULL);
+
+    pthread_mutex_destroy(&mutex_bcm);
+
+    cleanup_logging_system(); // stops logging
+
+    return 0;
 }
