@@ -1,4 +1,4 @@
-#include "can_socket.h"
+#include "common_includes/can_socket.h"
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -9,38 +9,8 @@
 
 #define CAN_INTERFACE ("vcan0")
 #define CAN_ID        (0x123U)
-#define CAN_DLC       (8U)
-#define CAN_MAX_PAD   (16U)
 #define PERMISSIONS   (0666)
 #define FIFO_PATH "/tmp/can_pipe"
-
-void send_encrypted_message(int sock, const char *message) 
-{
-    struct can_frame frame;
-    unsigned char encrypted_data[AES_BLOCK_SIZE] = {0};
-
-    char padded_message[AES_BLOCK_SIZE + CAN_MAX_PAD] = {0};
-    int encrypted_len = 0;
-    strncpy(padded_message, message, AES_BLOCK_SIZE);
-
-    encrypt_data((unsigned char*)padded_message, encrypted_data, &encrypted_len);
-
-    if (encrypted_len != AES_BLOCK_SIZE) 
-    {
-        printf("Unexpected encrypted data length: %d\n", encrypted_len);
-        fflush(stdout);
-        return;
-    }
-
-    frame.can_id = CAN_ID;
-    frame.can_dlc = CAN_DLC;
-    memcpy(frame.data, encrypted_data, CAN_DLC);
-    send_can_frame(sock, &frame);
-
-    frame.can_dlc = CAN_DLC;
-    memcpy(frame.data, encrypted_data + CAN_DLC, CAN_DLC);
-    send_can_frame(sock, &frame);
-}
 
 int main(void) 
 {
@@ -80,7 +50,7 @@ int main(void)
         }
         if (strcmp(input, "") != 0) 
         {
-            send_encrypted_message(sock, input);
+            send_encrypted_message(sock, input, CAN_ID);
         }
     }
 

@@ -1,39 +1,84 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -D_GNU_SOURCE
-BIN_DIR = ../bin
-SRC_DIR = .
-OBJ = $(BIN_DIR)/can_socket.o
 LDLFLAGS = -lssl -lcrypto
 
-# Executables
-TARGETS = $(BIN_DIR)/sender $(BIN_DIR)/receiver
+# Directories
+SRC_DIR = .
+COMMON_DIR = $(SRC_DIR)/common_includes
+BIN_DIR = ../bin
+
+# Ensure bin directory exists
+$(shell mkdir -p $(BIN_DIR))
+
+# Common object files (from common_includes)
+COMMON_OBJ = $(BIN_DIR)/can_socket.o $(BIN_DIR)/logging.o
+
+TARGETS = \
+  $(BIN_DIR)/sender \
+  $(BIN_DIR)/receiver \
+  $(BIN_DIR)/instrument_cluster \
+  $(BIN_DIR)/dashboard
 
 all: $(TARGETS)
 
-# Ensure the bin directory exists
-$(shell mkdir -p $(BIN_DIR))
+######################################################
+# Common_includes object compilation
+######################################################
+$(BIN_DIR)/can_socket.o: $(COMMON_DIR)/can_socket.c $(COMMON_DIR)/can_socket.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $(COMMON_DIR)/can_socket.c -o $@
 
-# Dependency rules
-$(BIN_DIR)/can_socket.o: $(SRC_DIR)/can_socket.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/can_socket.c -o $(BIN_DIR)/can_socket.o
+$(BIN_DIR)/logging.o: $(COMMON_DIR)/logging.c $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $(COMMON_DIR)/logging.c -o $@
 
-$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/sender.c -o $(BIN_DIR)/sender.o
+######################################################
+# Sender
+######################################################
+$(BIN_DIR)/sender.o: sender.c $(COMMON_DIR)/can_socket.h $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c sender.c -o $@
 
-$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/receiver.c -o $(BIN_DIR)/receiver.o
+$(BIN_DIR)/sender: $(BIN_DIR)/sender.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 
-# Build rules for executables
-$(BIN_DIR)/sender: $(BIN_DIR)/sender.o $(OBJ)
-	$(CC) $(CFLAGS) $(BIN_DIR)/sender.o $(OBJ) -o $(BIN_DIR)/sender $(LDLFLAGS)
+######################################################
+# Receiver
+######################################################
+$(BIN_DIR)/receiver.o: receiver.c $(COMMON_DIR)/can_socket.h $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c receiver.c -o $@
 
-$(BIN_DIR)/receiver: $(BIN_DIR)/receiver.o $(OBJ)
-	$(CC) $(CFLAGS) $(BIN_DIR)/receiver.o $(OBJ) -o $(BIN_DIR)/receiver $(LDLFLAGS)
+$(BIN_DIR)/receiver: $(BIN_DIR)/receiver.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 
-# Clean command
+######################################################
+# Instrument Cluster
+######################################################
+# If instrument_cluster.c is inside src/instrument_cluster folder:
+INST_CLUST_DIR = $(SRC_DIR)/instrument_cluster
+
+$(BIN_DIR)/instrument_cluster.o: $(INST_CLUST_DIR)/instrument_cluster.c \
+                                 $(COMMON_DIR)/can_socket.h \
+                                 $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $(INST_CLUST_DIR)/instrument_cluster.c -o $@
+
+$(BIN_DIR)/instrument_cluster: $(BIN_DIR)/instrument_cluster.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+######################################################
+# Dashboard
+######################################################
+# If dashboard.c is inside src/dashboard folder:
+DASH_DIR = $(SRC_DIR)/dashboard
+
+$(BIN_DIR)/dashboard.o: $(DASH_DIR)/dashboard.c $(COMMON_DIR)/can_socket.h $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $(DASH_DIR)/dashboard.c -o $@
+
+$(BIN_DIR)/dashboard: $(BIN_DIR)/dashboard.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+######################################################
+# Clean and Run
+######################################################
 clean:
 	rm -rf $(BIN_DIR)/*
 
-# Run command
 run: all
 	$(BIN_DIR)/sender & $(BIN_DIR)/receiver
