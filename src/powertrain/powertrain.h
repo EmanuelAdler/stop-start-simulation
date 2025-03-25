@@ -26,6 +26,11 @@ typedef struct {
     int external_temp;
     int door_open;
     double tilt_angle;
+    int accel;
+    int brake;
+    int temp_set;
+    double batt_soc;
+    double batt_volt;
 } VehicleData;
 
 #endif //POWERTRAIN_H
