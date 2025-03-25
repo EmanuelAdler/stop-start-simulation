@@ -28,11 +28,15 @@ static bool start_stop_is_active = false;
 
 /* Temperatures operation */
 
-#define MAX_TEMP_DIFF   5U
+#define MAX_TEMP_DIFF 5U
+
+#define MAX_ENGINE_TEMP 105U
+#define MIN_ENGINE_TEMP 70U
 
 /* Start/Stop operation logic */
 
-void check_conds(VehicleData *ptr_rec_data){
+void check_conds(VehicleData *ptr_rec_data)
+{
 
     int time = ptr_rec_data->time;
     double speed = ptr_rec_data->speed;
@@ -45,6 +49,7 @@ void check_conds(VehicleData *ptr_rec_data){
     int temp_set = ptr_rec_data->temp_set;
     double batt_soc = ptr_rec_data->batt_soc;
     double batt_volt = ptr_rec_data->batt_volt;
+    double engi_temp = ptr_rec_data->engi_temp;
 
     // Activation conditions
 
@@ -53,6 +58,7 @@ void check_conds(VehicleData *ptr_rec_data){
     int cond3 = 0;
     int cond4 = 0;
     int cond5 = 0;
+    int cond6 = 0;
 
     /* Speed, acceleration and brake logic */
 
@@ -66,7 +72,7 @@ void check_conds(VehicleData *ptr_rec_data){
         // implementar log
     }
 
-    /* Temperatures logic */
+    /* External and internal temperatures logic */
 
     if (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp <= temp_set)
     {
@@ -78,21 +84,26 @@ void check_conds(VehicleData *ptr_rec_data){
         // implementar log
     }
 
-    /* Battery logic */
+    /* Engine temperature logic */
 
-    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
+    if (engi_temp >= MIN_ENGINE_TEMP && engi_temp <= MAX_ENGINE_TEMP)
     {
         cond3 = 1;
     }
     else
     {
-        cond3 = 0;
-        // implementar log
+        /* If start/stop is already active and engine temperature decreases,
+        start stop won't be disabled by that */
+        if (!start_stop_is_active)
+        {
+            cond3 = 0;
+            // implementar log
+        }
     }
 
-    /* Door logic */
+    /* Battery logic */
 
-    if (!door_open)
+    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
     {
         cond4 = 1;
     }
@@ -102,9 +113,9 @@ void check_conds(VehicleData *ptr_rec_data){
         // implementar log
     }
 
-    /* Tilt angle logic */
+    /* Door logic */
 
-    if (tilt_angle <= MAX_TILT_ANGLE)
+    if (!door_open)
     {
         cond5 = 1;
     }
@@ -114,9 +125,21 @@ void check_conds(VehicleData *ptr_rec_data){
         // implementar log
     }
 
+    /* Tilt angle logic */
+
+    if (tilt_angle <= MAX_TILT_ANGLE)
+    {
+        cond6 = 1;
+    }
+    else
+    {
+        cond6 = 0;
+        // implementar log
+    }
+
     /* Check start/stop */
 
-    if (cond1 && cond2 && cond3 && cond4)
+    if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
     {
         start_stop_is_active = true;
     }

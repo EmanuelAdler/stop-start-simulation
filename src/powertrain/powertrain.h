@@ -31,6 +31,7 @@ typedef struct {
     int temp_set;
     double batt_soc;
     double batt_volt;
+    double engi_temp;
 } VehicleData;
 
 #endif //POWERTRAIN_H
