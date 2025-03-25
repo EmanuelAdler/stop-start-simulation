@@ -26,11 +26,13 @@ static bool start_stop_is_active = false;
 
 #define MAX_TILT_ANGLE 5.0F
 
+/* Temperatures operation */
+
+#define MAX_TEMP_DIFF   5U
+
 /* Start/Stop operation logic */
 
-void *function_start_stop(void *arg)
-{
-    VehicleData *ptr_rec_data = (VehicleData *)arg;
+void check_conds(VehicleData *ptr_rec_data){
 
     int time = ptr_rec_data->time;
     double speed = ptr_rec_data->speed;
@@ -52,6 +54,83 @@ void *function_start_stop(void *arg)
     int cond4 = 0;
     int cond5 = 0;
 
+    /* Speed, acceleration and brake logic */
+
+    if (speed == 0 && !accel && brake)
+    {
+        cond1 = 1;
+    }
+    else
+    {
+        cond1 = 0;
+        // implementar log
+    }
+
+    /* Temperatures logic */
+
+    if (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp <= temp_set)
+    {
+        cond2 = 1;
+    }
+    else
+    {
+        cond2 = 0;
+        // implementar log
+    }
+
+    /* Battery logic */
+
+    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
+    {
+        cond3 = 1;
+    }
+    else
+    {
+        cond3 = 0;
+        // implementar log
+    }
+
+    /* Door logic */
+
+    if (!door_open)
+    {
+        cond4 = 1;
+    }
+    else
+    {
+        cond4 = 0;
+        // implementar log
+    }
+
+    /* Tilt angle logic */
+
+    if (tilt_angle <= MAX_TILT_ANGLE)
+    {
+        cond5 = 1;
+    }
+    else
+    {
+        cond5 = 0;
+        // implementar log
+    }
+
+    /* Check start/stop */
+
+    if (cond1 && cond2 && cond3 && cond4)
+    {
+        start_stop_is_active = true;
+    }
+    else
+    {
+        start_stop_is_active = false;
+        // implementar log
+    }
+}
+
+void *function_start_stop(void *arg)
+{
+    VehicleData *ptr_rec_data = (VehicleData *)arg;
+
     while (true)
     {
         int lock_result = pthread_mutex_lock(&mutex_powertrain);
@@ -60,77 +139,9 @@ void *function_start_stop(void *arg)
             return NULL;
         }
 
-        /* Speed, acceleration and brake logic */
+        check_conds(ptr_rec_data);
 
-        if (speed == 0 && !accel && brake)
-        {
-            cond1 = 1;
-        }
-        else
-        {
-            cond1 = 0;
-            // implementar log
-        }
-
-        /* Temperatures logic */
-
-        if (internal_temp <= (temp_set + 5) && external_temp <= temp_set)
-        {
-            cond2 = 1;
-        }
-        else
-        {
-            cond2 = 0;
-            // implementar log
-        }
-
-        /* Battery logic */
-
-        if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
-        {
-            cond3 = 1;
-        }
-        else
-        {
-            cond3 = 0;
-            // implementar log
-        }
-
-        /* Door logic */
-
-        if (!door_open)
-        {
-            cond4 = 1;
-        }
-        else
-        {
-            cond4 = 0;
-            // implementar log
-        }
-
-        /* Tilt angle logic */
-
-        if (tilt_angle <= MAX_TILT_ANGLE)
-        {
-            cond5 = 1;
-        }
-        else
-        {
-            cond5 = 0;
-            // implementar log
-        }
-
-        /* Check start/stop */
-
-        if (cond1 && cond2 && cond3 && cond4)
-        {
-            start_stop_is_active = true;
-        }
-        else
-        {
-            start_stop_is_active = false;
-            // implementar log
-        }
+        printf("Start/Stop = %d\n", start_stop_is_active);
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
         if (unlock_result != 0)
@@ -176,7 +187,8 @@ int main()
 
     pthread_mutex_init(&mutex_powertrain, NULL);
 
-    pthread_t thread_start_stop, thread_comms;
+    pthread_t thread_start_stop;
+    pthread_t thread_comms;
 
     pthread_create(&thread_start_stop, NULL, function_start_stop, &rec_data);
     pthread_create(&thread_comms, NULL, comms, NULL);
