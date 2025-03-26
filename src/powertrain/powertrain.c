@@ -203,16 +203,16 @@ int sock = -1;
 bool check_is_valid_can_id(canid_t can_id)
 {
     bool is_valid = false;
-    
+
     switch (can_id)
     {
-        case CAN_ID_COMMAND:
-            is_valid = true;
-            break;        
-        default:
-            break;
+    case CAN_ID_COMMAND:
+        is_valid = true;
+        break;
+    default:
+        break;
     }
-    
+
     return is_valid;
 }
 
