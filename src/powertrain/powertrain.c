@@ -17,6 +17,8 @@ void sleep_microseconds(long int msec)
 
 static bool start_stop_is_active = false;
 
+static bool start_stop_manual = false;
+
 /* Battery operation */
 
 #define MIN_BATTERY_VOLTAGE 12.2F
@@ -163,11 +165,16 @@ void *function_start_stop(void *arg)
             return NULL;
         }
 
-        /* Check the conditions to activate Stop/Start */
+        /* Only check Stop/Start if the driver have enabled it */
 
-        check_conds(ptr_rec_data);
+        if (start_stop_manual)
+        {
+            /* Check the conditions to activate Stop/Start */
 
-        printf("Start/Stop = %d\n", start_stop_is_active);
+            check_conds(ptr_rec_data);
+
+            printf("Start/Stop = %d\n", start_stop_is_active);
+        }
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
         if (unlock_result != 0)
