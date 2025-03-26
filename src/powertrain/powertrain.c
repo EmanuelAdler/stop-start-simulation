@@ -340,12 +340,6 @@ void process_received_frame(int sock)
 void *comms(void *arg)
 {
 
-    sock = create_can_socket(CAN_INTERFACE);
-    if (sock < 0)
-    {
-        return ERROR_CODE;
-    }
-
     (void)printf("Listening for CAN frames...\n");
     (void)fflush(stdout);
 
@@ -377,6 +371,12 @@ int main()
     if (!init_logging_system())
     {
         fprintf(stderr, "Failed to open log file for writing.\n");
+        return ERROR_CODE;
+    }
+
+    sock = create_can_socket(CAN_INTERFACE);
+    if (sock < 0)
+    {
         return ERROR_CODE;
     }
 
