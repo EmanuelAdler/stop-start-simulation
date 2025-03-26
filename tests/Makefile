@@ -2,8 +2,10 @@
 # Compiler and Flags
 #===============================================================================
 CC       = gcc
-CFLAGS   = -Wall -Wextra -g --coverage -DUNIT_TEST
-LDFLAGS  = -lcunit -lssl -lcrypto -lpthread --coverage
+# CFLAGS   = -Wall -Wextra -g --coverage -DUNIT_TEST
+# LDFLAGS  = -lcunit -lssl -lcrypto -lpthread --coverage
+CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage -DUNIT_TEST
+LDFLAGS  = -fprofile-arcs -ftest-coverage -lcunit -lssl -lcrypto -lpthread
 
 #===============================================================================
 # Directories
@@ -157,10 +159,14 @@ test: all
 .PHONY: coverage
 coverage: test
 	@echo "Generating coverage data..."
-	lcov --rc branch_coverage=1 --capture --directory . --output-file coverage.info
-	# Exclude test files if you want:
+	# Capture coverage with branch info
+	lcov --rc branch_coverage=1  --rc mcdc_coverage=1 --capture --directory . --output-file coverage.info
+
+	# Optionally exclude test code from final coverage
 	lcov --remove coverage.info "**/tests/*" --output-file coverage.info
-	genhtml --branch-coverage coverage.info --output-directory coverage_report
+
+	genhtml --branch-coverage --mcdc-coverage coverage.info --output-directory coverage_report
+
 	@echo "Coverage report -> coverage_report/index.html"
 
 #===============================================================================
@@ -168,4 +174,4 @@ coverage: test
 #===============================================================================
 .PHONY: clean
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(BIN_DIR)/* coverage.info coverage_report *.gcno *.gcda
+	rm -rf $(OBJ_DIR)/* $(BIN_DIR)/* coverage.info coverage_report *.gcno *.gcda
