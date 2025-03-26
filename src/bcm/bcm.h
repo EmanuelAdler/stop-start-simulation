@@ -16,7 +16,6 @@
 
 #include "../common_includes/can_id_list.h"
 #include "../common_includes/can_socket.h"
-#include "../common_includes/logging.h"
 
 pthread_mutex_t mutex_bcm;
 

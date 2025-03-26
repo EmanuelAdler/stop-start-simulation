@@ -54,7 +54,7 @@ static float batt_soc = DEFAULT_BATTERY_SOC;
 
 /***** AC sensor data *****/
 
-#define DEFAULT_SET_TEMP 23.0F
+#define DEFAULT_SET_TEMP 23U
 
 /***** Function to get data from csv file *****/
 
@@ -227,6 +227,7 @@ static void *simu_speed(void *arg)
     int *accel[data_size];
     int *brake[data_size];
     int *gear[data_size];
+    int *temp_set[data_size];
 
     for (int i = 0; i < data_size; i++)
     {
@@ -234,9 +235,9 @@ static void *simu_speed(void *arg)
         accel[i] = &ptr_simu_data[i].accel;
         brake[i] = &ptr_simu_data[i].brake;
         gear[i] = &ptr_simu_data[i].gear;
+        temp_set[i] = &ptr_simu_data[i].temp_set;
+        *temp_set[i] = DEFAULT_SET_TEMP;
     }
-
-#define MAX_SPEED_LOG_SIZE 50
 
     while (true)
     {
@@ -265,7 +266,6 @@ static void *simu_speed(void *arg)
 
                     /* If car is moving, then gear = DRIVE */
                     *gear[simu_curr_step] = DRIVE;
-                    // printf("driving!\n");
                 }
                 else
                 {
@@ -276,15 +276,9 @@ static void *simu_speed(void *arg)
                     if (vehicle_data[simu_curr_step].speed == 0)
                     {
                         *gear[simu_curr_step] = PARKING;
-                        // printf("parked!\n");
                     }
                 }
             }
-
-            /* Logging */
-            /* char simu_log[MAX_SPEED_LOG_SIZE] = {0};
-            snprintf(simu_log, MAX_SPEED_LOG_SIZE, "([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
-            log_toggle_event(simu_log); */
 
             printf("Time: %d, Speed: %.1f, Int. Temp: %d, Ext. Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d, Setp_temp = %d, Batt_soc = %.1f, Batt_volt = %.1f, Engine temp = %.1f, gear = %d\n",
                    vehicle_data[simu_curr_step].time,
@@ -329,6 +323,7 @@ char send_msg[20];
 
 static void send_data_update()
 {
+
     /* Check speed update */
     if (vehicle_data[simu_curr_step].speed != vehicle_data[simu_curr_step - 1].speed)
     {
@@ -416,10 +411,11 @@ static void *comms(void *arg)
         }
 
         /* Check for data update and send if updated, if simulation is running */
-        if(simu_state == STATE_RUNNING){
+        if (simu_state == STATE_RUNNING)
+        {
             send_data_update();
         }
-            
+
         int unlock_result = pthread_mutex_unlock(&mutex_bcm);
         if (unlock_result != 0)
         {
@@ -433,7 +429,6 @@ static void *comms(void *arg)
 
 int main()
 {
-    // init_logging_system(); // starts logging
 
     sock = create_can_socket(CAN_INTERFACE);
     if (sock < 0)
@@ -457,8 +452,6 @@ int main()
     pthread_mutex_destroy(&mutex_bcm);
 
     close_can_socket(sock);
-
-    // cleanup_logging_system(); // stops logging
 
     return 0;
 }
