@@ -2,8 +2,6 @@
 # Compiler and Flags
 #===============================================================================
 CC       = gcc
-# CFLAGS   = -Wall -Wextra -g --coverage -DUNIT_TEST
-# LDFLAGS  = -lcunit -lssl -lcrypto -lpthread --coverage
 CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage -DUNIT_TEST
 LDFLAGS  = -fprofile-arcs -ftest-coverage -lcunit -lssl -lcrypto -lpthread
 
