@@ -1,6 +1,7 @@
 #include "../common_includes/can_id_list.h"
 #include "../common_includes/can_socket.h"
 #include "../common_includes/logging.h"
+#include "dashboard_func.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
