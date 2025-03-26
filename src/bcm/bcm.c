@@ -31,7 +31,7 @@ static int simu_order = ORDER_STOP;
 /***** Gear data *****/
 
 #define PARKING 0
-#define DRIVE   1
+#define DRIVE 1
 
 /* Current gear | 0 - Parking | 1 - Drive | */
 static bool curr_gear = PARKING;
@@ -272,10 +272,13 @@ static void *simu_speed(void *arg)
                 }
                 else
                 {
-                    is_accelerating = false;
-                    curr_gear = PARKING;
+                    if (vehicle_data[simu_curr_step].speed == 0)
+                    {
+                        is_accelerating = false;
+                        curr_gear = PARKING;
 
-                    is_braking = true;
+                        is_braking = true;
+                    }
                 }
             }
 
