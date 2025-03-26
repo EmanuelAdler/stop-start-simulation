@@ -1,6 +1,7 @@
 #include "bcm.h"
 
 #define SLEEP_TIME_US (100000U)
+#define COMMS_TIME_US (50000U)
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
 
@@ -317,7 +318,92 @@ static void *simu_speed(void *arg)
     return NULL;
 }
 
-/* to do */
+/* CAN communication */
+
+#define CAN_INTERFACE ("vcan0")
+#define ERROR_CODE (1)
+
+int sock = -1;
+
+char send_msg[20];
+
+static void send_data_update()
+{
+    /* Check speed update */
+    if (vehicle_data[simu_curr_step].speed != vehicle_data[simu_curr_step - 1].speed)
+    {
+        snprintf(send_msg, sizeof(send_msg), "speed: %lf", vehicle_data[simu_curr_step].speed);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check internal temperature update */
+    if (vehicle_data[simu_curr_step].internal_temp != vehicle_data[simu_curr_step - 1].internal_temp)
+    {
+        snprintf(send_msg, sizeof(send_msg), "in_temp: %d", vehicle_data[simu_curr_step].internal_temp);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check external temperature update */
+    if (vehicle_data[simu_curr_step].external_temp != vehicle_data[simu_curr_step - 1].external_temp)
+    {
+        snprintf(send_msg, sizeof(send_msg), "ex_temp: %d", vehicle_data[simu_curr_step].external_temp);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check door opened update */
+    if (vehicle_data[simu_curr_step].door_open != vehicle_data[simu_curr_step - 1].door_open)
+    {
+        snprintf(send_msg, sizeof(send_msg), "door: %d", vehicle_data[simu_curr_step].door_open);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check tilt angle update */
+    if (vehicle_data[simu_curr_step].tilt_angle != vehicle_data[simu_curr_step - 1].tilt_angle)
+    {
+        snprintf(send_msg, sizeof(send_msg), "tilt: %lf", vehicle_data[simu_curr_step].tilt_angle);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check acceleration update */
+    if (vehicle_data[simu_curr_step].accel != vehicle_data[simu_curr_step - 1].accel)
+    {
+        snprintf(send_msg, sizeof(send_msg), "accel: %d", vehicle_data[simu_curr_step].accel);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check brake update */
+    if (vehicle_data[simu_curr_step].brake != vehicle_data[simu_curr_step - 1].brake)
+    {
+        snprintf(send_msg, sizeof(send_msg), "brake: %d", vehicle_data[simu_curr_step].brake);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    // check if necessary
+    /* Check temperature setpoint update */
+    if (vehicle_data[simu_curr_step].temp_set != vehicle_data[simu_curr_step - 1].temp_set)
+    {
+        snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check battery SoC update */
+    if (vehicle_data[simu_curr_step].batt_soc != vehicle_data[simu_curr_step - 1].batt_soc)
+    {
+        snprintf(send_msg, sizeof(send_msg), "batt_soc: %lf", vehicle_data[simu_curr_step].batt_soc);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check battery voltage update */
+    if (vehicle_data[simu_curr_step].batt_volt != vehicle_data[simu_curr_step - 1].batt_volt)
+    {
+        snprintf(send_msg, sizeof(send_msg), "batt_volt: %lf", vehicle_data[simu_curr_step].batt_volt);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check engine temperature update */
+    if (vehicle_data[simu_curr_step].engi_temp != vehicle_data[simu_curr_step - 1].engi_temp)
+    {
+        snprintf(send_msg, sizeof(send_msg), "engi_temp: %lf", vehicle_data[simu_curr_step].engi_temp);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+    /* Check gear update */
+    if (vehicle_data[simu_curr_step].gear != vehicle_data[simu_curr_step - 1].gear)
+    {
+        snprintf(send_msg, sizeof(send_msg), "gear: %d", vehicle_data[simu_curr_step].gear);
+        send_encrypted_message(sock, send_msg, CAN_ID_COMMAND);
+    }
+}
+
 static void *comms(void *arg)
 {
 
@@ -329,6 +415,11 @@ static void *comms(void *arg)
             return NULL;
         }
 
+        /* Check for data update and send if updated, if simulation is running */
+        if(simu_state == STATE_RUNNING){
+            send_data_update();
+        }
+            
         int unlock_result = pthread_mutex_unlock(&mutex_bcm);
         if (unlock_result != 0)
         {
@@ -344,6 +435,12 @@ int main()
 {
     // init_logging_system(); // starts logging
 
+    sock = create_can_socket(CAN_INTERFACE);
+    if (sock < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
     simu_order = ORDER_RUN;
 
     pthread_mutex_init(&mutex_bcm, NULL);
@@ -358,6 +455,8 @@ int main()
     pthread_join(thread_comms, NULL);
 
     pthread_mutex_destroy(&mutex_bcm);
+
+    close_can_socket(sock);
 
     // cleanup_logging_system(); // stops logging
 
