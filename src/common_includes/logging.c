@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-#define LOG_FILE_PATH "/app/logs/diagnostics.log"
+#define LOG_FILE_PATH "/home/paulo/app/logs/diagnostics.log"
 #define TIME_STR_SIZE (64)
 
 static FILE *logFile = NULL;
