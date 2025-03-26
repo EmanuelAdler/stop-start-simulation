@@ -26,14 +26,13 @@ typedef struct {
     int external_temp;
     int door_open;
     double tilt_angle;
+    int accel;
+    int brake;
+    int temp_set;
+    double batt_soc;
+    double batt_volt;
     double engi_temp;
+    int     gear;
 } VehicleData;
-
-struct speed_data{
-
-    int *simu_order;
-    double *speed;
-
-};
 
 #endif // SIMU_BCM_H

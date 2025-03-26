@@ -40,24 +40,8 @@ static bool curr_gear = PARKING;
 
 #define SPEED_ARRAY_MAX_SIZE 5000
 
-/* Current speed */
-static double curr_speed = 0.0F;
-
 /* Number of data points in csv file */
 static int data_size = 0;
-
-/***** Accelerator pedal sensor data *****/
-
-static bool is_accelerating = false;
-
-/***** Brake sensor data *****/
-
-static bool is_braking = false;
-
-/***** Inclinometer sensor data *****/
-
-/* Current vehicle angle - horizontal reference */
-static float curr_vehicle_angle = 0.0F;
 
 /***** Battery sensor data *****/
 
@@ -70,20 +54,6 @@ static float batt_soc = DEFAULT_BATTERY_SOC;
 /***** AC sensor data *****/
 
 #define DEFAULT_SET_TEMP 23.0F
-
-/* #define DEFAULT_OUTSIDE_TEMP 28.0F
-#define DEFAULT_INSIDE_TEMP 25.0F
-
-static float out_temp = DEFAULT_OUTSIDE_TEMP;
-static float in_temp = DEFAULT_INSIDE_TEMP;
-static float set_temp = DEFAULT_SET_TEMP; */
-
-static int setp_temp = DEFAULT_SET_TEMP;
-
-/***** Door sensor data *****/
-
-/* Any door opened */
-static bool opened_door = false;
 
 /***** Function to get data from csv file *****/
 
@@ -99,11 +69,11 @@ static bool opened_door = false;
 
 #define CLEAN_STRING_SIZE 50
 
-#define MAX_FIELD 6
+#define MAX_FIELD 7
 
 /* Vehicle data structure*/
 
-VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
+VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE] = {0};
 
 void read_csv()
 {
@@ -117,12 +87,11 @@ void read_csv()
     char line[MAX_LINE_SIZE];
     char temp_line[MAX_LINE_SIZE];
     char *token;
-    int line_count = 0;
 
     // Bypass csv header
     fgets(line, sizeof(line), file);
 
-    while (fgets(line, sizeof(line), file) && data_size < SPEED_ARRAY_MAX_SIZE)
+    while (fgets(line, sizeof(line), file))
     {
         // Copy content for extraction
         strncpy(temp_line, line, sizeof(temp_line));
@@ -181,13 +150,14 @@ void read_csv()
                 break;
             }
 
+            // printf("field = %d\n", field);
+
             token = strtok_r(NULL, ",", &saveptr);
             field++;
         }
-
         data_size++;
     }
-
+    data_size--;
     fclose(file);
 }
 
@@ -202,8 +172,6 @@ void check_order(int simu_order)
 
             if (simu_state == (STATE_RUNNING || STATE_PAUSED))
             {
-                memset(vehicle_data, 0, sizeof(vehicle_data)); // delete current simulation speed data set
-                simu_curr_step = 0;                            // reset the current simulation step
                 simu_state = STATE_STOPPED;
             }
 
@@ -213,7 +181,14 @@ void check_order(int simu_order)
 
             if (simu_state == STATE_STOPPED)
             {
-                read_csv(); // acquire new set of speed data to simulate from start
+                /* reset the current simulation step */
+                simu_curr_step = 0;
+                /* delete current simulation speed data set */
+                memset(vehicle_data, 0, sizeof(vehicle_data));
+                /* reset number of lines in csv*/
+                data_size = 0;
+                /* acquire new set of speed data to simulate from start */
+                read_csv();
 
                 simu_state = STATE_RUNNING;
             }
@@ -243,9 +218,22 @@ void check_order(int simu_order)
 
 static void *simu_speed(void *arg)
 {
-    struct speed_data *ptr_s_d = (struct speed_data *)arg;
-    int *simu_order = ptr_s_d->simu_order;
-    double *speed = ptr_s_d->speed;
+    VehicleData *ptr_simu_data = (VehicleData *)arg;
+
+    check_order(simu_order);
+
+    double *speed[data_size];
+    int *accel[data_size];
+    int *brake[data_size];
+    int *gear[data_size];
+
+    for (int i = 0; i < data_size; i++)
+    {
+        speed[i] = &ptr_simu_data[i].speed;
+        accel[i] = &ptr_simu_data[i].accel;
+        brake[i] = &ptr_simu_data[i].brake;
+        gear[i] = &ptr_simu_data[i].gear;
+    }
 
 #define MAX_SPEED_LOG_SIZE 50
 
@@ -259,7 +247,7 @@ static void *simu_speed(void *arg)
 
         // check if any order is received
 
-        check_order(*simu_order);
+        check_order(simu_order);
 
         // continue simulation if it's running
 
@@ -269,53 +257,53 @@ static void *simu_speed(void *arg)
 
             if (simu_curr_step + 1 != data_size)
             {
-                if (vehicle_data[simu_curr_step + 1].speed - vehicle_data[simu_curr_step].speed > 0)
+                if (*speed[simu_curr_step + 1] - *speed[simu_curr_step] > 0)
                 {
-                    is_accelerating = true;
-                    curr_gear = DRIVE;
+                    *accel[simu_curr_step] = true;
+                    *brake[simu_curr_step] = false;
 
-                    is_braking = false;
+                    /* If car is moving, then gear = DRIVE */
+                    *gear[simu_curr_step] = DRIVE;
+                    // printf("driving!\n");
                 }
                 else
                 {
+                    *brake[simu_curr_step] = true;
+                    *accel[simu_curr_step] = false;
+
+                    /* If car is not moving, gear = PARKING */
                     if (vehicle_data[simu_curr_step].speed == 0)
                     {
-                        is_accelerating = false;
-                        curr_gear = PARKING;
-
-                        is_braking = true;
+                        *gear[simu_curr_step] = PARKING;
+                        // printf("parked!\n");
                     }
                 }
             }
-
-            /* Assign speed to pointer */
-            *speed = vehicle_data[simu_curr_step].speed;
 
             /* Logging */
             /* char simu_log[MAX_SPEED_LOG_SIZE] = {0};
             snprintf(simu_log, MAX_SPEED_LOG_SIZE, "([%d] of [%d]) current speed = %lf\n", simu_curr_step + 1, data_size, *speed);
             log_toggle_event(simu_log); */
 
-            printf("Time: %d, Speed: %.1f, Int. Temp: %d, Ext. Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d\n",
+            printf("Time: %d, Speed: %.1f, Int. Temp: %d, Ext. Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d, Setp_temp = %d, Batt_soc = %.1f, Batt_volt = %.1f, Engine temp = %.1f, gear = %d\n",
                    vehicle_data[simu_curr_step].time,
                    vehicle_data[simu_curr_step].speed,
                    vehicle_data[simu_curr_step].internal_temp,
                    vehicle_data[simu_curr_step].external_temp,
                    vehicle_data[simu_curr_step].door_open,
                    vehicle_data[simu_curr_step].tilt_angle,
-                   is_accelerating,
-                   is_braking,
-                   setp_temp,
-                   batt_soc,
-                   batt_volt,
+                   vehicle_data[simu_curr_step].accel,
+                   vehicle_data[simu_curr_step].brake,
+                   vehicle_data[simu_curr_step].temp_set,
+                   vehicle_data[simu_curr_step].batt_soc,
+                   vehicle_data[simu_curr_step].batt_volt,
                    vehicle_data[simu_curr_step].engi_temp,
-                   curr_gear);
+                   vehicle_data[simu_curr_step].gear);
 
             if (simu_curr_step + 1 == data_size)
             {
-                simu_state = STATE_STOPPED;
+                simu_order = ORDER_STOP;
             }
-
             simu_curr_step++;
         }
 
@@ -324,7 +312,6 @@ static void *simu_speed(void *arg)
         {
             return NULL;
         }
-
         sleep_microseconds(SLEEP_TIME_US);
     }
     return NULL;
@@ -359,16 +346,12 @@ int main()
 
     simu_order = ORDER_RUN;
 
-    struct speed_data s_d = {0};
-    s_d.simu_order = &simu_order;
-    s_d.speed = &curr_speed;
-
     pthread_mutex_init(&mutex_bcm, NULL);
 
     pthread_t thread_speed;
     pthread_t thread_comms;
 
-    pthread_create(&thread_speed, NULL, simu_speed, &s_d);
+    pthread_create(&thread_speed, NULL, simu_speed, &vehicle_data);
     pthread_create(&thread_comms, NULL, comms, NULL);
 
     pthread_join(thread_speed, NULL);
