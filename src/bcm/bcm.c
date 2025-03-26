@@ -64,18 +64,21 @@ static float curr_vehicle_angle = 0.0F;
 #define DEFAULT_BATTERY_VOLTAGE 12.0F
 #define DEFAULT_BATTERY_SOC 80.0F
 
-static float bat_voltage = DEFAULT_BATTERY_VOLTAGE;
-static float bat_soc = DEFAULT_BATTERY_SOC;
+static float batt_volt = DEFAULT_BATTERY_VOLTAGE;
+static float batt_soc = DEFAULT_BATTERY_SOC;
 
 /***** AC sensor data *****/
 
-#define DEFAULT_OUTSIDE_TEMP 28.0F
-#define DEFAULT_INSIDE_TEMP 25.0F
 #define DEFAULT_SET_TEMP 23.0F
+
+/* #define DEFAULT_OUTSIDE_TEMP 28.0F
+#define DEFAULT_INSIDE_TEMP 25.0F
 
 static float out_temp = DEFAULT_OUTSIDE_TEMP;
 static float in_temp = DEFAULT_INSIDE_TEMP;
-static float set_temp = DEFAULT_SET_TEMP;
+static float set_temp = DEFAULT_SET_TEMP; */
+
+static int setp_temp = DEFAULT_SET_TEMP;
 
 /***** Door sensor data *****/
 
@@ -92,6 +95,7 @@ static bool opened_door = false;
 #define CASE_INTEMP 3
 #define CASE_EXTEMP 4
 #define CASE_DOOR 5
+#define CASE_ENG_TEMP 6
 
 #define CLEAN_STRING_SIZE 50
 
@@ -170,7 +174,9 @@ void read_csv()
             case CASE_DOOR:
                 vehicle_data[data_size].door_open = atoi(clean_token);
                 break;
-
+            case CASE_ENG_TEMP:
+                vehicle_data[data_size].engi_temp = atof(clean_token);
+                break;
             default:
                 break;
             }
@@ -298,7 +304,12 @@ static void *simu_speed(void *arg)
                    vehicle_data[simu_curr_step].door_open,
                    vehicle_data[simu_curr_step].tilt_angle,
                    is_accelerating,
-                   is_braking);
+                   is_braking,
+                   setp_temp,
+                   batt_soc,
+                   batt_volt,
+                   vehicle_data[simu_curr_step].engi_temp,
+                   curr_gear);
 
             if (simu_curr_step + 1 == data_size)
             {
@@ -344,7 +355,6 @@ static void *comms(void *arg)
 
 int main()
 {
-
     // init_logging_system(); // starts logging
 
     simu_order = ORDER_RUN;

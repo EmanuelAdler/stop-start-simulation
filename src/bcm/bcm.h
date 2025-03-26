@@ -26,6 +26,7 @@ typedef struct {
     int external_temp;
     int door_open;
     double tilt_angle;
+    double engi_temp;
 } VehicleData;
 
 struct speed_data{

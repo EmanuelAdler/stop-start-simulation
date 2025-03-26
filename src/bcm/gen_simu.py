@@ -9,18 +9,19 @@ df = pd.read_csv('ftp75.csv')
 df['Speed (km/h)'] = df['Speed (km/h)'].str.replace(',', '.').astype(float)
 
 # Parâmetros para variação suave
-INTERNAL_TEMP_RANGE = (21, 24)
+INTERNAL_TEMP_RANGE = (21, 25)
 EXTERNAL_TEMP_RANGE = (26, 31)
 CHANGE_PROBABILITY = 0.01
-MAX_TILT_CHANGE = 1.5  # Máxima variação por segundo (graus)
+MAX_TILT_CHANGE = 1.5
 
 # Estado global para manter os valores atuais
 current_internal = np.random.randint(*INTERNAL_TEMP_RANGE)
 current_external = np.random.randint(*EXTERNAL_TEMP_RANGE)
-current_tilt = 0.0  # Valor inicial médio
-last_moving_tilt = 0.0  # Último valor registrado em movimento
+current_engine = current_external  # Começa igual à temperatura externa
+current_tilt = 0.0
+last_moving_tilt = 0.0
 
-# Função para temperatura interna
+# Funções de geração (mantidas iguais)
 def generate_internal_temp():
     global current_internal
     if random() < CHANGE_PROBABILITY:
@@ -28,57 +29,80 @@ def generate_internal_temp():
         current_internal = np.clip(new_temp, *INTERNAL_TEMP_RANGE)
     return round(current_internal)
 
-# Função para temperatura externa
 def generate_external_temp(time):
     global current_external
-    hour_effect = 2 * np.sin(2 * np.pi * time / 86400)  # Variação diurna
+    hour_effect = 2 * np.sin(2 * np.pi * time / 86400)
     if random() < CHANGE_PROBABILITY:
         new_temp = 28 + hour_effect + np.random.uniform(-1, 1)
         current_external = np.clip(new_temp, *EXTERNAL_TEMP_RANGE)
     return round(current_external)
 
-# Função para status da porta
+def generate_engine_temp(speed, ext_temp, prev_engine_temp):
+    global current_engine
+    
+    # Temperatura alvo baseada no estado de operação
+    if speed == 0:
+        target_temp = ext_temp  # Motor desligado tende à temperatura ambiente
+    else:
+        target_temp = 90.0  # Temperatura ideal de operação
+        
+        # Ajustes baseados na velocidade
+        if speed < 30:
+            target_temp += 2.5  # Trânsito lento aquece mais
+        elif speed > 100:
+            target_temp -= 1.5  # Alta velocidade resfria um pouco
+    
+    # Fator de mudança mais lento para estabilizar em 90°C
+    temp_change = (target_temp - prev_engine_temp) * 0.1
+    
+    # Adicionar variação aleatória (maior quando em movimento)
+    if speed > 0:
+        temp_change += np.random.uniform(-2.5, 2.5)
+    
+    new_temp = prev_engine_temp + temp_change
+    
+    # Permitir excedências ocasionais, mas com tendência clara para 90°C
+    if new_temp > 105:
+        # Se estiver superaquecendo, chance de resfriamento mais rápido
+        if random() < 0.3:  # 30% de chance de resfriamento forçado
+            new_temp -= np.random.uniform(2, 5)
+    
+    # Limites com pequena flexibilidade
+    current_engine = np.clip(new_temp, ext_temp - 5, 110)  # Mínimo nunca abaixo da ambiente-5
+    return round(current_engine, 1)
+
 def generate_door_status(speed):
     if speed == 0:
-        return np.random.choice([0, 1], p=[0.8, 0.2])  # 20% chance de porta aberta quando parado
-    return 0  # Sempre fechada em movimento
+        return np.random.choice([0, 1], p=[0.8, 0.2])
+    return 0
 
-# Função para inclinação com variação suave
 def generate_tilt(speed, prev_tilt):
     global current_tilt, last_moving_tilt
-    
-    if speed > 0:  # Veículo em movimento
-        # Variação suave limitada
+    if speed > 0:
         change = np.random.uniform(-MAX_TILT_CHANGE, MAX_TILT_CHANGE)
         new_tilt = prev_tilt + change
-        
-        # Limitar entre 0-20 graus
-        new_tilt = np.clip(new_tilt, 0, 20)
-        
-        # Atualizar valores
-        current_tilt = new_tilt
+        current_tilt = np.clip(new_tilt, 0, 20)
         last_moving_tilt = current_tilt
-    else:  # Veículo parado
-        current_tilt = last_moving_tilt  # Mantém o último valor válido
-    
+    else:
+        current_tilt = last_moving_tilt
     return round(current_tilt, 1)
 
-# Preparar as colunas
-df['Tilt Angle (deg)'] = 0.0  # Inicializar
-
-# Gerar valores sequencialmente para inclinação (importante para suavidade)
-for i in range(len(df)):
-    if i == 0:
-        df.at[i, 'Tilt Angle (deg)'] = 0.0  # Valor inicial
-    else:
-        speed = df.at[i, 'Speed (km/h)']
-        prev_tilt = df.at[i-1, 'Tilt Angle (deg)']
-        df.at[i, 'Tilt Angle (deg)'] = generate_tilt(speed, prev_tilt)
-
-# Gerar outras colunas
+# Primeiro, criar todas as colunas necessárias
+df['Tilt Angle (deg)'] = 0.0
 df['Internal Temp (C)'] = [generate_internal_temp() for _ in range(len(df))]
 df['External Temp (C)'] = [generate_external_temp(t) for t in df['Time (seconds)']]
 df['Door Open'] = df['Speed (km/h)'].apply(generate_door_status)
+df['Engine Temp (C)'] = df['External Temp (C)'].astype(float)  # Inicializa com temp externa
+
+# Agora simular a temperatura do motor e inclinação sequencialmente
+for i in range(1, len(df)):
+    speed = df.at[i, 'Speed (km/h)']
+    prev_tilt = df.at[i-1, 'Tilt Angle (deg)']
+    ext_temp = df.at[i-1, 'External Temp (C)']
+    prev_engine = df.at[i-1, 'Engine Temp (C)']
+    
+    df.at[i, 'Tilt Angle (deg)'] = generate_tilt(speed, prev_tilt)
+    df.at[i, 'Engine Temp (C)'] = generate_engine_temp(speed, ext_temp, prev_engine)
 
 # Salvar o novo dataset
 df.to_csv('full_simu.csv', index=False)
