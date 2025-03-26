@@ -14,7 +14,7 @@
 #include <math.h>
 #include <stdbool.h>
 
-//#include "../common_includes/logging.h"
+#include "../common_includes/logging.h"
 
 pthread_mutex_t mutex_powertrain;
 

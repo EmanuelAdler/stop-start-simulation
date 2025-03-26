@@ -69,7 +69,7 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond1 = 0;
-        // implementar log
+        log_toggle_event("Stop/Start: Brake not pressed or car is moving!");
     }
 
     /* External and internal temperatures logic */
@@ -81,7 +81,7 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond2 = 0;
-        // implementar log
+        log_toggle_event("Stop/Start: Difference between internal and external temps out of range!");
     }
 
     /* Engine temperature logic */
@@ -97,20 +97,20 @@ void check_conds(VehicleData *ptr_rec_data)
         if (!start_stop_is_active)
         {
             cond3 = 0;
-            // implementar log
+            log_toggle_event("Stop/Start: Engine temperature out of range!");
         }
     }
 
     /* Battery logic */
 
-    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
+    if (batt_soc >= MIN_BATTERY_SOC || batt_volt > MIN_BATTERY_VOLTAGE)
     {
         cond4 = 1;
     }
     else
     {
         cond4 = 0;
-        // implementar log
+        log_toggle_event("Stop/Start: Battery is not in operating range!");
     }
 
     /* Door logic */
@@ -122,7 +122,7 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond5 = 0;
-        // implementar log
+        log_toggle_event("Stop/Start: One or more doors are opened!");
     }
 
     /* Tilt angle logic */
@@ -134,7 +134,7 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond6 = 0;
-        // implementar log
+        log_toggle_event("Stop/Start: Tilt angle greater than 5 degrees!");
     }
 
     /* Check start/stop */
@@ -142,11 +142,12 @@ void check_conds(VehicleData *ptr_rec_data)
     if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
     {
         start_stop_is_active = true;
+        log_toggle_event("Stop/Start: Activated");
     }
     else
     {
         start_stop_is_active = false;
-        // implementar log
+        log_toggle_event("Stop/Start: deactivated!");
     }
 }
 
@@ -161,6 +162,8 @@ void *function_start_stop(void *arg)
         {
             return NULL;
         }
+
+        /* Check the conditions to activate Stop/Start */
 
         check_conds(ptr_rec_data);
 
@@ -205,6 +208,7 @@ void *comms(void *arg)
 
 int main()
 {
+    init_logging_system();
 
     VehicleData rec_data = {0};
 
@@ -220,6 +224,8 @@ int main()
     pthread_join(thread_comms, NULL);
 
     pthread_mutex_destroy(&mutex_powertrain);
+
+    cleanup_logging_system();
 
     return 0;
 }
