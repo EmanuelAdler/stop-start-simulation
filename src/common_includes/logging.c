@@ -5,16 +5,21 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-#define LOG_FILE_PATH "/app/logs/diagnostics.log"
 #define TIME_STR_SIZE (64)
+
+static const char *log_file_path = "/app/logs/diagnostics.log";
 
 static FILE *logFile = NULL;
 
 static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;
 
 bool init_logging_system(void) {
-    logFile = fopen(LOG_FILE_PATH, "a");
+    logFile = fopen(log_file_path, "a");
     return (logFile != NULL);
+}
+
+void set_log_file_path(const char *new_path) {
+    log_file_path = new_path;
 }
 
 void log_toggle_event(char* message) {
