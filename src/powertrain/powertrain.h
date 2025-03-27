@@ -19,6 +19,7 @@
 #include "../common_includes/logging.h"
 
 pthread_mutex_t mutex_powertrain;
+extern int sock;
 
 // Vehicle simulation data
 typedef struct {
@@ -35,6 +36,8 @@ typedef struct {
     double batt_volt;
     double engi_temp;
     int     gear;
+    int prev_brake;
+    int prev_accel;
 } VehicleData;
 
 #endif //POWERTRAIN_H

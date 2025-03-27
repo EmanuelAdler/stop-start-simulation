@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -D_GNU_SOURCE
+CFLAGS = -Wall -Wextra -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE
 LDLFLAGS = -lssl -lcrypto
 
 # Directories

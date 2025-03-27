@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g --coverage
-LDFLAGS = -lcunit -lssl -lcrypto --coverage
+CFLAGS = -Wall -Wextra -g --coverage -D_POSIX_C_SOURCE=199309L
+LDFLAGS = -lcunit -lssl -lcrypto -lrt --coverage
 
 SRC = ../src/common_includes/can_socket.c test_can_socket.c
 OBJ_DIR = obj

@@ -156,9 +156,60 @@ void check_conds(VehicleData *ptr_rec_data)
     }
 }
 
+static void handle_restart_logic(
+    VehicleData* data,
+    bool* is_restarting,
+    struct timespec* restart_start
+) {
+    /* Restart trigger detection */
+    if (start_stop_is_active && !(*is_restarting)) {
+        const bool brake_released = (data->prev_brake && !data->brake);
+        const bool accelerator_pressed = (!data->prev_accel && data->accel);
+
+        if (brake_released || accelerator_pressed) {
+            /* Battery check */
+            if (data->batt_volt >= MIN_BATTERY_VOLTAGE && 
+                data->batt_soc >= MIN_BATTERY_SOC) {
+                send_encrypted_message(sock, "RESTART", CAN_ID_ECU_RESTART);
+                log_toggle_event("Engine On");
+                clock_gettime(CLOCK_MONOTONIC, restart_start);
+                *is_restarting = true;
+            } else {
+                log_toggle_event("Fault: SWR3.5 (Low Battery)");
+            }
+        }
+    }
+
+    /* Update previous states */
+    data->prev_brake = data->brake;
+    data->prev_accel = data->accel;
+
+    /* Restart monitoring */
+    if (*is_restarting) {
+        struct timespec now;
+        clock_gettime(CLOCK_MONOTONIC, &now);
+
+        const long elapsed_us = 
+            ((now.tv_sec - restart_start->tv_sec) * MICROSECS_IN_ONESEC) + 
+            ((now.tv_nsec - restart_start->tv_nsec) / NANO_TO_MICRO);
+
+        if (elapsed_us > MICROSECS_IN_ONESEC) {
+            *is_restarting = false;  // Successful restart
+        } else if (data->batt_volt < MIN_BATTERY_VOLTAGE) {
+            send_encrypted_message(sock, "ABORT", CAN_ID_ECU_RESTART);
+            log_toggle_event("Fault: SWR3.4 (Battery Drop)");
+            *is_restarting = false;
+        }
+    }
+}
+
 void *function_start_stop(void *arg)
 {
     VehicleData *ptr_rec_data = (VehicleData *)arg;
+    static int prev_brake = 0;
+    static int prev_accel = 0;
+    static bool is_restarting = false;
+    static struct timespec restart_start_time;
 
     while (true)
     {
@@ -177,6 +228,12 @@ void *function_start_stop(void *arg)
             check_conds(ptr_rec_data);
 
             printf("Start/Stop = %d\n", start_stop_is_active);
+
+            handle_restart_logic(
+                ptr_rec_data,
+                &is_restarting,
+                &restart_start_time
+            );
         }
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
