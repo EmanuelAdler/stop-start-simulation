@@ -3,10 +3,16 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 // Thresholds based on requirements
-#define BATTERY_VOLTAGE_THRESHOLD 12.2  // Minimum voltage under load (RSYS4.3)
-#define BATTERY_SOC_THRESHOLD 70        // Minimum state of charge percentage (RSYS4.3)
+#define BATTERY_VOLTAGE_THRESHOLD 12.0
+#define BATTERY_SOC_THRESHOLD 70        
+
+// External references to BCM battery variables
+extern float batt_volt;
+extern float batt_soc;
+extern pthread_mutex_t mutex_bcm;
 
 // Battery Functions
 void battery_monitor_init(void);
