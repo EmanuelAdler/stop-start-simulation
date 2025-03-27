@@ -45,12 +45,8 @@ static bool curr_gear = PARKING;
 static int data_size = 0;
 
 /***** Battery sensor data *****/
-
-#define DEFAULT_BATTERY_VOLTAGE 12.0F
-#define DEFAULT_BATTERY_SOC 80.0F
-
-static float batt_volt = DEFAULT_BATTERY_VOLTAGE;
-static float batt_soc = DEFAULT_BATTERY_SOC;
+float batt_volt = DEFAULT_BATTERY_VOLTAGE;
+float batt_soc = DEFAULT_BATTERY_SOC;
 
 /***** AC sensor data *****/
 
@@ -427,6 +423,62 @@ static void *comms(void *arg)
     return NULL;
 }
 
+/*****  Battery voltage and state of charge *****/
+
+/* Update battery SOC based on vehicle state */
+void update_battery_soc(float vehicle_speed)
+{
+    pthread_mutex_lock(&mutex_bcm);
+    
+    if (vehicle_speed > 0.0) {
+        // When vehicle is moving, battery charges
+        batt_soc += BATTERY_SOC_INCREMENT;
+        if (batt_soc > MAX_BATTERY_SOC) {
+            batt_soc = MAX_BATTERY_SOC;
+        }
+    } else {
+        // When vehicle is stationary, battery discharges
+        batt_soc -= BATTERY_SOC_DECREMENT;
+        if (batt_soc < 0) {
+            batt_soc = 0;
+        }
+    }
+    
+    // Calculate voltage based on battery SOC (linear relationship)
+    batt_volt = (0.01125 * batt_soc) + 11.675;
+    
+    // Update the vehicle_data with current battery status
+    vehicle_data[simu_curr_step].batt_soc = batt_soc;
+    vehicle_data[simu_curr_step].batt_volt = batt_volt;
+    
+    pthread_mutex_unlock(&mutex_bcm);
+}
+
+/* Battery sensor thread function */
+void* sensor_battery(void *arg)
+{
+    while (true) {
+        int lock_result = pthread_mutex_lock(&mutex_bcm);
+        if (lock_result != 0) {
+            return NULL;
+        }
+
+        // Update battery based on current vehicle speed
+        if (simu_state == STATE_RUNNING) {
+            update_battery_soc(vehicle_data[simu_curr_step].speed);
+        }
+
+        int unlock_result = pthread_mutex_unlock(&mutex_bcm);
+        if (unlock_result != 0) {
+            return NULL;
+        }
+
+        sleep_microseconds(SLEEP_TIME_US);
+    }
+
+    return NULL;
+}
+
 int main()
 {
 
@@ -442,12 +494,15 @@ int main()
 
     pthread_t thread_speed;
     pthread_t thread_comms;
+    pthread_t thread_battery;
 
     pthread_create(&thread_speed, NULL, simu_speed, &vehicle_data);
     pthread_create(&thread_comms, NULL, comms, NULL);
+    pthread_create(&thread_battery, NULL, sensor_battery, NULL);
 
     pthread_join(thread_speed, NULL);
     pthread_join(thread_comms, NULL);
+    pthread_join(thread_battery, NULL);
 
     pthread_mutex_destroy(&mutex_bcm);
 
