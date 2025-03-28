@@ -154,8 +154,11 @@ void check_conds(VehicleData *ptr_rec_data)
     }
     else
     {
-        start_stop_is_active = false;
-        log_toggle_event("Stop/Start: deactivated!");
+        /* Will only deactivate stop/start once, when it's activated */
+        if(start_stop_is_active){
+            start_stop_is_active = false;
+            log_toggle_event("Stop/Start: deactivated!");
+        }
     }
 }
 
