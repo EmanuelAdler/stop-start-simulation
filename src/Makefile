@@ -3,7 +3,7 @@
 #===============================================================================
 CC       = gcc
 CFLAGS   = -Wall -Wextra -D_GNU_SOURCE
-LDLFLAGS = -lssl -lcrypto   # libraries used during linking
+LDLFLAGS = -lssl -lcrypto -lpthread  # libraries used during linking
 
 #===============================================================================
 # Directories
