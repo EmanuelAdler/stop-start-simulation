@@ -3,7 +3,7 @@
 #===============================================================================
 CC       = gcc
 CFLAGS   = -Wall -Wextra -D_GNU_SOURCE
-LDLFLAGS = -lssl -lcrypto   # libraries used during linking
+LDLFLAGS = -lssl -lcrypto -lpthread  # libraries used during linking
 
 #===============================================================================
 # Directories
@@ -14,6 +14,7 @@ BIN_DIR        = ../bin
 COMMON_DIR     = $(SRC_DIR)/common_includes
 DASH_DIR       = $(SRC_DIR)/dashboard
 INSTR_CLUST_DIR = $(SRC_DIR)/instrument_cluster
+BCM_DIR = $(SRC_DIR)/bcm
 
 # Ensure the bin/ directory exists
 $(shell mkdir -p $(BIN_DIR))
@@ -25,7 +26,8 @@ TARGETS = \
   $(BIN_DIR)/sender \
   $(BIN_DIR)/receiver \
   $(BIN_DIR)/instrument_cluster \
-  $(BIN_DIR)/dashboard
+  $(BIN_DIR)/dashboard \
+  $(BIN_DIR)/bcm
 
 all: $(TARGETS)
 
@@ -118,6 +120,33 @@ $(BIN_DIR)/dashboard_func.o: $(DASH_DIR)/dashboard_func.c \
 
 # (c) link final dashboard
 $(BIN_DIR)/dashboard: $(DASH_OBJS) $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+#===============================================================================
+# BCM (Body Control Module)
+#  - Needs to compile bcm.c (which contains main())
+#  - Also compiles bcm_func.c
+#===============================================================================
+BCM_OBJS = \
+  $(BIN_DIR)/bcm.o \
+  $(BIN_DIR)/bcm_func.o
+
+# (a) bcm.o (has main)
+$(BIN_DIR)/bcm.o: $(BCM_DIR)/bcm.c \
+                        $(BCM_DIR)/bcm_func.h \
+                        $(COMMON_DIR)/can_socket.h \
+                        $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(BCM_DIR) -c $< -o $@
+
+# (b) bcm_func.o (auxiliary logic)
+$(BIN_DIR)/bcm_func.o: $(BCM_DIR)/bcm_func.c \
+                             $(BCM_DIR)/bcm_func.h \
+                             $(COMMON_DIR)/can_socket.h \
+                             $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(BCM_DIR) -c $< -o $@
+
+# (c) link final bcm
+$(BIN_DIR)/bcm: $(BCM_OBJS) $(COMMON_OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 
 #===============================================================================
