@@ -146,8 +146,11 @@ void check_conds(VehicleData *ptr_rec_data)
 
     if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
     {
-        start_stop_is_active = true;
-        log_toggle_event("Stop/Start: Activated");
+        /* Will only activate stop/start once, when it's not activated */
+        if(!start_stop_is_active){
+            start_stop_is_active = true;
+            log_toggle_event("Stop/Start: Activated");
+        }
     }
     else
     {
