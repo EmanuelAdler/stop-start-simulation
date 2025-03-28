@@ -28,15 +28,7 @@ services:
     build: .
     container_name: bcm
     network_mode: "host"
-    command: ["./bin/receiver"]
-    volumes:
-      - ss_logs_volume:/app/logs
-
-  ecu_climatization:
-    build: .
-    container_name: climatization
-    network_mode: "host"
-    command: ["./bin/receiver"]
+    command: ["./bin/bcm"]
     volumes:
       - ss_logs_volume:/app/logs
 

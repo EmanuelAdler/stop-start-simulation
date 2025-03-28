@@ -25,10 +25,4 @@ jobs:
 
       - name: Run Clang-Tidy on Source Files
         run: |
-          clang-tidy $(find src -name '*.c') $(find test -name '*.c') -- \
-            -std=c99 \
-            -D_POSIX_C_SOURCE=199309L \
-            -I/usr/include \
-            -I./src \
-            -I./src/common_includes \
-            -lrt
+          clang-tidy $(find src -name '*.c') $(find test -name '*.c') -- -std=c99 -D_POSIX_C_SOURCE=199309L
