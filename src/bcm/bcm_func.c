@@ -247,7 +247,7 @@ void send_data_update(void)
 {
     if (vehicle_data[simu_curr_step].speed != vehicle_data[simu_curr_step - 1].speed)
     {
-        snprintf(send_msg, sizeof(send_msg), "speed: %lf", vehicle_data[simu_curr_step].speed);
+        snprintf(send_msg, sizeof(send_msg), "speed: %.1lf", vehicle_data[simu_curr_step].speed);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
     if (vehicle_data[simu_curr_step].internal_temp != vehicle_data[simu_curr_step - 1].internal_temp)
@@ -267,7 +267,7 @@ void send_data_update(void)
     }
     if (vehicle_data[simu_curr_step].tilt_angle != vehicle_data[simu_curr_step - 1].tilt_angle)
     {
-        snprintf(send_msg, sizeof(send_msg), "tilt: %lf", vehicle_data[simu_curr_step].tilt_angle);
+        snprintf(send_msg, sizeof(send_msg), "tilt: %.1lf", vehicle_data[simu_curr_step].tilt_angle);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
     if (vehicle_data[simu_curr_step].accel != vehicle_data[simu_curr_step - 1].accel)
@@ -287,17 +287,17 @@ void send_data_update(void)
     }
     if (vehicle_data[simu_curr_step].batt_soc != vehicle_data[simu_curr_step - 1].batt_soc)
     {
-        snprintf(send_msg, sizeof(send_msg), "batt_soc: %lf", vehicle_data[simu_curr_step].batt_soc);
+        snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
     if (vehicle_data[simu_curr_step].batt_volt != vehicle_data[simu_curr_step - 1].batt_volt)
     {
-        snprintf(send_msg, sizeof(send_msg), "batt_volt: %lf", vehicle_data[simu_curr_step].batt_volt);
+        snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
     if (vehicle_data[simu_curr_step].engi_temp != vehicle_data[simu_curr_step - 1].engi_temp)
     {
-        snprintf(send_msg, sizeof(send_msg), "engi_temp: %lf", vehicle_data[simu_curr_step].engi_temp);
+        snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
     if (vehicle_data[simu_curr_step].gear != vehicle_data[simu_curr_step - 1].gear)
