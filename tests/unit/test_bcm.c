@@ -364,7 +364,6 @@ void test_sensor_battery_updates_soc_when_running(void)
     pthread_create(&thread_id, NULL, sensor_battery, NULL);
 
     // Allow it to run at least once
-    // usleep(THREAD_SLEEP_TIME * 2);
     sleep_microseconds(THREAD_SLEEP_TIME);
     test_mode = true;
 
@@ -406,7 +405,6 @@ void test_simu_speed_performs_control_update(void)
     pthread_create(&thread_id, NULL, simu_speed, (void *)sim_data);
 
     // Let it run one iteration
-    // usleep(THREAD_SLEEP_TIME * 2);
     sleep_microseconds(THREAD_SLEEP_TIME);
     test_mode = true;
     pthread_join(thread_id, NULL);
