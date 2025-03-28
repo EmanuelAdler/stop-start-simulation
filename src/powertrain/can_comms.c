@@ -32,9 +32,9 @@ void parse_input_received(char *input)
         }
     }
     /* Check if CAN message is speed */
-    if (sscanf(input, "speed: %lf", &rec_data.speed) == 1)
+    if (sscanf(input, "speed: %.1lf", &rec_data.speed) == 1)
     {
-        printf("received speed = %lf\n", rec_data.speed);
+        printf("received speed = %.1lf\n", rec_data.speed);
     }
     /* Check if CAN message is internal temperature */
     if (sscanf(input, "in_temp: %d", &rec_data.internal_temp) == 1)
@@ -52,9 +52,9 @@ void parse_input_received(char *input)
         printf("received door = %d\n", rec_data.door_open);
     }
     /* Check if CAN message is tilt angle */
-    if (sscanf(input, "tilt: %lf", &rec_data.tilt_angle) == 1)
+    if (sscanf(input, "tilt: %.1lf", &rec_data.tilt_angle) == 1)
     {
-        printf("received tilt = %lf\n", rec_data.tilt_angle);
+        printf("received tilt = %.1lf\n", rec_data.tilt_angle);
     }
     /* Check if CAN message is acceleration sensor */
     if (sscanf(input, "accel: %d", &rec_data.accel) == 1)
@@ -72,19 +72,19 @@ void parse_input_received(char *input)
         printf("received temp_set = %d\n", rec_data.temp_set);
     }
     /* Check if CAN message is battery SoC */
-    if (sscanf(input, "batt_soc: %lf", &rec_data.batt_soc) == 1)
+    if (sscanf(input, "batt_soc: %.1lf", &rec_data.batt_soc) == 1)
     {
-        printf("received batt_soc = %lf\n", rec_data.batt_soc);
+        printf("received batt_soc = %.1lf\n", rec_data.batt_soc);
     }
     /* Check if CAN message is battery voltage */
-    if (sscanf(input, "batt_volt: %lf", &rec_data.batt_volt) == 1)
+    if (sscanf(input, "batt_volt: %.1lf", &rec_data.batt_volt) == 1)
     {
-        printf("received batt_volt = %lf\n", rec_data.batt_volt);
+        printf("received batt_volt = %.1lf\n", rec_data.batt_volt);
     }
     /* Check if CAN message is engine temperature */
-    if (sscanf(input, "engi_temp: %lf", &rec_data.engi_temp) == 1)
+    if (sscanf(input, "engi_temp: %.1lf", &rec_data.engi_temp) == 1)
     {
-        printf("received engi_temp = %lf\n", rec_data.engi_temp);
+        printf("received engi_temp = %.1lf\n", rec_data.engi_temp);
     }
     /* Check if CAN message is gear */
     if (sscanf(input, "gear: %d", &rec_data.gear) == 1)
