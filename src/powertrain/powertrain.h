@@ -12,32 +12,11 @@
 #include <pthread.h>
 #include <signal.h>
 #include <math.h>
-#include <stdbool.h>
+//#include <linux/time.h>
 
-#include "../common_includes/can_id_list.h"
-#include "../common_includes/can_socket.h"
-#include "../common_includes/logging.h"
+#include "can_comms.h"
 
 pthread_mutex_t mutex_powertrain;
-extern int sock;
+// extern int sock;
 
-// Vehicle simulation data
-typedef struct {
-    int time;
-    double speed;
-    int internal_temp;
-    int external_temp;
-    int door_open;
-    double tilt_angle;
-    int accel;
-    int brake;
-    int temp_set;
-    double batt_soc;
-    double batt_volt;
-    double engi_temp;
-    int     gear;
-    int prev_brake;
-    int prev_accel;
-} VehicleData;
-
-#endif //POWERTRAIN_H
+#endif // POWERTRAIN_H

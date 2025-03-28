@@ -19,8 +19,6 @@ VehicleData rec_data = {0};
 
 static bool start_stop_is_active = false;
 
-static bool start_stop_manual = false;
-
 /* Battery operation */
 
 #define MIN_BATTERY_VOLTAGE 12.2F
@@ -41,7 +39,6 @@ static bool start_stop_manual = false;
 
 void check_conds(VehicleData *ptr_rec_data)
 {
-
     int time = ptr_rec_data->time;
     double speed = ptr_rec_data->speed;
     int internal_temp = ptr_rec_data->internal_temp;
@@ -147,7 +144,8 @@ void check_conds(VehicleData *ptr_rec_data)
     if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
     {
         /* Will only activate stop/start once, when it's not activated */
-        if(!start_stop_is_active){
+        if (!start_stop_is_active)
+        {
             start_stop_is_active = true;
             log_toggle_event("Stop/Start: Activated");
         }
@@ -155,7 +153,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         /* Will only deactivate stop/start once, when it's activated */
-        if(start_stop_is_active){
+        if (start_stop_is_active)
+        {
             start_stop_is_active = false;
             log_toggle_event("Stop/Start: deactivated!");
         }
@@ -163,24 +162,29 @@ void check_conds(VehicleData *ptr_rec_data)
 }
 
 static void handle_restart_logic(
-    VehicleData* data,
-    bool* is_restarting,
-    struct timespec* restart_start
-) {
+    VehicleData *data,
+    bool *is_restarting,
+    struct timespec *restart_start)
+{
     /* Restart trigger detection */
-    if (start_stop_is_active && !(*is_restarting)) {
+    if (start_stop_is_active && !(*is_restarting))
+    {
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
 
-        if (brake_released || accelerator_pressed) {
+        if (brake_released || accelerator_pressed)
+        {
             /* Battery check */
-            if (data->batt_volt >= MIN_BATTERY_VOLTAGE && 
-                data->batt_soc >= MIN_BATTERY_SOC) {
+            if (data->batt_volt >= MIN_BATTERY_VOLTAGE &&
+                data->batt_soc >= MIN_BATTERY_SOC)
+            {
                 send_encrypted_message(sock, "RESTART", CAN_ID_ECU_RESTART);
                 log_toggle_event("Engine On");
                 clock_gettime(CLOCK_MONOTONIC, restart_start);
                 *is_restarting = true;
-            } else {
+            }
+            else
+            {
                 log_toggle_event("Fault: SWR3.5 (Low Battery)");
             }
         }
@@ -191,17 +195,21 @@ static void handle_restart_logic(
     data->prev_accel = data->accel;
 
     /* Restart monitoring */
-    if (*is_restarting) {
+    if (*is_restarting)
+    {
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
 
-        const long elapsed_us = 
-            ((now.tv_sec - restart_start->tv_sec) * MICROSECS_IN_ONESEC) + 
+        const long elapsed_us =
+            ((now.tv_sec - restart_start->tv_sec) * MICROSECS_IN_ONESEC) +
             ((now.tv_nsec - restart_start->tv_nsec) / NANO_TO_MICRO);
 
-        if (elapsed_us > MICROSECS_IN_ONESEC) {
-            *is_restarting = false;  // Successful restart
-        } else if (data->batt_volt < MIN_BATTERY_VOLTAGE) {
+        if (elapsed_us > MICROSECS_IN_ONESEC)
+        {
+            *is_restarting = false; // Successful restart
+        }
+        else if (data->batt_volt < MIN_BATTERY_VOLTAGE)
+        {
             send_encrypted_message(sock, "ABORT", CAN_ID_ECU_RESTART);
             log_toggle_event("Fault: SWR3.4 (Battery Drop)");
             *is_restarting = false;
@@ -238,8 +246,7 @@ void *function_start_stop(void *arg)
             handle_restart_logic(
                 ptr_rec_data,
                 &is_restarting,
-                &restart_start_time
-            );
+                &restart_start_time);
         }
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
@@ -255,150 +262,7 @@ void *function_start_stop(void *arg)
 
 /* CAN Communication */
 
-#define CAN_INTERFACE ("vcan0")
-#define CAN_DATA_LENGTH (8)
-#define LOG_MESSAGE_SIZE (50)
-#define SUCCESS_CODE (0)
-#define ERROR_CODE (1)
-
 int sock = -1;
-
-bool check_is_valid_can_id(canid_t can_id)
-{
-    bool is_valid = false;
-
-    switch (can_id)
-    {
-    case CAN_ID_COMMAND:
-        is_valid = true;
-        break;
-    default:
-        break;
-    }
-
-    return is_valid;
-}
-
-void parse_input_received(char *input)
-{
-    if (strcmp(input, "press_start_stop") == 0)
-    {
-        start_stop_manual = !start_stop_manual;
-
-        if (start_stop_manual)
-        {
-            log_toggle_event("Stop/Start: System Activated");
-        }
-        else
-        {
-            log_toggle_event("Stop*/Start: System Deactivated");
-        }
-    }
-    /* Check if CAN message is speed */
-    if (sscanf(input, "speed: %lf", &rec_data.speed) == 1)
-    {
-        printf("received speed = %lf\n", rec_data.speed);
-    }
-    /* Check if CAN message is internal temperature */
-    if (sscanf(input, "in_temp: %d", &rec_data.internal_temp) == 1)
-    {
-        printf("received in_temp = %d\n", rec_data.internal_temp);
-    }
-    /* Check if CAN message is external temperature */
-    if (sscanf(input, "ex_temp: %d", &rec_data.external_temp) == 1)
-    {
-        printf("received ex_temp = %d\n", rec_data.external_temp);
-    }
-    /* Check if CAN message is door open */
-    if (sscanf(input, "door: %d", &rec_data.door_open) == 1)
-    {
-        printf("received door = %d\n", rec_data.door_open);
-    }
-    /* Check if CAN message is tilt angle */
-    if (sscanf(input, "tilt: %lf", &rec_data.tilt_angle) == 1)
-    {
-        printf("received tilt = %lf\n", rec_data.tilt_angle);
-    }
-    /* Check if CAN message is acceleration sensor */
-    if (sscanf(input, "accel: %d", &rec_data.accel) == 1)
-    {
-        printf("received accel = %d\n", rec_data.accel);
-    }
-    /* Check if CAN message is braking sensor*/
-    if (sscanf(input, "brake: %d", &rec_data.brake) == 1)
-    {
-        printf("received brake = %d\n", rec_data.brake);
-    }
-    /* Check if CAN message is temperature setpoint */
-    if (sscanf(input, "temp_set: %d", &rec_data.temp_set) == 1)
-    {
-        printf("received temp_set = %d\n", rec_data.temp_set);
-    }
-    /* Check if CAN message is battery SoC */
-    if (sscanf(input, "batt_soc: %lf", &rec_data.batt_soc) == 1)
-    {
-        printf("received batt_soc = %lf\n", rec_data.batt_soc);
-    }
-    /* Check if CAN message is battery voltage */
-    if (sscanf(input, "batt_volt: %lf", &rec_data.batt_volt) == 1)
-    {
-        printf("received batt_volt = %lf\n", rec_data.batt_volt);
-    }
-    /* Check if CAN message is engine temperature */
-    if (sscanf(input, "engi_temp: %lf", &rec_data.engi_temp) == 1)
-    {
-        printf("received engi_temp = %lf\n", rec_data.engi_temp);
-    }
-    /* Check if CAN message is gear */
-    if (sscanf(input, "gear: %d", &rec_data.gear) == 1)
-    {
-        printf("received gear = %d\n", rec_data.gear);
-    }
-}
-
-void process_received_frame(int sock)
-{
-    struct can_frame frame;
-    unsigned char encrypted_data[AES_BLOCK_SIZE];
-    char decrypted_message[AES_BLOCK_SIZE];
-    int received_bytes = 0;
-    char message_log[LOG_MESSAGE_SIZE];
-
-    for (;;)
-    {
-        if (receive_can_frame(sock, &frame) == 0)
-        {
-            if (check_is_valid_can_id(frame.can_id))
-            {
-                (void)printf("Received CAN ID: %X Data: ", frame.can_id);
-                for (int i = 0; i < frame.can_dlc; i++)
-                {
-                    (void)printf("%02X ", frame.data[i]);
-                }
-                (void)printf("\n");
-                (void)fflush(stdout);
-
-                if (frame.can_dlc == CAN_DATA_LENGTH)
-                {
-                    memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
-                    received_bytes += CAN_DATA_LENGTH;
-
-                    if (received_bytes == AES_BLOCK_SIZE)
-                    {
-                        decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                        parse_input_received(decrypted_message);
-                        received_bytes = 0;
-                    }
-                }
-                else
-                {
-                    (void)printf("Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
-                    (void)fflush(stdout);
-                }
-            }
-        }
-    }
-}
 
 void *comms(void *arg)
 {
