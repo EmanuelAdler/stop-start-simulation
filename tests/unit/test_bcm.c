@@ -8,6 +8,7 @@
 #include "../../src/bcm/bcm_func.h"
 
 #define CSV_FILE_PATH "../src/bcm/full_simu.csv"
+#define TEST_EXPECTED_IT (2.0F)
 
 // Tolerances
 const float SOC_TOLERANCE = 0.001F;
@@ -17,11 +18,13 @@ const float SOC_TOLERANCE = 0.001F;
 #define TEST_SOC_LOW               0.1F
 #define TEST_SOC_UPDATE_POSITIVE   20.0F
 #define TEST_SOC_UPDATE_NEGATIVE   0.0F
+#define TEST_BATT_SOC_INITIAL      50.0F
 
 // Speeds
 #define SPEED_LOW                  5.0
 #define SPEED_MEDIUM               10.0
 #define SPEED_HIGH                 20.0
+#define TEST_SPEED_INCREASE        10.0
 
 // Temperatures
 #define INT_TEMP_1                 25
@@ -48,9 +51,8 @@ const float SOC_TOLERANCE = 0.001F;
 #define BATT_SOC_2                82.0
 
 // Delay
-#define TEST_MICRO_SLEEP_DELAY     100000U
-
-
+#define TEST_MICRO_SLEEP_DELAY     (100000U)
+#define THREAD_SLEEP_TIME          (200000U)
 
 // Mocked can_socket calls (like in test_instrument_cluster)
 int stub_can_get_send_count(void);
@@ -334,6 +336,87 @@ void test_simu_speed_step(void)
     CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
 }
 
+//-------------------------------------
+// 8) Battery sensor simulator for SOC update
+//-------------------------------------
+void test_sensor_battery_updates_soc_when_running(void)
+{
+    // Set up simulation state
+    test_mode = false;
+    simu_state = STATE_RUNNING;
+    simu_curr_step = 0;
+
+    // Initialize vehicle data and global battery state
+    vehicle_data[0].speed = SPEED_HIGH;
+    vehicle_data[0].batt_soc = TEST_BATT_SOC_INITIAL;
+    batt_soc = TEST_BATT_SOC_INITIAL;
+
+    // Calculate expected SoC after one update
+    float expected_iterations = TEST_EXPECTED_IT; // if THREAD_SLEEP_TIME * 2 allows 2 iterations
+    float expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
+    if (expected_soc > MAX_BATTERY_SOC) 
+    {
+        expected_soc = MAX_BATTERY_SOC;
+    }
+
+    // Start the sensor thread
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, sensor_battery, NULL);
+
+    // Allow it to run at least once
+    // usleep(THREAD_SLEEP_TIME * 2);
+    sleep_microseconds(THREAD_SLEEP_TIME);
+    test_mode = true;
+
+    // Wait for the thread to finish
+    pthread_join(thread_id, NULL);
+
+    // Get actual updated SoC
+    float actual_soc = (float) vehicle_data[0].batt_soc;
+
+    // Assert the SoC was updated as expected
+    CU_ASSERT_DOUBLE_EQUAL(expected_soc, actual_soc, SOC_TOLERANCE);
+}
+
+//-------------------------------------
+// 9) Speed simulator thread
+//-------------------------------------
+void test_simu_speed_performs_control_update(void)
+{
+    // Arrange
+    test_mode = false;
+    simu_state = STATE_RUNNING;
+    simu_curr_step = 0;
+    simu_order = ORDER_RUN;
+    data_size = 2;
+
+    VehicleData sim_data[2] = {0};
+
+    // Initial setup: speed increases between steps
+    sim_data[0].speed = 0.0;
+    sim_data[1].speed = TEST_SPEED_INCREASE;
+
+    // Initialize outputs (accel, brake, gear)
+    sim_data[0].accel = 0;
+    sim_data[0].brake = 0;
+    sim_data[0].gear = 0;
+
+    // Act: start the thread
+    pthread_t thread_id;
+    pthread_create(&thread_id, NULL, simu_speed, (void *)sim_data);
+
+    // Let it run one iteration
+    // usleep(THREAD_SLEEP_TIME * 2);
+    sleep_microseconds(THREAD_SLEEP_TIME);
+    test_mode = true;
+    pthread_join(thread_id, NULL);
+
+    // Assert: check that control actions were applied
+    CU_ASSERT_EQUAL(sim_data[0].accel, 1);
+    CU_ASSERT_EQUAL(sim_data[0].brake, 0);
+    CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE);  // assume DRIVE is a defined constant
+}
+
 
 //-------------------------------------
 // Test main
@@ -363,6 +446,8 @@ int main(void)
     CU_add_test(suite, "send_data_update many fields", test_send_data_update_manyfields);
     CU_add_test(suite, "simu_speed small loop", test_simu_speed_smallloop);
     CU_add_test(suite, "simu_speed_step direct call", test_simu_speed_step);
+    CU_add_test(suite, "sensor_battery_updates_soc_when_running", test_sensor_battery_updates_soc_when_running);
+    CU_add_test(suite, "simu_speed_performs_control_update", test_simu_speed_performs_control_update);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
