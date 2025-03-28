@@ -5,20 +5,23 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-#define LOG_FILE_PATH "/home/paulo/app/logs/diagnostics.log"
+#define LOG_FILE_PATH "/app/logs/diagnostics.log"
 #define TIME_STR_SIZE (64)
 
 static FILE *logFile = NULL;
 
 static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;
 
-bool init_logging_system(void) {
+bool init_logging_system(void)
+{
     logFile = fopen(LOG_FILE_PATH, "a");
     return (logFile != NULL);
 }
 
-void log_toggle_event(char* message) {
-    if (logFile == NULL) {
+void log_toggle_event(char *message)
+{
+    if (logFile == NULL)
+    {
         return;
     }
 
@@ -39,8 +42,10 @@ void log_toggle_event(char* message) {
     pthread_mutex_unlock(&logMutex);
 }
 
-void cleanup_logging_system(void) {
-    if (logFile) {
+void cleanup_logging_system(void)
+{
+    if (logFile)
+    {
         fclose(logFile);
         logFile = NULL;
     }
