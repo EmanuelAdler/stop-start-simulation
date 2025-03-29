@@ -16,7 +16,7 @@
 
 #include "can_comms.h"
 
-pthread_mutex_t mutex_powertrain;
+static pthread_mutex_t mutex_powertrain;
 // extern int sock;
 
 #endif // POWERTRAIN_H

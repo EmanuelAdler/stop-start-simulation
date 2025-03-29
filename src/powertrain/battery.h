@@ -13,11 +13,6 @@
 #define BATTERY_VOLTAGE_THRESHOLD 12.0
 #define BATTERY_SOC_THRESHOLD 70        
 
-// External references to BCM battery variables
-extern float batt_volt;
-extern float batt_soc;
-extern pthread_mutex_t mutex_bcm;
-
 // Battery Functions
 void battery_monitor_init(void);
 void battery_monitor_update(void);
