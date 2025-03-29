@@ -181,6 +181,7 @@ $(BIN_DIR)/can_comms.o: $(POWERTRAIN_DIR)/can_comms.c \
 # (b) battery.o
 $(BIN_DIR)/battery.o: $(POWERTRAIN_DIR)/battery.c \
                         $(POWERTRAIN_DIR)/powertrain.h \
+                        $(POWERTRAIN_DIR)/can_comms.h \
                         $(POWERTRAIN_DIR)/battery.h \
                         $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(POWERTRAIN_DIR) -c $< -o $@

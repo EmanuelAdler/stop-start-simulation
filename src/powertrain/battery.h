@@ -1,8 +1,12 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-#include <stdint.h>
+#include "powertrain.h"
+#include "can_comms.h"
+#include "logging.h"
+#include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <pthread.h>
 
 // Thresholds based on requirements
