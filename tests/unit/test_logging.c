@@ -9,15 +9,15 @@
 
 #include "../../src/common_includes/logging.h"
 
-#define NUM_THREADS    (5)
+#define NUM_THREADS (5)
 #define FILE_LINE_SIZE (512)
-#define BUFFER_SIZE    (64)
+#define BUFFER_SIZE (64)
 
 //-------------------------------------
 // Setup the CUnit Suite
 //-------------------------------------
-static int init_suite(void)   { return 0; }
-static int clean_suite(void)  { return 0; }
+static int init_suite(void) { return 0; }
+static int clean_suite(void) { return 0; }
 
 //-------------------------------------
 // Test 1: Successful Initialization
@@ -62,28 +62,38 @@ void test_logging_init_failure(void)
 //-------------------------------------
 // Utility to find a given substring in the file
 //-------------------------------------
-static bool file_contains_substring(const char *filepath, const char *substring)
+
+typedef struct
 {
-    FILE *fp = fopen(filepath, "r");
-    if (!fp) {
+    const char *filepath;
+    const char *substring;
+} f_susbtring_data;
+
+static bool file_contains_substring(f_susbtring_data struct_f_subs)
+{
+    FILE *fpath = fopen(struct_f_subs.filepath, "r");
+    if (!fpath)
+    {
         return false;
     }
     char line[FILE_LINE_SIZE];
     bool found = false;
-    while (fgets(line, sizeof(line), fp)) {
-        if (strstr(line, substring)) {
+    while (fgets(line, sizeof(line), fpath))
+    {
+        if (strstr(line, struct_f_subs.substring))
+        {
             found = true;
             break;
         }
     }
-    fclose(fp);
+    fclose(fpath);
     return found;
 }
 
 //-------------------------------------
 // Test 3: Concurrency
 //-------------------------------------
-static void* thread_logging_fn(void* arg)
+static void *thread_logging_fn(void *arg)
 {
     // Each thread logs a distinct message based on its ID
     long tid = (long)arg;
@@ -104,11 +114,13 @@ void test_logging_concurrency(void)
 
     // Spawn multiple threads, each logs a unique message
     pthread_t threads[NUM_THREADS];
-    for (long i = 0; i < NUM_THREADS; i++) {
-        pthread_create(&threads[i], NULL, thread_logging_fn, (void*)i);
+    for (long i = 0; i < NUM_THREADS; i++)
+    {
+        pthread_create(&threads[i], NULL, thread_logging_fn, (void *)i);
     }
     // Join all threads
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
         pthread_join(threads[i], NULL);
     }
 
@@ -116,10 +128,17 @@ void test_logging_concurrency(void)
     cleanup_logging_system();
 
     // Verify each thread’s message is in the file
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
         char expected[BUFFER_SIZE];
         snprintf(expected, sizeof(expected), "Thread %d logging message", i);
-        CU_ASSERT_TRUE(file_contains_substring(log_path, expected));
+
+        f_susbtring_data params_str;
+
+        params_str.filepath = log_path;
+        params_str.substring = expected;
+
+        CU_ASSERT_TRUE(file_contains_substring(params_str));
     }
 }
 
@@ -135,39 +154,49 @@ void test_logging_after_cleanup(void)
     bool result = init_logging_system();
     CU_ASSERT_TRUE_FATAL(result);
     const char *first_message = "Test: normal usage";
-    log_toggle_event((char*)first_message);
+    log_toggle_event((char *)first_message);
 
     // Cleanup
     cleanup_logging_system();
 
     // Attempt to log again (should be ignored / no-op)
     const char *second_message = "Test: after cleanup";
-    log_toggle_event((char*)second_message);
+    log_toggle_event((char *)second_message);
+
+    f_susbtring_data params_str;
+
+    params_str.filepath = log_path;
+    params_str.substring = first_message;
 
     // Now verify the file
     // Only the first message should be present
-    CU_ASSERT_TRUE(file_contains_substring(log_path, first_message));
-    CU_ASSERT_FALSE(file_contains_substring(log_path, second_message));
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = second_message;
+
+    CU_ASSERT_FALSE(file_contains_substring(params_str));
 }
 
 int main(void)
 {
     // Initialize CUnit test registry
-    if (CU_initialize_registry() != CUE_SUCCESS) {
+    if (CU_initialize_registry() != CUE_SUCCESS)
+    {
         return CU_get_error();
     }
 
     CU_pSuite suite = CU_add_suite("LoggingSuite", init_suite, clean_suite);
-    if (!suite) {
+    if (!suite)
+    {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
     // Add tests
-    CU_add_test(suite, "test init success",        test_logging_init_success);
-    CU_add_test(suite, "test init failure",        test_logging_init_failure);
-    CU_add_test(suite, "test concurrency",         test_logging_concurrency);
-    CU_add_test(suite, "test after cleanup",       test_logging_after_cleanup);
+    CU_add_test(suite, "test init success", test_logging_init_success);
+    CU_add_test(suite, "test init failure", test_logging_init_failure);
+    CU_add_test(suite, "test concurrency", test_logging_concurrency);
+    CU_add_test(suite, "test after cleanup", test_logging_after_cleanup);
 
     // Run all tests in verbose mode
     CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -20,21 +20,21 @@ static int clean_suite(void) { return 0; }
 /* Utility to search for a substring in a file */
 static bool file_contains_substring(const char *path, const char *substr)
 {
-    FILE *fp = fopen(path, "r");
-    if (!fp)
+    FILE *fpath = fopen(path, "r");
+    if (!fpath)
     {
         return false;
     }
 
     char line[FILE_LINE_SIZE];
     bool found = false;
-    while (fgets(line, sizeof(line), fp)) {
+    while (fgets(line, sizeof(line), fpath)) {
         if (strstr(line, substr)) {
             found = true;
             break;
         }
     }
-    fclose(fp);
+    fclose(fpath);
     return found;
 }
 
@@ -81,11 +81,11 @@ void test_print_dashboard_status(void)
 
     // 3) Open temporary file
     const char *stdout_file = "/tmp/test_dashboard_stdout.txt";
-    FILE *fp = fopen(stdout_file, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    FILE *fpath = fopen(stdout_file, "w");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fpath);
 
     // 4) Redirect stdout to this file
-    int temp_fd = fileno(fp);
+    int temp_fd = fileno(fpath);
     dup2(temp_fd, STDOUT_FILENO);
 
     // 5) Call the function
@@ -95,7 +95,7 @@ void test_print_dashboard_status(void)
     fflush(stdout);
     dup2(saved_stdout_fd, STDOUT_FILENO);
     close(saved_stdout_fd);
-    fclose(fp);
+    fclose(fpath);
 
     // 7) Now check the file for expected text
     CU_ASSERT_TRUE(file_contains_substring(stdout_file, "=== Dashboard Status ==="));
