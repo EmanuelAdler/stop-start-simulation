@@ -1,39 +1,160 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -D_GNU_SOURCE
-BIN_DIR = ../bin
-SRC_DIR = .
-OBJ = $(BIN_DIR)/can_socket.o
-LDLFLAGS = -lssl -lcrypto
+#===============================================================================
+# Compiler/Flags
+#===============================================================================
+CC       = gcc
+CFLAGS   = -Wall -Wextra -D_GNU_SOURCE
+LDLFLAGS = -lssl -lcrypto -lpthread  # libraries used during linking
 
-# Executables
-TARGETS = $(BIN_DIR)/sender $(BIN_DIR)/receiver
+#===============================================================================
+# Directories
+#===============================================================================
+SRC_DIR        = .
+BIN_DIR        = ../bin
+
+COMMON_DIR     = $(SRC_DIR)/common_includes
+DASH_DIR       = $(SRC_DIR)/dashboard
+INSTR_CLUST_DIR = $(SRC_DIR)/instrument_cluster
+BCM_DIR = $(SRC_DIR)/bcm
+
+# Ensure the bin/ directory exists
+$(shell mkdir -p $(BIN_DIR))
+
+#===============================================================================
+# Final Executables
+#===============================================================================
+TARGETS = \
+  $(BIN_DIR)/sender \
+  $(BIN_DIR)/receiver \
+  $(BIN_DIR)/instrument_cluster \
+  $(BIN_DIR)/dashboard \
+  $(BIN_DIR)/bcm
 
 all: $(TARGETS)
 
-# Ensure the bin directory exists
-$(shell mkdir -p $(BIN_DIR))
+#===============================================================================
+# Common Objects (from common_includes)
+#===============================================================================
+COMMON_OBJ = \
+  $(BIN_DIR)/can_socket.o \
+  $(BIN_DIR)/logging.o
 
-# Dependency rules
-$(BIN_DIR)/can_socket.o: $(SRC_DIR)/can_socket.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/can_socket.c -o $(BIN_DIR)/can_socket.o
+# 1) can_socket.o
+$(BIN_DIR)/can_socket.o: $(COMMON_DIR)/can_socket.c $(COMMON_DIR)/can_socket.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
 
-$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/sender.c -o $(BIN_DIR)/sender.o
+# 2) logging.o
+$(BIN_DIR)/logging.o: $(COMMON_DIR)/logging.c $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
 
-$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c $(SRC_DIR)/can_socket.h
-	$(CC) $(CFLAGS) -c $(SRC_DIR)/receiver.c -o $(BIN_DIR)/receiver.o
+#===============================================================================
+# Sender
+#===============================================================================
+$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c \
+                     $(COMMON_DIR)/can_socket.h \
+                     $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
 
-# Build rules for executables
-$(BIN_DIR)/sender: $(BIN_DIR)/sender.o $(OBJ)
-	$(CC) $(CFLAGS) $(BIN_DIR)/sender.o $(OBJ) -o $(BIN_DIR)/sender $(LDLFLAGS)
+$(BIN_DIR)/sender: $(BIN_DIR)/sender.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 
-$(BIN_DIR)/receiver: $(BIN_DIR)/receiver.o $(OBJ)
-	$(CC) $(CFLAGS) $(BIN_DIR)/receiver.o $(OBJ) -o $(BIN_DIR)/receiver $(LDLFLAGS)
+#===============================================================================
+# Receiver
+#===============================================================================
+$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c \
+                       $(COMMON_DIR)/can_socket.h \
+                       $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
 
-# Clean command
+$(BIN_DIR)/receiver: $(BIN_DIR)/receiver.o $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+#===============================================================================
+# Instrument Cluster
+#  - Needs to compile instrument_cluster.c (which contains main())
+#  - Also compiles instrument_cluster_func.c
+#===============================================================================
+INSTR_CLUST_OBJS = \
+  $(BIN_DIR)/instrument_cluster.o \
+  $(BIN_DIR)/instrument_cluster_func.o
+
+# (a) instrument_cluster.o (has main)
+$(BIN_DIR)/instrument_cluster.o: $(INSTR_CLUST_DIR)/instrument_cluster.c \
+                                 $(INSTR_CLUST_DIR)/instrument_cluster_func.h \
+                                 $(COMMON_DIR)/can_socket.h \
+                                 $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(INSTR_CLUST_DIR) -c $< -o $@
+
+# (b) instrument_cluster_func.o (auxiliary logic)
+$(BIN_DIR)/instrument_cluster_func.o: $(INSTR_CLUST_DIR)/instrument_cluster_func.c \
+                                      $(INSTR_CLUST_DIR)/instrument_cluster_func.h \
+                                      $(COMMON_DIR)/can_socket.h \
+                                      $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(INSTR_CLUST_DIR) -c $< -o $@
+
+# (c) link final instrument_cluster
+$(BIN_DIR)/instrument_cluster: $(INSTR_CLUST_OBJS) $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+#===============================================================================
+# Dashboard
+#  - Needs to compile dashboard.c (which contains main())
+#  - Also compiles dashboard_func.c
+#===============================================================================
+DASH_OBJS = \
+  $(BIN_DIR)/dashboard.o \
+  $(BIN_DIR)/dashboard_func.o
+
+# (a) dashboard.o (has main)
+$(BIN_DIR)/dashboard.o: $(DASH_DIR)/dashboard.c \
+                        $(DASH_DIR)/dashboard_func.h \
+                        $(COMMON_DIR)/can_socket.h \
+                        $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
+
+# (b) dashboard_func.o (auxiliary logic)
+$(BIN_DIR)/dashboard_func.o: $(DASH_DIR)/dashboard_func.c \
+                             $(DASH_DIR)/dashboard_func.h \
+                             $(COMMON_DIR)/can_socket.h \
+                             $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
+
+# (c) link final dashboard
+$(BIN_DIR)/dashboard: $(DASH_OBJS) $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+#===============================================================================
+# BCM (Body Control Module)
+#  - Needs to compile bcm.c (which contains main())
+#  - Also compiles bcm_func.c
+#===============================================================================
+BCM_OBJS = \
+  $(BIN_DIR)/bcm.o \
+  $(BIN_DIR)/bcm_func.o
+
+# (a) bcm.o (has main)
+$(BIN_DIR)/bcm.o: $(BCM_DIR)/bcm.c \
+                        $(BCM_DIR)/bcm_func.h \
+                        $(COMMON_DIR)/can_socket.h \
+                        $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(BCM_DIR) -c $< -o $@
+
+# (b) bcm_func.o (auxiliary logic)
+$(BIN_DIR)/bcm_func.o: $(BCM_DIR)/bcm_func.c \
+                             $(BCM_DIR)/bcm_func.h \
+                             $(COMMON_DIR)/can_socket.h \
+                             $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(BCM_DIR) -c $< -o $@
+
+# (c) link final bcm
+$(BIN_DIR)/bcm: $(BCM_OBJS) $(COMMON_OBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
+
+#===============================================================================
+# Clean and Run
+#===============================================================================
 clean:
 	rm -rf $(BIN_DIR)/*
 
-# Run command
 run: all
-	$(BIN_DIR)/sender & $(BIN_DIR)/receiver
+	$(BIN_DIR)/sender & \
+	$(BIN_DIR)/receiver

@@ -1,16 +1,9 @@
-#include "common_includes/can_socket.h"
-#include <fcntl.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "instrument_cluster_func.h"
 
-#define CAN_INTERFACE ("vcan0")
-#define CAN_ID        (0x123U)
-#define PERMISSIONS   (0666)
-#define FIFO_PATH "/tmp/can_pipe"
+#define CAN_INTERFACE      ("vcan0")
+#define PERMISSIONS        (0666)
+#define ERROR_CODE         (1)
+#define FIFO_PATH "/tmp/command_pipe"
 
 int main(void) 
 {
@@ -26,20 +19,30 @@ int main(void)
     char input[AES_BLOCK_SIZE + 1];
     int fifo_fd;
 
-    printf("Type a message to send (max 16 chars) or 'exit' to terminate:\n");
+    if (!init_logging_system()) {
+        fprintf(stderr, "Failed to open log file for writing.\n");
+        return ERROR_CODE;
+    }
+
+    (void)printf("Waiting for new commands...\n");
+    (void)fflush(stdout);
 
     for(;;) 
     {
         fifo_fd = open(FIFO_PATH, O_RDONLY);
         if (fifo_fd < 0) 
         {
-            perror("Errror opening FIFO");
+            perror("Error opening FIFO");
             continue;
         }
 
         memset(input, 0, sizeof(input));
         read(fifo_fd, input, AES_BLOCK_SIZE);
         close(fifo_fd);
+        
+        // Remove any trailing newline
+        input[strcspn(input, "\r\n")] = '\0';
+
         (void)printf("%s\n", input);
         (void)fflush(stdout);
 
@@ -50,12 +53,13 @@ int main(void)
         }
         if (strcmp(input, "") != 0) 
         {
-            send_encrypted_message(sock, input, CAN_ID);
+            check_input_command(input, sock);
         }
     }
 
     close_can_socket(sock);
     unlink(FIFO_PATH);
+    cleanup_logging_system();
     (void)printf("Sender terminated successfully.\n");
     return EXIT_SUCCESS;
 }

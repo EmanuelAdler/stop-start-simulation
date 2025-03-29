@@ -1,7 +1,9 @@
 # Build artifacts
 bin/
 build/
-test/obj/
+tests/obj/
+coverage_report/
+coverage.info
 
 # Editor and temporary files
 .vscode/

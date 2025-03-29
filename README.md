@@ -123,7 +123,7 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 ## Communication Test
 Send a message via CAN:
 ```sh
-echo "message" | docker exec -i sender sh -c 'cat > /tmp/can_pipe'
+echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
 ```
 
 To stop the containers:
@@ -143,4 +143,10 @@ make test
 or
 ```sh
 make coverage
+```
+
+## Checking the logs
+When the container is running, execute:
+```sh
+docker exec -it <container> cat /app/logs/diagnostics.log
 ```

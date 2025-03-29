@@ -1,36 +1,36 @@
 version: '3'
 services:
-  can_sender:
-    # image: emanueladler/can-sender:latest
+  ecu_dashboard:
     build: .
-    container_name: sender
+    container_name: dashboard
     network_mode: "host"
-    command: ["./bin/sh", "-c", "mkfifo /tmp/can_pipe && ./bin/sender"]
+    command: ["./bin/dashboard"]
+    volumes:
+      - ss_logs_volume:/app/logs
 
   ecu_powertrain:
-    # image: emanueladler/can-receiver:latest
     build: .
-    container_name: receiver
+    container_name: powertrain
     network_mode: "host"
     command: ["./bin/receiver"]
+    volumes:
+      - ss_logs_volume:/app/logs
 
   ecu_instrument_cluster:
-    # image: emanueladler/can-receiver:latest
     build: .
-    container_name: receiver
+    container_name: instrument_cluster
     network_mode: "host"
-    command: ["./bin/receiver"]
+    command: ["./bin/instrument_cluster"]
+    volumes:
+      - ss_logs_volume:/app/logs
 
   ecu_bcm:
-    # image: emanueladler/can-receiver:latest
     build: .
-    container_name: receiver
+    container_name: bcm
     network_mode: "host"
-    command: ["./bin/receiver"]
+    command: ["./bin/bcm"]
+    volumes:
+      - ss_logs_volume:/app/logs
 
-  ecu_climatization:
-    # image: emanueladler/can-receiver:latest
-    build: .
-    container_name: receiver
-    network_mode: "host"
-    command: ["./bin/receiver"]
+volumes:
+  ss_logs_volume:
