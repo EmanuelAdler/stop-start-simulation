@@ -30,10 +30,10 @@ static bool start_stop_is_active = false;
 
 /* Temperatures operation */
 
-#define MAX_TEMP_DIFF 5U
+#define MAX_TEMP_DIFF 5
 
-#define MAX_ENGINE_TEMP 105U
-#define MIN_ENGINE_TEMP 70U
+#define MAX_ENGINE_TEMP 105
+#define MIN_ENGINE_TEMP 70
 
 /* Start/Stop operation logic */
 
