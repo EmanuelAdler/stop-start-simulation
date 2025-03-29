@@ -6,7 +6,7 @@ void battery_monitor_update(void)
     if (!is_battery_sufficient())
     {
         pthread_mutex_lock(&mutex_powertrain);
-        char warning_msg[256];
+        char warning_msg[BATTERY_WARN_MAX_MSG];
         snprintf(warning_msg, sizeof(warning_msg),
                  "Warning: Battery level insufficient! Voltage: %.2f V, State of Charge: %.2f%%",
                  rec_data.batt_volt, rec_data.batt_soc);
@@ -30,7 +30,7 @@ bool is_battery_sufficient(void)
 void log_battery_status(void)
 {
     pthread_mutex_lock(&mutex_powertrain);
-    char status_msg[256];
+    char status_msg[BATTERY_WARN_MAX_MSG];
     snprintf(status_msg, sizeof(status_msg),
              "Battery Status - Voltage: %.2f V, State of Charge: %.2f%%",
              rec_data.batt_volt, rec_data.batt_soc);

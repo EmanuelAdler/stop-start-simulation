@@ -6,10 +6,7 @@ bool check_is_valid_can_id(canid_t can_id)
 
     switch (can_id)
     {
-    case CAN_ID_COMMAND:
-        is_valid = true;
-        break;
-    case CAN_ID_SENSOR_READ:
+    case CAN_ID_COMMAND || CAN_ID_SENSOR_READ:
         is_valid = true;
         break;
     default:
@@ -135,7 +132,7 @@ void process_received_frame(int sock)
                 {
                     memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
                     received_bytes += CAN_DATA_LENGTH;
-                    
+
                     if (received_bytes == AES_BLOCK_SIZE)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
