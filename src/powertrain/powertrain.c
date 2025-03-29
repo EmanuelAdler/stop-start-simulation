@@ -242,6 +242,7 @@ void *function_start_stop(void *arg)
             check_conds(ptr_rec_data);
 
             printf("Start/Stop = %d\n", start_stop_is_active);
+            fflush(stdout);
 
             handle_restart_logic(
                 ptr_rec_data,
