@@ -116,7 +116,7 @@ void test_logging_concurrency(void)
     pthread_t threads[NUM_THREADS];
     for (long i = 0; i < NUM_THREADS; i++)
     {
-        pthread_create(&threads[i], NULL, thread_logging_fn, (void *)i);
+        pthread_create(&threads[i], NULL, thread_logging_fn, &i);
     }
     // Join all threads
     for (int i = 0; i < NUM_THREADS; i++)
