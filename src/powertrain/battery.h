@@ -1,7 +1,7 @@
 #ifndef BATTERY_H
 #define BATTERY_H
 
-#include "powertrain.h"
+#include "powertrain_func.h"
 #include "can_comms.h"
 #include "../common_includes/logging.h"
 #include <stdio.h>

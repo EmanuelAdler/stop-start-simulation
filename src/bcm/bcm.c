@@ -1,7 +1,5 @@
 #include "bcm_func.h"
 
-#define MICROSECS_IN_ONESEC (1000000L)
-#define NANO_TO_MICRO       (1000)
 #define CAN_INTERFACE       ("vcan0")
 
 int main(void)

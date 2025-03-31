@@ -11,11 +11,11 @@ LDLFLAGS = -lssl -lcrypto -lpthread  # libraries used during linking
 SRC_DIR        = .
 BIN_DIR        = ../bin
 
-COMMON_DIR     = $(SRC_DIR)/common_includes
-DASH_DIR       = $(SRC_DIR)/dashboard
-INSTR_CLUST_DIR = $(SRC_DIR)/instrument_cluster
-BCM_DIR = $(SRC_DIR)/bcm
-POWERTRAIN_DIR = $(SRC_DIR)/powertrain
+COMMON_DIR            = $(SRC_DIR)/common_includes
+DASH_DIR              = $(SRC_DIR)/dashboard
+INSTR_CLUST_DIR       = $(SRC_DIR)/instrument_cluster
+BCM_DIR               = $(SRC_DIR)/bcm
+POWERTRAIN_DIR        = $(SRC_DIR)/powertrain
 
 # Ensure the bin/ directory exists
 $(shell mkdir -p $(BIN_DIR))
@@ -159,11 +159,12 @@ $(BIN_DIR)/bcm: $(BCM_OBJS) $(COMMON_OBJ)
 POWERTRAIN_OBJS = \
   $(BIN_DIR)/powertrain.o \
   $(BIN_DIR)/can_comms.o \
-  $(BIN_DIR)/battery.o
+  $(BIN_DIR)/battery.o \
+  $(BIN_DIR)/powertrain_func.o
 
 # (a) powertrain.o (has main)
 $(BIN_DIR)/powertrain.o: $(POWERTRAIN_DIR)/powertrain.c \
-                        $(POWERTRAIN_DIR)/powertrain.h \
+                        $(POWERTRAIN_DIR)/powertrain_func.h \
                         $(POWERTRAIN_DIR)/battery.h \
                         $(POWERTRAIN_DIR)/can_comms.h \
                         $(COMMON_DIR)/can_socket.h \
@@ -172,21 +173,29 @@ $(BIN_DIR)/powertrain.o: $(POWERTRAIN_DIR)/powertrain.c \
 
 # (b) can_comms.o
 $(BIN_DIR)/can_comms.o: $(POWERTRAIN_DIR)/can_comms.c \
-                        $(POWERTRAIN_DIR)/powertrain.h \
+                        $(POWERTRAIN_DIR)/powertrain_func.h \
                         $(POWERTRAIN_DIR)/can_comms.h \
                         $(COMMON_DIR)/can_socket.h \
                         $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(POWERTRAIN_DIR) -c $< -o $@
 
-# (b) battery.o
+# (c) battery.o
 $(BIN_DIR)/battery.o: $(POWERTRAIN_DIR)/battery.c \
-                        $(POWERTRAIN_DIR)/powertrain.h \
+                        $(POWERTRAIN_DIR)/powertrain_func.h \
                         $(POWERTRAIN_DIR)/can_comms.h \
                         $(POWERTRAIN_DIR)/battery.h \
                         $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(POWERTRAIN_DIR) -c $< -o $@
 
-# (c) link final powertrain
+# (d) powertrain_func.o (auxiliary logic)
+$(BIN_DIR)/powertrain_func.o: $(POWERTRAIN_DIR)/powertrain_func.c \
+                             $(POWERTRAIN_DIR)/powertrain_func.h \
+                             $(COMMON_DIR)/can_socket.h \
+                             $(POWERTRAIN_DIR)/can_comms.h \
+                             $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(BCM_DIR) -c $< -o $@
+
+# (e) link final powertrain
 $(BIN_DIR)/powertrain: $(POWERTRAIN_OBJS) $(COMMON_OBJ)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 

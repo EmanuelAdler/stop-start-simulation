@@ -17,6 +17,15 @@
 #include "can_comms.h"
 
 static pthread_mutex_t mutex_powertrain;
-// extern int sock;
+extern int sock_sender;
+extern int sock_receiver;
+
+void check_conds(VehicleData *ptr_rec_data);
+static void handle_restart_logic(
+    VehicleData *data,
+    bool *is_restarting,
+    struct timespec *restart_start);
+void *function_start_stop(void *arg);
+void *comms(void *arg);
 
 #endif // POWERTRAIN_H
