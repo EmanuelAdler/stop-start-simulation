@@ -95,12 +95,10 @@ static bool file_contains_substring(f_susbtring_data struct_f_subs)
 //-------------------------------------
 static void *thread_logging_fn(void *arg)
 {
-    // Each thread logs a distinct message based on its ID
-    long tid = (long)arg;
+    long tid = *(long *)arg;
     char buffer[BUFFER_SIZE];
     snprintf(buffer, sizeof(buffer), "Thread %ld logging message", tid);
     log_toggle_event(buffer);
-
     return NULL;
 }
 
@@ -114,12 +112,16 @@ void test_logging_concurrency(void)
 
     // Spawn multiple threads, each logs a unique message
     pthread_t threads[NUM_THREADS];
+    long thread_ids[NUM_THREADS];  // Aloca IDs fixos para cada thread
+
     for (long i = 0; i < NUM_THREADS; i++)
     {
-        pthread_create(&threads[i], NULL, thread_logging_fn, &i);
+        thread_ids[i] = i;
+        pthread_create(&threads[i], NULL, thread_logging_fn, &thread_ids[i]);
     }
+
     // Join all threads
-    for (int i = 0; i < NUM_THREADS; i++)
+    for (long i = 0; i < NUM_THREADS; i++)
     {
         pthread_join(threads[i], NULL);
     }
@@ -128,10 +130,10 @@ void test_logging_concurrency(void)
     cleanup_logging_system();
 
     // Verify each thread’s message is in the file
-    for (int i = 0; i < NUM_THREADS; i++)
+    for (long i = 0; i < NUM_THREADS; i++)
     {
         char expected[BUFFER_SIZE];
-        snprintf(expected, sizeof(expected), "Thread %d logging message", i);
+        snprintf(expected, sizeof(expected), "Thread %ld logging message", i);
 
         f_susbtring_data params_str;
 
