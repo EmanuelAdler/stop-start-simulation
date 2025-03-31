@@ -35,6 +35,10 @@ static bool start_stop_is_active = false;
 #define MAX_ENGINE_TEMP 105
 #define MIN_ENGINE_TEMP 70
 
+/* CAN communication sockets*/
+int sock_sender = -1;
+int sock_receiver = -1;
+
 /* Start/Stop operation logic */
 
 void check_conds(VehicleData *ptr_rec_data)
@@ -71,7 +75,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond1 = 0;
-        log_toggle_event("Stop/Start: Brake not pressed or car is moving!");
+        send_encrypted_message(sock_sender, "error_brake_not_pressed", CAN_ID_ERROR_DASH);
+        log_toggle_event("Stop/Start: SWR2.8 (Brake not pressed or car is moving!)");
     }
 
     /* External and internal temperatures logic */
@@ -83,7 +88,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond2 = 0;
-        log_toggle_event("Stop/Start: Difference between internal and external temps out of range!");
+        send_encrypted_message(sock_sender, "error_temperature_out_range", CAN_ID_ERROR_DASH);
+        log_toggle_event("Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
     }
 
     /* Engine temperature logic */
@@ -99,7 +105,8 @@ void check_conds(VehicleData *ptr_rec_data)
         if (!start_stop_is_active)
         {
             cond3 = 0;
-            log_toggle_event("Stop/Start: Engine temperature out of range!");
+            send_encrypted_message(sock_sender, "error_engine_temperature_out_range", CAN_ID_ERROR_DASH);
+            log_toggle_event("Stop/Start: SWR2.8 (Engine temperature out of range!)");
         }
     }
 
@@ -112,7 +119,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond4 = 0;
-        log_toggle_event("Stop/Start: Battery is not in operating range!");
+        send_encrypted_message(sock_sender, "error_battery_out_range", CAN_ID_ERROR_DASH);
+        log_toggle_event("Stop/Start: SWR2.8 (Battery is not in operating range!)");
     }
 
     /* Door logic */
@@ -124,7 +132,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond5 = 0;
-        log_toggle_event("Stop/Start: One or more doors are opened!");
+        send_encrypted_message(sock_sender, "error_door_open", CAN_ID_ERROR_DASH);
+        log_toggle_event("Stop/Start: SWR2.8 (One or more doors are opened!)");
     }
 
     /* Tilt angle logic */
@@ -136,7 +145,8 @@ void check_conds(VehicleData *ptr_rec_data)
     else
     {
         cond6 = 0;
-        log_toggle_event("Stop/Start: Tilt angle greater than 5 degrees!");
+        send_encrypted_message(sock_sender, "error_tilt_angle", CAN_ID_ERROR_DASH);
+        log_toggle_event("Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)");
     }
 
     /* Check start/stop */
@@ -156,7 +166,7 @@ void check_conds(VehicleData *ptr_rec_data)
         if (start_stop_is_active)
         {
             start_stop_is_active = false;
-            log_toggle_event("Stop/Start: deactivated!");
+            log_toggle_event("Stop/Start: Deactivated");
         }
     }
 }
@@ -178,13 +188,14 @@ static void handle_restart_logic(
             if (data->batt_volt >= MIN_BATTERY_VOLTAGE &&
                 data->batt_soc >= MIN_BATTERY_SOC)
             {
-                send_encrypted_message(sock, "RESTART", CAN_ID_ECU_RESTART);
-                log_toggle_event("Engine On");
+                send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
+                log_toggle_event("Stop/Start: Engine On");
                 clock_gettime(CLOCK_MONOTONIC, restart_start);
                 *is_restarting = true;
             }
             else
             {
+                send_encrypted_message(sock_sender, "error_battery_low", CAN_ID_ERROR_DASH);
                 log_toggle_event("Fault: SWR3.5 (Low Battery)");
             }
         }
@@ -210,7 +221,8 @@ static void handle_restart_logic(
         }
         else if (data->batt_volt < MIN_BATTERY_VOLTAGE)
         {
-            send_encrypted_message(sock, "ABORT", CAN_ID_ECU_RESTART);
+            send_encrypted_message(sock_sender, "ABORT", CAN_ID_ECU_RESTART);
+            send_encrypted_message(sock_sender, "error_battery_drop", CAN_ID_ERROR_DASH);
             log_toggle_event("Fault: SWR3.4 (Battery Drop)");
             *is_restarting = false;
         }
@@ -261,10 +273,6 @@ void *function_start_stop(void *arg)
     return NULL;
 }
 
-/* CAN Communication */
-
-int sock = -1;
-
 void *comms(void *arg)
 {
 
@@ -281,7 +289,7 @@ void *comms(void *arg)
 
         /* CAN Communication logic */
 
-        process_received_frame(sock);
+        process_received_frame(sock_receiver);
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
         if (unlock_result != 0)
@@ -302,8 +310,9 @@ int main()
         return ERROR_CODE;
     }
 
-    sock = create_can_socket(CAN_INTERFACE);
-    if (sock < 0)
+    sock_receiver = create_can_socket(CAN_INTERFACE);
+    sock_sender = create_can_socket(CAN_INTERFACE);
+    if (sock_receiver < 0 || sock_sender < 0)
     {
         return ERROR_CODE;
     }
@@ -321,7 +330,8 @@ int main()
 
     pthread_mutex_destroy(&mutex_powertrain);
 
-    close_can_socket(sock);
+    close_can_socket(sock_receiver);
+    close_can_socket(sock_sender);
 
     cleanup_logging_system();
 
