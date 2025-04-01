@@ -44,8 +44,10 @@ void log_toggle_event(char* message) {
     pthread_mutex_unlock(&logMutex);
 }
 
-void cleanup_logging_system(void) {
-    if (logFile) {
+void cleanup_logging_system(void)
+{
+    if (logFile)
+    {
         fclose(logFile);
         logFile = NULL;
     }

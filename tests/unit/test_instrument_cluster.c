@@ -29,8 +29,8 @@ void test_press_start_stop(void)
 {
     // Initialize logging just so we don't get an error
     set_log_file_path("/tmp/test_ic_stub.log");
-    bool ok = init_logging_system();
-    CU_ASSERT_TRUE_FATAL(ok);
+    bool is_log_ok = init_logging_system();
+    CU_ASSERT_TRUE_FATAL(is_log_ok);
 
     // Reset the stub counter
     stub_can_reset();
@@ -54,8 +54,8 @@ void test_show_dashboard(void)
 {
     // Initialize logging just so we don't get an error
     set_log_file_path("/tmp/test_ic_stub.log");
-    bool ok = init_logging_system();
-    CU_ASSERT_TRUE_FATAL(ok);
+    bool is_log_ok = init_logging_system();
+    CU_ASSERT_TRUE_FATAL(is_log_ok);
 
     // Reset the stub counter
     stub_can_reset();
