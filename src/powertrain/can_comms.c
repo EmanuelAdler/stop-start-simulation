@@ -118,9 +118,10 @@ void process_received_frame_powertrain(int sock)
     int received_bytes = 0;
     char message_log[LOG_MESSAGE_SIZE];
 
-    for(;;)
+    while(received_bytes < AES_BLOCK_SIZE)
     {
-        if (test_mode_powertrain) {
+        if (test_mode_powertrain) 
+        {
             break;
         }
 
@@ -145,7 +146,6 @@ void process_received_frame_powertrain(int sock)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
                         parse_input_received_powertrain(decrypted_message);
-                        received_bytes = 0;
                     }
                 }
                 else
@@ -156,4 +156,5 @@ void process_received_frame_powertrain(int sock)
             }
         }
     }
+    received_bytes = 0;
 }
