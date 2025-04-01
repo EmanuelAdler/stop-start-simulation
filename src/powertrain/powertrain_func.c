@@ -115,7 +115,7 @@ void check_conds(VehicleData *ptr_rec_data)
 
     /* Battery logic */
 
-    if (batt_soc >= MIN_BATTERY_SOC || batt_volt > MIN_BATTERY_VOLTAGE)
+    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
     {
         cond4 = 1;
     }
