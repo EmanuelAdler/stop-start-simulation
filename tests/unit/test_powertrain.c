@@ -210,7 +210,7 @@ static void test_check_conds_deactivate(void)
 }
 
 // 9) Check restart logic
-static void test_handle_restart(void)
+static void test_handle_engine_restart(void)
 {
     // Ensure manual=on, start_stop active
     start_stop_manual = true;
@@ -226,7 +226,7 @@ static void test_handle_restart(void)
     struct timespec tss;
     clock_gettime(CLOCK_MONOTONIC, &tss);
 
-    handle_restart_logic(&data_test, &is_restarting, &tss);
+    handle_engine_restart_logic(&data_test, &is_restarting, &tss);
 
     CU_ASSERT_TRUE(is_restarting);
 }
@@ -411,7 +411,7 @@ int main(void)
     CU_add_test(suite, "fail_cond5",               test_check_conds_fail_cond5);
     CU_add_test(suite, "fail_cond6",               test_check_conds_fail_cond6);
     CU_add_test(suite, "deactivate_when_active",   test_check_conds_deactivate);
-    CU_add_test(suite, "handle_restart",           test_handle_restart);
+    CU_add_test(suite, "handle_engine_restart",    test_handle_engine_restart);
     CU_add_test(suite, "powertrain_comms_loop",    test_powertrain_comms_loop);
     CU_add_test(suite, "test_process_can_frame",   test_process_can_frame);
     CU_add_test(suite, "function_start_stop test", test_function_start_stop);

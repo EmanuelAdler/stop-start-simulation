@@ -174,13 +174,13 @@ void check_conds(VehicleData *ptr_rec_data)
     }
 }
 
-void handle_restart_logic(
+void handle_engine_restart_logic(
     VehicleData *data,
-    bool *is_restarting,
-    struct timespec *restart_start)
+    bool *engine_is_restarting,
+    struct timespec *engine_restart_start)
 {
     /* Restart trigger detection */
-    if (start_stop_is_active && !(*is_restarting))
+    if (start_stop_is_active && !(*engine_is_restarting))
     {
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
@@ -193,8 +193,8 @@ void handle_restart_logic(
             {
                 send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
                 log_toggle_event("Stop/Start: Engine On");
-                clock_gettime(CLOCK_MONOTONIC, restart_start);
-                *is_restarting = true;
+                clock_gettime(CLOCK_MONOTONIC, engine_restart_start);
+                *engine_is_restarting = true;
             }
             else
             {
@@ -209,25 +209,25 @@ void handle_restart_logic(
     data->prev_accel = data->accel;
 
     /* Restart monitoring */
-    if (*is_restarting)
+    if (*engine_is_restarting)
     {
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
 
         const long elapsed_us =
-            ((now.tv_sec - restart_start->tv_sec) * MICROSECS_IN_ONESEC) +
-            ((now.tv_nsec - restart_start->tv_nsec) / NANO_TO_MICRO);
+            ((now.tv_sec - engine_restart_start->tv_sec) * MICROSECS_IN_ONESEC) +
+            ((now.tv_nsec - engine_restart_start->tv_nsec) / NANO_TO_MICRO);
 
         if (elapsed_us > MICROSECS_IN_ONESEC)
         {
-            *is_restarting = false; // Successful restart
+            *engine_is_restarting = false; // Successful restart
         }
         else if (data->batt_volt < MIN_BATTERY_VOLTAGE)
         {
             send_encrypted_message(sock_sender, "ABORT", CAN_ID_ECU_RESTART);
             send_encrypted_message(sock_sender, "error_battery_drop", CAN_ID_ERROR_DASH);
             log_toggle_event("Fault: SWR3.4 (Battery Drop)");
-            *is_restarting = false;
+            *engine_is_restarting = false;
         }
     }
 }
@@ -237,8 +237,8 @@ void *function_start_stop(void *arg)
     VehicleData *ptr_rec_data = (VehicleData *)arg;
     static int prev_brake = 0;
     static int prev_accel = 0;
-    static bool is_restarting = false;
-    static struct timespec restart_start_time;
+    static bool engine_is_restarting = false;
+    static struct timespec engine_restart_start_time;
 
     while (!test_mode_powertrain)
     {
@@ -259,10 +259,10 @@ void *function_start_stop(void *arg)
             printf("Start/Stop = %d\n", start_stop_is_active);
             fflush(stdout);
 
-            handle_restart_logic(
+            handle_engine_restart_logic(
                 ptr_rec_data,
-                &is_restarting,
-                &restart_start_time);
+                &engine_is_restarting,
+                &engine_restart_start_time);
         }
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
