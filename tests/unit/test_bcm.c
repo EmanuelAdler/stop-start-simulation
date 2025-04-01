@@ -363,10 +363,6 @@ void test_sensor_battery_updates_soc_when_running(void)
     pthread_t thread_id;
     pthread_create(&thread_id, NULL, sensor_battery, NULL);
 
-    // Allow it to run at least once
-    sleep_microseconds(THREAD_SLEEP_TIME);
-    test_mode = true;
-
     // Wait for the thread to finish
     pthread_join(thread_id, NULL);
 

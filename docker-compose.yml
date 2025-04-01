@@ -12,7 +12,7 @@ services:
     build: .
     container_name: powertrain
     network_mode: "host"
-    command: ["./bin/receiver"]
+    command: ["./bin/powertrain"]
     volumes:
       - ss_logs_volume:/app/logs
 

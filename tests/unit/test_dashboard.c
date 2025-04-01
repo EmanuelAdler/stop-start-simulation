@@ -17,24 +17,30 @@
 static int init_suite(void)  { return 0; }
 static int clean_suite(void) { return 0; }
 
-/* Utility to search for a substring in a file */
-static bool file_contains_substring(const char *path, const char *substr)
+typedef struct
 {
-    FILE *fp = fopen(path, "r");
-    if (!fp)
+    const char *filepath;
+    const char *substring;
+} f_susbtring_data;
+
+/* Utility to search for a substring in a file */
+static bool file_contains_substring(f_susbtring_data struct_f_subs)
+{
+    FILE *fpath = fopen(struct_f_subs.filepath, "r");
+    if (!fpath)
     {
         return false;
     }
 
     char line[FILE_LINE_SIZE];
     bool found = false;
-    while (fgets(line, sizeof(line), fp)) {
-        if (strstr(line, substr)) {
+    while (fgets(line, sizeof(line), fpath)) {
+        if (strstr(line, struct_f_subs.substring)) {
             found = true;
             break;
         }
     }
-    fclose(fp);
+    fclose(fpath);
     return found;
 }
 
@@ -64,8 +70,12 @@ void test_process_received_frame(void)
 
     // 5) Check the log for "[INFO] System Activated" 
     //    if parse_input_received toggled the system on.
-    CU_ASSERT_TRUE(file_contains_substring("/tmp/test_dashboard_frame.log", 
-                                           "[INFO] System Activated"));
+    f_susbtring_data params_str;
+
+    params_str.filepath = "/tmp/test_dashboard_frame.log";
+    params_str.substring = "[INFO] System Activated";
+
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
 }
 
 //-------------------------------------
@@ -81,11 +91,11 @@ void test_print_dashboard_status(void)
 
     // 3) Open temporary file
     const char *stdout_file = "/tmp/test_dashboard_stdout.txt";
-    FILE *fp = fopen(stdout_file, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(fp);
+    FILE *fpath = fopen(stdout_file, "w");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fpath);
 
     // 4) Redirect stdout to this file
-    int temp_fd = fileno(fp);
+    int temp_fd = fileno(fpath);
     dup2(temp_fd, STDOUT_FILENO);
 
     // 5) Call the function
@@ -95,11 +105,19 @@ void test_print_dashboard_status(void)
     fflush(stdout);
     dup2(saved_stdout_fd, STDOUT_FILENO);
     close(saved_stdout_fd);
-    fclose(fp);
+    fclose(fpath);
 
     // 7) Now check the file for expected text
-    CU_ASSERT_TRUE(file_contains_substring(stdout_file, "=== Dashboard Status ==="));
-    CU_ASSERT_TRUE(file_contains_substring(stdout_file, "Stop/Start button: 0"));
+    f_susbtring_data params_str;
+
+    params_str.filepath = stdout_file;
+    params_str.substring = "=== Dashboard Status ===";
+
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "Stop/Start button: 0";
+
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
 }
 
 int main(void)

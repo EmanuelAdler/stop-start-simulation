@@ -356,7 +356,14 @@ void update_battery_soc(double vehicle_speed)
 void* sensor_battery(void *arg)
 {
     (void) arg;
-    while (!test_mode) 
+    #ifdef UNIT_TEST
+        // Bounded loop
+        int max_iterations = 2;
+        int i;
+        for (i = 0; i < max_iterations; i++)
+    #else
+        while (!test_mode)
+    #endif    
     {
         int lock_result = pthread_mutex_lock(&mutex_bcm);
         if (lock_result != 0) 
