@@ -24,7 +24,7 @@ extern int sock_receiver;
 extern bool start_stop_is_active;
 
 void check_conds(VehicleData *ptr_rec_data);
-void handle_restart_logic(
+void handle_engine_restart_logic(
     VehicleData *data,
     bool *is_restarting,
     struct timespec *restart_start);
