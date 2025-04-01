@@ -5,7 +5,7 @@
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
 
-void sleep_microseconds(long int msec)
+void sleep_microseconds_pw(long int msec)
 {
     struct timespec tspec;
     tspec.tv_sec = msec / MICROSECS_IN_ONESEC;
@@ -13,11 +13,14 @@ void sleep_microseconds(long int msec)
     nanosleep(&tspec, NULL);
 }
 
+bool test_mode_powertrain = false;
+
 /* Powertrain data */
 
 VehicleData rec_data = {0};
 
-static bool start_stop_is_active = false;
+bool start_stop_is_active = false;
+pthread_mutex_t mutex_powertrain;
 
 /* Battery operation */
 
@@ -171,7 +174,7 @@ void check_conds(VehicleData *ptr_rec_data)
     }
 }
 
-static void handle_restart_logic(
+void handle_restart_logic(
     VehicleData *data,
     bool *is_restarting,
     struct timespec *restart_start)
@@ -237,7 +240,7 @@ void *function_start_stop(void *arg)
     static bool is_restarting = false;
     static struct timespec restart_start_time;
 
-    while (true)
+    while (!test_mode_powertrain)
     {
         int lock_result = pthread_mutex_lock(&mutex_powertrain);
         if (lock_result != 0)
@@ -268,18 +271,18 @@ void *function_start_stop(void *arg)
             return NULL;
         }
 
-        sleep_microseconds(SLEEP_TIME_US);
+        sleep_microseconds_pw(SLEEP_TIME_US);
     }
     return NULL;
 }
 
-void *comms(void *arg)
+void *powertrain_comms(void *arg)
 {
 
     (void)printf("Listening for CAN frames...\n");
     (void)fflush(stdout);
 
-    while (true)
+    while (!test_mode_powertrain)
     {
         int lock_result = pthread_mutex_lock(&mutex_powertrain);
         if (lock_result != 0)
@@ -289,7 +292,7 @@ void *comms(void *arg)
 
         /* CAN Communication logic */
 
-        process_received_frame(sock_receiver);
+        process_received_frame_powertrain(sock_receiver);
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);
         if (unlock_result != 0)
@@ -297,7 +300,7 @@ void *comms(void *arg)
             return NULL;
         }
 
-        sleep_microseconds(COMMS_TIME_US);
+        sleep_microseconds_pw(COMMS_TIME_US);
     }
     return NULL;
 }

@@ -21,7 +21,7 @@ int main()
     pthread_t thread_comms;
 
     pthread_create(&thread_start_stop, NULL, function_start_stop, &rec_data);
-    pthread_create(&thread_comms, NULL, comms, NULL);
+    pthread_create(&thread_comms, NULL, powertrain_comms, NULL);
 
     pthread_join(thread_start_stop, NULL);
     pthread_join(thread_comms, NULL);

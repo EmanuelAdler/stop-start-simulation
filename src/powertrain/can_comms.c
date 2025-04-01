@@ -1,12 +1,15 @@
 #include "can_comms.h"
 
-bool check_is_valid_can_id(canid_t can_id)
+bool start_stop_manual = false;
+
+bool check_is_valid_can_id_powertrain(canid_t can_id)
 {
     bool is_valid = false;
 
     switch (can_id)
     {
-    case CAN_ID_COMMAND || CAN_ID_SENSOR_READ:
+    case CAN_ID_COMMAND:
+    case CAN_ID_SENSOR_READ:
         is_valid = true;
         break;
     default:
@@ -16,7 +19,7 @@ bool check_is_valid_can_id(canid_t can_id)
     return is_valid;
 }
 
-void parse_input_received(char *input)
+void parse_input_received_powertrain(char *input)
 {
     printf("%s\n", input);
     fflush(stdout);
@@ -30,13 +33,13 @@ void parse_input_received(char *input)
         }
         else
         {
-            log_toggle_event("Stop*/Start: System Deactivated");
+            log_toggle_event("Stop/Start: System Deactivated");
         }
     }
     /* Check if CAN message is speed */
-    if (sscanf(input, "speed: %.1lf", &rec_data.speed) == 1)
+    if (sscanf(input, "speed: %lf", &rec_data.speed) == 1)
     {
-        (void)printf("received speed = %.1lf\n", rec_data.speed);
+        (void)printf("received speed = %lf\n", rec_data.speed);
         (void)fflush(stdout);
     }
     /* Check if CAN message is internal temperature */
@@ -58,7 +61,7 @@ void parse_input_received(char *input)
         (void)fflush(stdout);
     }
     /* Check if CAN message is tilt angle */
-    if (sscanf(input, "tilt: %.1lf", &rec_data.tilt_angle) == 1)
+    if (sscanf(input, "tilt: %lf", &rec_data.tilt_angle) == 1)
     {
         (void)printf("received tilt = %.1lf\n", rec_data.tilt_angle);
         (void)fflush(stdout);
@@ -82,19 +85,19 @@ void parse_input_received(char *input)
         (void)fflush(stdout);
     }
     /* Check if CAN message is battery SoC */
-    if (sscanf(input, "batt_soc: %.1lf", &rec_data.batt_soc) == 1)
+    if (sscanf(input, "batt_soc: %lf", &rec_data.batt_soc) == 1)
     {
         (void)printf("received batt_soc = %.1lf\n", rec_data.batt_soc);
         (void)fflush(stdout);
     }
     /* Check if CAN message is battery voltage */
-    if (sscanf(input, "batt_volt: %.1lf", &rec_data.batt_volt) == 1)
+    if (sscanf(input, "batt_volt: %lf", &rec_data.batt_volt) == 1)
     {
-        (void)printf("received batt_volt = %.1lf\n", rec_data.batt_volt);
+        (void)printf("received batt_volt = %lf\n", rec_data.batt_volt);
         (void)fflush(stdout);
     }
     /* Check if CAN message is engine temperature */
-    if (sscanf(input, "engi_temp: %.1lf", &rec_data.engi_temp) == 1)
+    if (sscanf(input, "engi_temp: %lf", &rec_data.engi_temp) == 1)
     {
         (void)printf("received engi_temp = %.1lf\n", rec_data.engi_temp);
         (void)fflush(stdout);
@@ -107,7 +110,7 @@ void parse_input_received(char *input)
     }
 }
 
-void process_received_frame(int sock)
+void process_received_frame_powertrain(int sock)
 {
     struct can_frame frame;
     unsigned char encrypted_data[AES_BLOCK_SIZE];
@@ -115,10 +118,15 @@ void process_received_frame(int sock)
     int received_bytes = 0;
     char message_log[LOG_MESSAGE_SIZE];
 
-    for(;;){
+    for(;;)
+    {
+        if (test_mode_powertrain) {
+            break;
+        }
+
         if (receive_can_frame(sock, &frame) == 0)
         {
-            if (check_is_valid_can_id(frame.can_id))
+            if (check_is_valid_can_id_powertrain(frame.can_id))
             {
                 (void)printf("Received CAN ID: %X Data: ", frame.can_id);
                 for (int i = 0; i < frame.can_dlc; i++)
@@ -136,7 +144,7 @@ void process_received_frame(int sock)
                     if (received_bytes == AES_BLOCK_SIZE)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                        parse_input_received(decrypted_message);
+                        parse_input_received_powertrain(decrypted_message);
                         received_bytes = 0;
                     }
                 }

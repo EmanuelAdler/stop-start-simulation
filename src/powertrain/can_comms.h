@@ -5,6 +5,7 @@
 #include "../common_includes/can_id_list.h"
 #include "../common_includes/can_socket.h"
 #include "../common_includes/logging.h"
+#include "globals.h"
 
 #define CAN_INTERFACE ("vcan0")
 #define CAN_DATA_LENGTH (8)
@@ -12,7 +13,7 @@
 #define SUCCESS_CODE (0)
 #define ERROR_CODE (1)
 
-static bool start_stop_manual = false;
+extern bool start_stop_manual;
 extern int sock;
 
 // Vehicle simulation data
@@ -36,8 +37,10 @@ typedef struct {
 
 extern VehicleData rec_data;
 
-bool check_is_valid_can_id(canid_t can_id);
+bool check_is_valid_can_id_powertrain(canid_t can_id);
 
-void process_received_frame(int sock);
+void process_received_frame_powertrain(int sock);
+
+void parse_input_received_powertrain(char *input);
 
 #endif //CAN_COMMS_H
