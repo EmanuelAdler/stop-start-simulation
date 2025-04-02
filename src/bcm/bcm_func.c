@@ -1,20 +1,20 @@
 #include "bcm_func.h"
 
-#define MICRO_CONSTANT_CONV  (1000000L)
-#define NANO_CONSTANT_CONV   (1000)
-#define CSV_LINE_BUFFER      (256)
-#define CSV_MAX_FIELDS       (7)
-#define CSV_MAX_TOKEN_SIZE   (50)
-#define CSV_NUM_FIELD_0      (0)
-#define CSV_NUM_FIELD_1      (1)
-#define CSV_NUM_FIELD_2      (2)
-#define CSV_NUM_FIELD_3      (3)
-#define CSV_NUM_FIELD_4      (4)
-#define CSV_NUM_FIELD_5      (5)
-#define CSV_NUM_FIELD_6      (6)
-#define THREAD_SLEEP_TIME    (100000U)
-#define BATTERY_VOLT_MUL     (0.01125f)
-#define BATTERY_VOLT_SUM     (11.675f)
+#define MICRO_CONSTANT_CONV (1000000L)
+#define NANO_CONSTANT_CONV (1000)
+#define CSV_LINE_BUFFER (256)
+#define CSV_MAX_FIELDS (7)
+#define CSV_MAX_TOKEN_SIZE (50)
+#define CSV_NUM_FIELD_0 (0)
+#define CSV_NUM_FIELD_1 (1)
+#define CSV_NUM_FIELD_2 (2)
+#define CSV_NUM_FIELD_3 (3)
+#define CSV_NUM_FIELD_4 (4)
+#define CSV_NUM_FIELD_5 (5)
+#define CSV_NUM_FIELD_6 (6)
+#define THREAD_SLEEP_TIME (100000U)
+#define BATTERY_VOLT_MUL (0.01125f)
+#define BATTERY_VOLT_SUM (11.675f)
 
 // Global variables definitions
 pthread_mutex_t mutex_bcm;
@@ -29,6 +29,8 @@ VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE] = {0};
 int sock = -1;
 char send_msg[AES_BLOCK_SIZE + 1] = {0};
 bool test_mode = false;
+
+bool data_updated = false;
 
 // Sleep for a given number of microseconds
 void sleep_microseconds(long int microseconds)
@@ -89,29 +91,29 @@ void read_csv(const char *path)
             }
             switch (field)
             {
-                case CSV_NUM_FIELD_0:
-                    vehicle_data[data_size].time = atoi(clean_token);
-                    break;
-                case CSV_NUM_FIELD_1:
-                    vehicle_data[data_size].speed = atof(clean_token);
-                    break;
-                case CSV_NUM_FIELD_2:
-                    vehicle_data[data_size].tilt_angle = atof(clean_token);
-                    break;
-                case CSV_NUM_FIELD_3:
-                    vehicle_data[data_size].internal_temp = atoi(clean_token);
-                    break;
-                case CSV_NUM_FIELD_4:
-                    vehicle_data[data_size].external_temp = atoi(clean_token);
-                    break;
-                case CSV_NUM_FIELD_5:
-                    vehicle_data[data_size].door_open = atoi(clean_token);
-                    break;
-                case CSV_NUM_FIELD_6:
-                    vehicle_data[data_size].engi_temp = atof(clean_token);
-                    break;
-                default:
-                    break;
+            case CSV_NUM_FIELD_0:
+                vehicle_data[data_size].time = atoi(clean_token);
+                break;
+            case CSV_NUM_FIELD_1:
+                vehicle_data[data_size].speed = atof(clean_token);
+                break;
+            case CSV_NUM_FIELD_2:
+                vehicle_data[data_size].tilt_angle = atof(clean_token);
+                break;
+            case CSV_NUM_FIELD_3:
+                vehicle_data[data_size].internal_temp = atoi(clean_token);
+                break;
+            case CSV_NUM_FIELD_4:
+                vehicle_data[data_size].external_temp = atoi(clean_token);
+                break;
+            case CSV_NUM_FIELD_5:
+                vehicle_data[data_size].door_open = atoi(clean_token);
+                break;
+            case CSV_NUM_FIELD_6:
+                vehicle_data[data_size].engi_temp = atof(clean_token);
+                break;
+            default:
+                break;
             }
             token = strtok_r(NULL, ",", &saveptr);
             field++;
@@ -129,34 +131,34 @@ void check_order(int order)
     {
         switch (order)
         {
-            case ORDER_STOP:
-                if (simu_state == STATE_RUNNING || simu_state == STATE_PAUSED)
-                {
-                    simu_state = STATE_STOPPED;
-                }
-                break;
-            case ORDER_RUN:
-                if (simu_state == STATE_STOPPED)
-                {
-                    simu_curr_step = 0;
-                    memset(vehicle_data, 0, sizeof(vehicle_data));
-                    data_size = 0;
-                    read_csv_default();
-                    simu_state = STATE_RUNNING;
-                }
-                else if (simu_state == STATE_PAUSED)
-                {
-                    simu_state = STATE_RUNNING;
-                }
-                break;
-            case ORDER_PAUSE:
-                if (simu_state == STATE_RUNNING)
-                {
-                    simu_state = STATE_PAUSED;
-                }
-                break;
-            default:
-                break;
+        case ORDER_STOP:
+            if (simu_state == STATE_RUNNING || simu_state == STATE_PAUSED)
+            {
+                simu_state = STATE_STOPPED;
+            }
+            break;
+        case ORDER_RUN:
+            if (simu_state == STATE_STOPPED)
+            {
+                simu_curr_step = 0;
+                memset(vehicle_data, 0, sizeof(vehicle_data));
+                data_size = 0;
+                read_csv_default();
+                simu_state = STATE_RUNNING;
+            }
+            else if (simu_state == STATE_PAUSED)
+            {
+                simu_state = STATE_RUNNING;
+            }
+            break;
+        case ORDER_PAUSE:
+            if (simu_state == STATE_RUNNING)
+            {
+                simu_state = STATE_PAUSED;
+            }
+            break;
+        default:
+            break;
         }
     }
 }
@@ -183,6 +185,9 @@ void simu_speed_step(VehicleData *sim_data, ControlData controls)
                 }
             }
         }
+        /* printf("updated data[%d]\n", simu_curr_step);
+        fflush(stdout); */
+        data_updated = true;
         /*
         printf("Time: %d, Speed: %.1f, Int Temp: %d, Ext Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d, Set Temp: %d, Batt SOC: %.1f, Batt Volt: %.1f, Eng Temp: %.1f, Gear: %d\n",
                 sim_data[simu_curr_step].time,
@@ -203,12 +208,12 @@ void simu_speed_step(VehicleData *sim_data, ControlData controls)
         {
             simu_order = ORDER_STOP;
         }
-        simu_curr_step++;
+        sem_post(&sem_comms);
     }
 }
 
 // Thread function to simulate speed updates
-void* simu_speed(void *arg)
+void *simu_speed(void *arg)
 {
     VehicleData *sim_data = (VehicleData *)arg;
     check_order(simu_order);
@@ -229,14 +234,14 @@ void* simu_speed(void *arg)
         *temp_set[i] = DEFAULT_SET_TEMP;
     }
 
-    ControlData control_data = { speed, accel, brake, gear };
+    ControlData control_data = {speed, accel, brake, gear};
 
     while (!test_mode)
     {
         pthread_mutex_lock(&mutex_bcm);
         check_order(simu_order);
         simu_speed_step(sim_data, control_data);
-        pthread_mutex_unlock(&mutex_bcm);        
+        pthread_mutex_unlock(&mutex_bcm);
         sleep_microseconds(THREAD_SLEEP_TIME);
     }
     return NULL;
@@ -245,62 +250,65 @@ void* simu_speed(void *arg)
 // Function to check for updates in simulation data and send CAN messages
 void send_data_update(void)
 {
-    if (vehicle_data[simu_curr_step].speed != vehicle_data[simu_curr_step - 1].speed)
+    /* printf("will send data[%d]\n", simu_curr_step);
+    fflush(stdout); */
+
+    if (vehicle_data[simu_curr_step + 1].speed != vehicle_data[simu_curr_step].speed)
     {
         snprintf(send_msg, sizeof(send_msg), "speed: %.1lf", vehicle_data[simu_curr_step].speed);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].internal_temp != vehicle_data[simu_curr_step - 1].internal_temp)
+    if (vehicle_data[simu_curr_step + 1].internal_temp != vehicle_data[simu_curr_step].internal_temp)
     {
         snprintf(send_msg, sizeof(send_msg), "in_temp: %d", vehicle_data[simu_curr_step].internal_temp);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].external_temp != vehicle_data[simu_curr_step - 1].external_temp)
+    if (vehicle_data[simu_curr_step + 1].external_temp != vehicle_data[simu_curr_step].external_temp)
     {
         snprintf(send_msg, sizeof(send_msg), "ex_temp: %d", vehicle_data[simu_curr_step].external_temp);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].door_open != vehicle_data[simu_curr_step - 1].door_open)
+    if (vehicle_data[simu_curr_step + 1].door_open != vehicle_data[simu_curr_step].door_open)
     {
         snprintf(send_msg, sizeof(send_msg), "door: %d", vehicle_data[simu_curr_step].door_open);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].tilt_angle != vehicle_data[simu_curr_step - 1].tilt_angle)
+    if (vehicle_data[simu_curr_step + 1].tilt_angle != vehicle_data[simu_curr_step].tilt_angle)
     {
         snprintf(send_msg, sizeof(send_msg), "tilt: %.1lf", vehicle_data[simu_curr_step].tilt_angle);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].accel != vehicle_data[simu_curr_step - 1].accel)
+    if (vehicle_data[simu_curr_step + 1].accel != vehicle_data[simu_curr_step].accel)
     {
         snprintf(send_msg, sizeof(send_msg), "accel: %d", vehicle_data[simu_curr_step].accel);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].brake != vehicle_data[simu_curr_step - 1].brake)
+    if (vehicle_data[simu_curr_step + 1].brake != vehicle_data[simu_curr_step].brake)
     {
         snprintf(send_msg, sizeof(send_msg), "brake: %d", vehicle_data[simu_curr_step].brake);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].temp_set != vehicle_data[simu_curr_step - 1].temp_set)
+    if (vehicle_data[simu_curr_step + 1].temp_set != vehicle_data[simu_curr_step].temp_set)
     {
         snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].batt_soc != vehicle_data[simu_curr_step - 1].batt_soc)
+    if (vehicle_data[simu_curr_step + 1].batt_soc != vehicle_data[simu_curr_step].batt_soc)
     {
         snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].batt_volt != vehicle_data[simu_curr_step - 1].batt_volt)
+    if (vehicle_data[simu_curr_step + 1].batt_volt != vehicle_data[simu_curr_step].batt_volt)
     {
         snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].engi_temp != vehicle_data[simu_curr_step - 1].engi_temp)
+    if (vehicle_data[simu_curr_step + 1].engi_temp != vehicle_data[simu_curr_step].engi_temp)
     {
         snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
     }
-    if (vehicle_data[simu_curr_step].gear != vehicle_data[simu_curr_step - 1].gear)
+    if (vehicle_data[simu_curr_step + 1].gear != vehicle_data[simu_curr_step].gear)
     {
         snprintf(send_msg, sizeof(send_msg), "gear: %d", vehicle_data[simu_curr_step].gear);
         send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
@@ -308,19 +316,23 @@ void send_data_update(void)
 }
 
 // Communication thread function
-void* comms(void *arg)
+void *comms(void *arg)
 {
-    (void) arg;
+    (void)arg;
     while (!test_mode)
     {
+        sem_wait(&sem_comms);
+
         int lock_result = pthread_mutex_lock(&mutex_bcm);
         if (lock_result != 0)
         {
             return NULL;
         }
-        if (simu_state == STATE_RUNNING)
+        if (simu_state == STATE_RUNNING && data_updated)
         {
             send_data_update();
+            data_updated = false; // ready to update data again after sending
+            simu_curr_step++;
         }
         pthread_mutex_unlock(&mutex_bcm);
         sleep_microseconds(THREAD_SLEEP_TIME);
@@ -331,15 +343,15 @@ void* comms(void *arg)
 // Update battery state of charge based on vehicle speed
 void update_battery_soc(double vehicle_speed)
 {
-    if (vehicle_speed > 0.0) 
+    if (vehicle_speed > 0.0)
     {
         batt_soc += BATTERY_SOC_INCREMENT;
         if (batt_soc > MAX_BATTERY_SOC)
         {
             batt_soc = MAX_BATTERY_SOC;
         }
-    } 
-    else 
+    }
+    else
     {
         batt_soc -= BATTERY_SOC_DECREMENT;
         if (batt_soc < 0)
@@ -353,24 +365,24 @@ void update_battery_soc(double vehicle_speed)
 }
 
 // Battery sensor thread function
-void* sensor_battery(void *arg)
+void *sensor_battery(void *arg)
 {
-    (void) arg;
-    #ifdef UNIT_TEST
-        // Bounded loop
-        int max_iterations = 2;
-        int i;
-        for (i = 0; i < max_iterations; i++)
-    #else
-        while (!test_mode)
-    #endif    
+    (void)arg;
+#ifdef UNIT_TEST
+    // Bounded loop
+    int max_iterations = 2;
+    int i;
+    for (i = 0; i < max_iterations; i++)
+#else
+    while (!test_mode)
+#endif
     {
         int lock_result = pthread_mutex_lock(&mutex_bcm);
-        if (lock_result != 0) 
+        if (lock_result != 0)
         {
             return NULL;
         }
-        if (simu_state == STATE_RUNNING) 
+        if (simu_state == STATE_RUNNING)
         {
             update_battery_soc(vehicle_data[simu_curr_step].speed);
         }
