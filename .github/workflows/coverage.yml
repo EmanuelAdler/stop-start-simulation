@@ -22,7 +22,8 @@ jobs:
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
           sudo apt install -y gcc-14 g++-14 can-utils \
-            linux-modules-extra-$(uname -r)
+            linux-modules-extra-$(uname -r) \
+            libcunit1 libcunit1-doc libcunit1-dev
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
           gcc --version
