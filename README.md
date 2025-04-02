@@ -1,4 +1,9 @@
 # Stop/Start (SS) Simulation
+
+![Tests](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/auto-tests.yml/badge.svg)
+![Coverage](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/coverage.yml/badge.svg)
+![Static Analysis](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/linting.yml/badge.svg)
+
 This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
 ## Requirements  
