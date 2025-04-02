@@ -34,8 +34,13 @@ jobs:
           sudo make install
           lcov --version
 
+      - name: Install can interface
+        run: sudo ./setup_vcan.sh
+
       - name: Generate coverage report
-        run: make coverage
+        run: |
+          cd tests/
+          make coverage
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
