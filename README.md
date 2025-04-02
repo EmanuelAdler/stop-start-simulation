@@ -112,13 +112,28 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 **Workflow File:** `.github/workflows/auto-tests.yml`
 
 **Triggers:**
-- Runs on every pull request to the `develop` branch.
+- Runs on every pull request to the `main` or the `develop` branch.
 
 **Key Steps:**
 - **Checkout Code:** Retrieves the latest code from the repository.
-- **Install Dependencies:** Installs necessary packages, including `can-utils`, `libcunit1-dev`, `lcov`, and required kernel modules.
+- **Install Dependencies:** Installs necessary packages, including `can-utils`, `libcunit1-dev`, and required kernel modules.
 - **Set Up CAN Interface:** Executes `setup_vcan.sh` to configure the virtual CAN interface.
 - **Run Tests:** Executes `make test` to compile and run unit and integration tests.
+
+### 5. Coverage Report Workflow
+**Purpose:** Automatically generates a test coverage report using GCC 14.2.0 and LCOV 2.3-1, including MC/DC and branch coverage.
+
+**Workflow File:** `.github/workflows/coverage.yml`
+
+**Triggers:**
+- Runs on every push to the `main` branch.
+
+**Key Steps:**
+- **Install GCC 14.2.0 & LCOV 2.3-1:** Ensures full support for branch and MC/DC analysis.
+- **Generate Coverage:** Uses `make coverage` to run tests and produce a report.
+- **Publish to GitHub Pages:** The report is deployed to the `gh-pages` branch and can be accessed online.
+
+📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation](https://emanueladler.github.io/stop-start-simulation)
 
 ## Communication Test
 Send a message via CAN:
