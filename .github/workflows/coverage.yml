@@ -1,0 +1,44 @@
+name: Coverage Report
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  generate-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install essential build tools
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential curl make python3
+
+      - name: Install GCC 14.2.0
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt update
+          sudo apt install -y gcc-14 g++-14
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
+          gcc --version
+
+      - name: Install LCOV 2.3-1
+        run: |
+          curl -LO https://github.com/linux-test-project/lcov/releases/download/v2.3/lcov-2.3.tar.gz
+          tar -xzf lcov-2.3.tar.gz
+          cd lcov-2.3
+          sudo make install
+          lcov --version
+
+      - name: Generate coverage report
+        run: make coverage
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: ./tests/coverage_report
