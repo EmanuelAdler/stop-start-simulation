@@ -21,7 +21,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
-          sudo apt install -y gcc-14 g++-14 gcov-14 can-utils \
+          sudo apt install -y gcc-14 g++-14 can-utils \
             linux-modules-extra-$(uname -r) \
             libcunit1 libcunit1-doc libcunit1-dev
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
@@ -29,7 +29,7 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-14 100
           gcc --version
           gcov --version
-      
+
       - name: Install LCOV 2.3-1
         run: |
           sudo apt install -y cpanminus  # instala cpanm
