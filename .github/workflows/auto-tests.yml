@@ -26,6 +26,7 @@ jobs:
 
       - name: Build and run unit tests
         run: |
+          cd tests/
           make clean
           make all
           make test
