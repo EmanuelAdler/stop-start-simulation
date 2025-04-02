@@ -29,6 +29,7 @@ VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE] = {0};
 int sock = -1;
 char send_msg[AES_BLOCK_SIZE + 1] = {0};
 bool test_mode = false;
+sem_t sem_comms;
 
 bool data_updated = false;
 

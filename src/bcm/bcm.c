@@ -2,8 +2,6 @@
 
 #define CAN_INTERFACE       ("vcan0")
 
-sem_t sem_comms;
-
 int main(void)
 {
     // Create CAN socket using the defined interface (vcan0)
