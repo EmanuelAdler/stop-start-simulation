@@ -29,10 +29,12 @@ jobs:
 
       - name: Install LCOV 2.3-1
         run: |
+          sudo apt install -y cpanminus  # instala cpanm
           curl -LO https://github.com/linux-test-project/lcov/releases/download/v2.3/lcov-2.3.tar.gz
           tar -xzf lcov-2.3.tar.gz
           cd lcov-2.3
           sudo make install
+          sudo cpanm Capture::Tiny
           lcov --version
 
       - name: Setup virtual CAN interface
