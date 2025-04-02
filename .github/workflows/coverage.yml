@@ -17,11 +17,12 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential curl make python3
 
-      - name: Install GCC 14.2.0
+      - name: Install GCC 14.2.0 and CAN tools
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
-          sudo apt install -y gcc-14 g++-14 can-utils
+          sudo apt install -y gcc-14 g++-14 can-utils \
+            linux-modules-extra-$(uname -r)
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
           gcc --version
@@ -34,7 +35,7 @@ jobs:
           sudo make install
           lcov --version
 
-      - name: Install can interface
+      - name: Setup virtual CAN interface
         run: sudo ./setup_vcan.sh
 
       - name: Generate coverage report
