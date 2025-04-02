@@ -2,8 +2,8 @@
 # Compiler and Flags
 #===============================================================================
 CC       = gcc
-CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage -DUNIT_TEST
-LDFLAGS  = -fprofile-arcs -ftest-coverage -lcunit -lssl -lcrypto -lpthread
+CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage -fcondition-coverage -DUNIT_TEST
+LDFLAGS  = -fprofile-arcs -ftest-coverage -fcondition-coverage -lcunit -lssl -lcrypto -lpthread
 
 #===============================================================================
 # Directories
@@ -184,12 +184,16 @@ test: all
 coverage: test
 	@echo "Generating coverage data..."
 	# Capture coverage with branch info
-	lcov --rc branch_coverage=1  --rc mcdc_coverage=1 --capture --directory . --output-file coverage.info
+	lcov --rc branch_coverage=1 --rc mcdc_coverage=1 \
+     --capture --directory . \
+     --output-file coverage.info \
+     --exclude 'tests/*'
 
-	# Optionally exclude test code from final coverage
-	lcov --remove coverage.info "**/tests/*" --output-file coverage.info
-
-	genhtml --branch-coverage --mcdc-coverage coverage.info --output-directory coverage_report
+	genhtml \
+	 --branch-coverage \
+	 --mcdc-coverage \
+	 coverage.info \
+	 --output-directory coverage_report
 
 	@echo "Coverage report -> coverage_report/index.html"
 
