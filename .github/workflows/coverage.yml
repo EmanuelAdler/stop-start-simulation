@@ -35,6 +35,7 @@ jobs:
           cd lcov-2.3
           sudo make install
           sudo cpanm Capture::Tiny
+          sudo cpanm DateTime
           lcov --version
 
       - name: Setup virtual CAN interface
