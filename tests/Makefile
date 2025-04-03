@@ -1,9 +1,24 @@
 #===============================================================================
+# Version Checks (GCC >= 14.2.0 and LCOV >= 2.3-1)
+#===============================================================================
+GCC_VERSION := $(shell gcc -dumpfullversion -dumpversion)
+GCC_OK := $(shell [ "$$(printf '%s\n' '14.2.0' '$(GCC_VERSION)' | sort -V | head -n1)" = '14.2.0' ] && echo 1 || echo 0)
+
+LCOV_VERSION := $(shell lcov --version 2>/dev/null | grep -o '[0-9]\+\.[0-9]\+\(-[0-9]\+\)\?' | head -n1)
+LCOV_OK := $(shell [ "$$(printf '%s\n' '2.3-1' '$(LCOV_VERSION)' | sort -V | head -n1)" = '2.3-1' ] && echo 1 || echo 0)
+
+$(info GCC_VERSION is $(GCC_VERSION))
+$(info GCC_OK is $(GCC_OK))
+$(info LCOV_VERSION is $(LCOV_VERSION))
+$(info LCOV_OK is $(LCOV_OK))
+
+#===============================================================================
 # Compiler and Flags
 #===============================================================================
 CC       = gcc
-CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage -fcondition-coverage -DUNIT_TEST
-LDFLAGS  = -fprofile-arcs -ftest-coverage -fcondition-coverage -lcunit -lssl -lcrypto -lpthread
+COND_COVERAGE_FLAG := $(if $(and $(findstring 1,$(GCC_OK)),$(findstring 1,$(LCOV_OK))),-fcondition-coverage,)
+CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage $(COND_COVERAGE_FLAG) -DUNIT_TEST
+LDFLAGS  = -fprofile-arcs -ftest-coverage $(COND_COVERAGE_FLAG) -lcunit -lssl -lcrypto -lpthread
 
 #===============================================================================
 # Directories
