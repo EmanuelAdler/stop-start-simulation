@@ -71,7 +71,9 @@ void check_disable_engine(VehicleData *ptr_rec_data)
 
     /* Speed, gear, acceleration and brake logic */
 
-    if (speed == 0 && !accel && brake && !gear)
+    bool movement_cond = (speed == 0 && !accel && brake && !gear);
+
+    if (movement_cond)
     {
         cond1 = 1;
     }
@@ -84,7 +86,9 @@ void check_disable_engine(VehicleData *ptr_rec_data)
 
     /* External and internal temperatures logic */
 
-    if (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp >= temp_set)
+    bool ext_int_temp_cond = (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp >= temp_set);
+
+    if (ext_int_temp_cond)
     {
         cond2 = 1;
     }
@@ -102,7 +106,9 @@ void check_disable_engine(VehicleData *ptr_rec_data)
 
     /* Engine temperature logic */
 
-    if (engi_temp >= MIN_ENGINE_TEMP && engi_temp <= MAX_ENGINE_TEMP)
+    bool engine_temp_cond = (engi_temp >= MIN_ENGINE_TEMP && engi_temp <= MAX_ENGINE_TEMP);
+
+    if (engine_temp_cond)
     {
         cond3 = 1;
     }
@@ -120,7 +126,9 @@ void check_disable_engine(VehicleData *ptr_rec_data)
 
     /* Battery logic */
 
-    if (batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE)
+    bool batt_cond = batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE;
+
+    if (batt_cond)
     {
         cond4 = 1;
     }
