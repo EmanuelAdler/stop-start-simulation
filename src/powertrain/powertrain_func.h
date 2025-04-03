@@ -21,9 +21,9 @@
 extern pthread_mutex_t mutex_powertrain;
 extern int sock_sender;
 extern int sock_receiver;
-extern bool start_stop_is_active;
+extern bool engine_off;
 
-void check_conds(VehicleData *ptr_rec_data);
+void check_disable_engine(VehicleData *ptr_rec_data);
 void handle_engine_restart_logic(
     VehicleData *data,
     bool *is_restarting,

@@ -19,7 +19,7 @@ bool test_mode_powertrain = false;
 
 VehicleData rec_data = {0};
 
-bool start_stop_is_active = false;
+bool engine_off = false;
 pthread_mutex_t mutex_powertrain;
 
 /* Battery operation */
@@ -44,7 +44,7 @@ int sock_receiver = -1;
 
 /* Start/Stop operation logic */
 
-void check_conds(VehicleData *ptr_rec_data)
+void check_disable_engine(VehicleData *ptr_rec_data)
 {
     int time = ptr_rec_data->time;
     double speed = ptr_rec_data->speed;
@@ -105,7 +105,7 @@ void check_conds(VehicleData *ptr_rec_data)
     {
         /* If start/stop is already active and engine temperature decreases,
         start stop won't be disabled by that */
-        if (!start_stop_is_active)
+        if (!engine_off)
         {
             cond3 = 0;
             send_encrypted_message(sock_sender, "error_engine_temperature_out_range", CAN_ID_ERROR_DASH);
@@ -156,20 +156,11 @@ void check_conds(VehicleData *ptr_rec_data)
 
     if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
     {
-        /* Will only activate stop/start once, when it's not activated */
-        if (!start_stop_is_active)
+        /* Will only attempt to deactivate the engine if it's activated */
+        if (!engine_off)
         {
-            start_stop_is_active = true;
-            log_toggle_event("Stop/Start: Activated");
-        }
-    }
-    else
-    {
-        /* Will only deactivate stop/start once, when it's activated */
-        if (start_stop_is_active)
-        {
-            start_stop_is_active = false;
-            log_toggle_event("Stop/Start: Deactivated");
+            engine_off = true;
+            log_toggle_event("Stop/Start: Engine turned Off");
         }
     }
 }
@@ -180,7 +171,7 @@ void handle_engine_restart_logic(
     struct timespec *engine_restart_start)
 {
     /* Restart trigger detection */
-    if (start_stop_is_active && !(*engine_is_restarting))
+    if (engine_off && !(*engine_is_restarting))
     {
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
@@ -192,7 +183,8 @@ void handle_engine_restart_logic(
                 data->batt_soc >= MIN_BATTERY_SOC)
             {
                 send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
-                log_toggle_event("Stop/Start: Engine On");
+                log_toggle_event("Stop/Start: Engine turned On");
+                engine_off = false;
                 clock_gettime(CLOCK_MONOTONIC, engine_restart_start);
                 *engine_is_restarting = true;
             }
@@ -254,9 +246,9 @@ void *function_start_stop(void *arg)
         {
             /* Check the conditions to activate Stop/Start */
 
-            check_conds(ptr_rec_data);
+            check_disable_engine(ptr_rec_data);
 
-            printf("Start/Stop = %d\n", start_stop_is_active);
+            printf("Start/Stop = %d\n", engine_off);
             fflush(stdout);
 
             handle_engine_restart_logic(
