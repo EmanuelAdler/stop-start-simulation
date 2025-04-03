@@ -15,6 +15,10 @@
 #define THREAD_SLEEP_TIME (100000U)
 #define BATTERY_VOLT_MUL (0.01125f)
 #define BATTERY_VOLT_SUM (11.675f)
+#define BATTERY_SOC_MUL (5.0f)
+#define VOLTAGE_OFFSET_VALUE (-0.8f)
+#define SOC_THRESHOLD (30.0f)
+#define VOLTAGE_DEC (0.5f)
 
 // Global variables definitions
 pthread_mutex_t mutex_bcm;
@@ -344,23 +348,31 @@ void *comms(void *arg)
 // Update battery state of charge based on vehicle speed
 void update_battery_soc(double vehicle_speed)
 {
-    if (vehicle_speed > 0.0)
+    if (vehicle_speed > 0.0) 
     {
         batt_soc += BATTERY_SOC_INCREMENT;
         if (batt_soc > MAX_BATTERY_SOC)
         {
             batt_soc = MAX_BATTERY_SOC;
         }
-    }
-    else
+        batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM;
+    } 
+    else 
     {
-        batt_soc -= BATTERY_SOC_DECREMENT;
+        batt_soc -= (BATTERY_SOC_DECREMENT * BATTERY_SOC_MUL);
         if (batt_soc < 0)
         {
             batt_soc = 0;
         }
+        
+        batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM + VOLTAGE_OFFSET_VALUE;
+        
+        if (batt_soc < SOC_THRESHOLD)
+        {
+            batt_volt -= VOLTAGE_DEC;
+        }
     }
-    batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM;
+    
     vehicle_data[simu_curr_step].batt_soc = batt_soc;
     vehicle_data[simu_curr_step].batt_volt = batt_volt;
 }
