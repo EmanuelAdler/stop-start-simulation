@@ -255,69 +255,41 @@ void *simu_speed(void *arg)
 // Function to check for updates in simulation data and send CAN messages
 void send_data_update(void)
 {
-    /* printf("will send data[%d]\n", simu_curr_step);
-    fflush(stdout); */
+    snprintf(send_msg, sizeof(send_msg), "speed: %.1lf", vehicle_data[simu_curr_step].speed);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
 
-    if (vehicle_data[simu_curr_step + 1].speed != vehicle_data[simu_curr_step].speed)
-    {
-        snprintf(send_msg, sizeof(send_msg), "speed: %.1lf", vehicle_data[simu_curr_step].speed);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].internal_temp != vehicle_data[simu_curr_step].internal_temp)
-    {
-        snprintf(send_msg, sizeof(send_msg), "in_temp: %d", vehicle_data[simu_curr_step].internal_temp);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].external_temp != vehicle_data[simu_curr_step].external_temp)
-    {
-        snprintf(send_msg, sizeof(send_msg), "ex_temp: %d", vehicle_data[simu_curr_step].external_temp);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].door_open != vehicle_data[simu_curr_step].door_open)
-    {
-        snprintf(send_msg, sizeof(send_msg), "door: %d", vehicle_data[simu_curr_step].door_open);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].tilt_angle != vehicle_data[simu_curr_step].tilt_angle)
-    {
-        snprintf(send_msg, sizeof(send_msg), "tilt: %.1lf", vehicle_data[simu_curr_step].tilt_angle);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].accel != vehicle_data[simu_curr_step].accel)
-    {
-        snprintf(send_msg, sizeof(send_msg), "accel: %d", vehicle_data[simu_curr_step].accel);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].brake != vehicle_data[simu_curr_step].brake)
-    {
-        snprintf(send_msg, sizeof(send_msg), "brake: %d", vehicle_data[simu_curr_step].brake);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].temp_set != vehicle_data[simu_curr_step].temp_set)
-    {
-        snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].batt_soc != vehicle_data[simu_curr_step].batt_soc)
-    {
-        snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].batt_volt != vehicle_data[simu_curr_step].batt_volt)
-    {
-        snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].engi_temp != vehicle_data[simu_curr_step].engi_temp)
-    {
-        snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
-    if (vehicle_data[simu_curr_step + 1].gear != vehicle_data[simu_curr_step].gear)
-    {
-        snprintf(send_msg, sizeof(send_msg), "gear: %d", vehicle_data[simu_curr_step].gear);
-        send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
-    }
+    snprintf(send_msg, sizeof(send_msg), "in_temp: %d", vehicle_data[simu_curr_step].internal_temp);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "ex_temp: %d", vehicle_data[simu_curr_step].external_temp);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "door: %d", vehicle_data[simu_curr_step].door_open);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "tilt: %.1lf", vehicle_data[simu_curr_step].tilt_angle);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "accel: %d", vehicle_data[simu_curr_step].accel);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "brake: %d", vehicle_data[simu_curr_step].brake);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+
+    snprintf(send_msg, sizeof(send_msg), "gear: %d", vehicle_data[simu_curr_step].gear);
+    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
 }
 
 // Communication thread function
@@ -348,7 +320,7 @@ void *comms(void *arg)
 // Update battery state of charge based on vehicle speed
 void update_battery_soc(double vehicle_speed)
 {
-    if (vehicle_speed > 0.0) 
+    if (vehicle_speed > 0.0)
     {
         batt_soc += BATTERY_SOC_INCREMENT;
         if (batt_soc > MAX_BATTERY_SOC)
@@ -356,23 +328,23 @@ void update_battery_soc(double vehicle_speed)
             batt_soc = MAX_BATTERY_SOC;
         }
         batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM;
-    } 
-    else 
+    }
+    else
     {
         batt_soc -= (BATTERY_SOC_DECREMENT * BATTERY_SOC_MUL);
         if (batt_soc < 0)
         {
             batt_soc = 0;
         }
-        
+
         batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM + VOLTAGE_OFFSET_VALUE;
-        
+
         if (batt_soc < SOC_THRESHOLD)
         {
             batt_volt -= VOLTAGE_DEC;
         }
     }
-    
+
     vehicle_data[simu_curr_step].batt_soc = batt_soc;
     vehicle_data[simu_curr_step].batt_volt = batt_volt;
 }
