@@ -14,6 +14,10 @@ int main(void)
     // Set simulation order to RUN
     simu_order = ORDER_RUN;
 
+    // Initialize semaphores
+    //sem_init(&sem_stop_start, 0, 1);    // Stop/Start can produce initially
+    sem_init(&sem_comms, 0, 0);         // Comms must wait
+
     // Initialize mutex for simulation
     pthread_mutex_init(&mutex_bcm, NULL);
 
@@ -33,6 +37,10 @@ int main(void)
 
     // Clean up
     pthread_mutex_destroy(&mutex_bcm);
+
+    //sem_destroy(&sem_stop_start);
+    sem_destroy(&sem_comms);
+
     close_can_socket(sock);
 
     return EXIT_SUCCESS;

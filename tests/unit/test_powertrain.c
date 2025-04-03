@@ -13,6 +13,7 @@
 
 #define LOG_EVENT_MSG_SIZE     (256)
 #define TEMP_OK                (25)
+#define TEMP_HIGH              (31)
 #define TEMP_LOW               (20)
 #define TEMP_FAIL              (31)
 #define TEMP_SET_OK            (25)
@@ -77,7 +78,7 @@ static VehicleData base_ok_data(void)
     VehicleData data_test = {
         .speed         = SPEED_OK,
         .internal_temp = TEMP_OK,
-        .external_temp = TEMP_LOW,
+        .external_temp = TEMP_HIGH,
         .door_open     = DOOR_OK,
         .tilt_angle    = TILT_OK,
         .accel         = ACCEL_OK,

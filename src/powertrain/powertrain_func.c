@@ -84,7 +84,7 @@ void check_conds(VehicleData *ptr_rec_data)
 
     /* External and internal temperatures logic */
 
-    if (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp <= temp_set)
+    if (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp >= temp_set)
     {
         cond2 = 1;
     }
