@@ -96,118 +96,119 @@ static VehicleData base_ok_data(void)
 // Unit tests
 
 // 1) All conditions OK => should set cond1..cond6=1 => activates if not already active
-static void test_check_conds_all_ok(void)
+static void test_check_disable_engine_all_ok(void)
 {
-    // Test example of "check_conds()"
-    start_stop_is_active = false;
+    // Test example of "check_disable_engine()"
+    engine_off = false;
     start_stop_manual = true; // simulates manual trigger
 
     VehicleData data_test = base_ok_data();
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_TRUE(start_stop_is_active);
+    CU_ASSERT_TRUE(engine_off);
 }
 
 // 2) Fail cond1 => e.g. brake=0
-static void test_check_conds_fail_cond1(void)
+static void test_check_disable_engine_fail_cond1(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false; // so the error branch triggers
+    engine_off = false; // so the error branch triggers
 
     VehicleData data_test = base_ok_data();
     data_test.brake = BRAKE_FAIL; // failing condition speed==0 && !accel && brake => now brake=0 => else branch
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    // cond1 = 0 => start_stop_is_active should remain false
-    CU_ASSERT_FALSE(start_stop_is_active);
+    // cond1 = 0 => engine_off should remain false
+    CU_ASSERT_FALSE(engine_off);
 }
 
 // 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5)
-static void test_check_conds_fail_cond2(void)
+static void test_check_disable_engine_fail_cond2(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false;
+    engine_off = false;
 
     VehicleData data_test = base_ok_data();
     data_test.internal_temp = TEMP_FAIL; // triggers the else for cond2
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_FALSE(start_stop_is_active);
+    CU_ASSERT_FALSE(engine_off);
 }
 
 // 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60
-static void test_check_conds_fail_cond3_inactive(void)
+static void test_check_disable_engine_fail_cond3_inactive(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false;
+    engine_off = false;
 
     VehicleData data_test = base_ok_data();
     data_test.engi_temp = ENG_TEMP_FAIL; // below MIN_ENGINE_TEMP(70)
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_FALSE(start_stop_is_active);
+    CU_ASSERT_FALSE(engine_off);
 }
 
 // 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2
-static void test_check_conds_fail_cond4(void)
+static void test_check_disable_engine_fail_cond4(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false;
+    engine_off = false;
 
     VehicleData data_test = base_ok_data();
     data_test.batt_soc  = BATT_SOC_LOW; // below 70
     data_test.batt_volt = BATT_VOLT_LOW; // not > 12.2 => triggers else
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_FALSE(start_stop_is_active);
+    CU_ASSERT_FALSE(engine_off);
 }
 
 // 6) Fail cond5 => door_open != 0
-static void test_check_conds_fail_cond5(void)
+static void test_check_disable_engine_fail_cond5(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false;
+    engine_off = false;
 
     VehicleData data_test = base_ok_data();
     data_test.door_open = DOOR_FAIL; // triggers the else for cond5
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_FALSE(start_stop_is_active);
+    CU_ASSERT_FALSE(engine_off);
 }
 
 // 7) Fail cond6 => tilt_angle > 5
-static void test_check_conds_fail_cond6(void)
+static void test_check_disable_engine_fail_cond6(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = false;
+    engine_off = false;
 
     VehicleData data_test = base_ok_data();
     data_test.tilt_angle = TILT_FAIL; // triggers the else for cond6
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    CU_ASSERT_FALSE(start_stop_is_active);
+    CU_ASSERT_FALSE(engine_off);
 }
 
-// 8) Start_stop_is_active=true => then ANY cond fails => triggers deactivation
-static void test_check_conds_deactivate(void)
+// 8) engine_off=false => then if ANY cond related to movement succeeds => triggers engine deactivation
+static void test_check_disable_engine(void)
 {
     start_stop_manual    = true;
-    start_stop_is_active = true; // simulate it's already active
+    engine_off = false; // simulate engine it's already on
 
     VehicleData data_test = base_ok_data();
-    data_test.brake = BRAKE_FAIL; // fail cond1 => we go to else => if (start_stop_is_active){ ... }
+    data_test.prev_brake = BRAKE_FAIL;
+    data_test.brake = BRAKE_OK; // fail cond1 => handle_engine_restart_logic should enable engine
 
-    check_conds(&data_test);
+    check_disable_engine(&data_test);
 
-    // Now it should have deactivated
-    CU_ASSERT_FALSE(start_stop_is_active);
+    // Now the engine should have deactivated
+    CU_ASSERT_TRUE(engine_off);
 }
 
 // 9) Check restart logic
@@ -215,7 +216,7 @@ static void test_handle_engine_restart(void)
 {
     // Ensure manual=on, start_stop active
     start_stop_manual = true;
-    start_stop_is_active = true;
+    engine_off = true;
 
     VehicleData data_test = {
         .prev_brake = BRAKE_OK, 
@@ -299,9 +300,9 @@ static void test_function_start_stop(void)
     //    pthread_mutex_init(&mutex_powertrain, NULL);
     test_mode_powertrain = false;   // so the function won't exit immediately
     start_stop_manual    = true;    // "driver" turned on stop/start
-    start_stop_is_active = false;   // begins inactive
+    engine_off = false;   // begins inactive
 
-    // 2. Set up a VehicleData with conditions that pass check_conds()
+    // 2. Set up a VehicleData with conditions that pass check_disable_engine()
     VehicleData data_test = base_ok_data();
 
     // 3. Start the function_start_stop in a separate thread
@@ -311,9 +312,9 @@ static void test_function_start_stop(void)
     // 4. Let the thread run for a moment
     sleep_microseconds_pw(USLEEP_DELAY_THREAD); // 200ms - enough time for the loop to run a couple times
 
-    // 5. Check if start_stop_is_active got set to 'true'
-    //    Because our conditions above should pass in check_conds().
-    CU_ASSERT_TRUE(start_stop_is_active);
+    // 5. Check if engine_off got set to 'true'
+    //    Because our conditions above should pass in check_disable_engine().
+    CU_ASSERT_TRUE(engine_off);
 
     // 6. Now signal the loop to exit
     test_mode_powertrain = true;
@@ -404,14 +405,14 @@ int main(void)
     }
 
     // Add tests
-    CU_add_test(suite, "check_conds_all_ok",       test_check_conds_all_ok);
-    CU_add_test(suite, "fail_cond1",               test_check_conds_fail_cond1);
-    CU_add_test(suite, "fail_cond2",               test_check_conds_fail_cond2);
-    CU_add_test(suite, "fail_cond3_inactive",      test_check_conds_fail_cond3_inactive);
-    CU_add_test(suite, "fail_cond4",               test_check_conds_fail_cond4);
-    CU_add_test(suite, "fail_cond5",               test_check_conds_fail_cond5);
-    CU_add_test(suite, "fail_cond6",               test_check_conds_fail_cond6);
-    CU_add_test(suite, "deactivate_when_active",   test_check_conds_deactivate);
+    CU_add_test(suite, "check_disable_engine_all_ok",       test_check_disable_engine_all_ok);
+    CU_add_test(suite, "fail_cond1",               test_check_disable_engine_fail_cond1);
+    CU_add_test(suite, "fail_cond2",               test_check_disable_engine_fail_cond2);
+    CU_add_test(suite, "fail_cond3_inactive",      test_check_disable_engine_fail_cond3_inactive);
+    CU_add_test(suite, "fail_cond4",               test_check_disable_engine_fail_cond4);
+    CU_add_test(suite, "fail_cond5",               test_check_disable_engine_fail_cond5);
+    CU_add_test(suite, "fail_cond6",               test_check_disable_engine_fail_cond6);
+    CU_add_test(suite, "deactivate_when_active",   test_check_disable_engine);
     CU_add_test(suite, "handle_engine_restart",    test_handle_engine_restart);
     CU_add_test(suite, "powertrain_comms_loop",    test_powertrain_comms_loop);
     CU_add_test(suite, "test_process_can_frame",   test_process_can_frame);
