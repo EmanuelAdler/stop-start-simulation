@@ -90,9 +90,14 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
     else
     {
-        cond2 = 0;
-        send_encrypted_message(sock_sender, "error_temperature_out_range", CAN_ID_ERROR_DASH);
-        log_toggle_event("Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
+        /* If engine is already off and temperature is out of range,
+        engine won't be turned on (cond2 won't be 0) */
+        if (!engine_off)
+        {
+            cond2 = 0;
+            send_encrypted_message(sock_sender, "error_temperature_out_range", CAN_ID_ERROR_DASH);
+            log_toggle_event("Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
+        }
     }
 
     /* Engine temperature logic */
@@ -103,8 +108,8 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
     else
     {
-        /* If start/stop is already active and engine temperature decreases,
-        start stop won't be disabled by that */
+        /* If engine is already off and engine temperature is out of range,
+        engine won't be turned on (cond3 won't be 0) */
         if (!engine_off)
         {
             cond3 = 0;
@@ -121,9 +126,14 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
     else
     {
-        cond4 = 0;
-        send_encrypted_message(sock_sender, "error_battery_out_range", CAN_ID_ERROR_DASH);
-        log_toggle_event("Stop/Start: SWR2.8 (Battery is not in operating range!)");
+        /* If engine is already off and batery is operating out of range,
+        engine won't be turned on (cond4 won't be 0) */
+        if (!engine_off)
+        {
+            cond4 = 0;
+            send_encrypted_message(sock_sender, "error_battery_out_range", CAN_ID_ERROR_DASH);
+            log_toggle_event("Stop/Start: SWR2.8 (Battery is not in operating range!)");
+        }
     }
 
     /* Door logic */
@@ -134,9 +144,14 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
     else
     {
+        /* If engine is already off and at least one door is opened,
+        engine won't be turned on (cond5 won't be 0) */
+        if (!engine_off)
+        {
         cond5 = 0;
         send_encrypted_message(sock_sender, "error_door_open", CAN_ID_ERROR_DASH);
         log_toggle_event("Stop/Start: SWR2.8 (One or more doors are opened!)");
+        }
     }
 
     /* Tilt angle logic */
