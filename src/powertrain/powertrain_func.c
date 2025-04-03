@@ -44,143 +44,112 @@ int sock_receiver = -1;
 
 /* Start/Stop operation logic */
 
+/* Condition check functions */
+static bool check_movement_conditions(double speed, int accel, int brake, int gear)
+{
+    return (fabs(speed) == 0.0F) && (accel == 0) && (brake != 0) && (gear == 0);
+}
+
+static bool check_temperature_conditions(int internal_temp, int external_temp, int temp_set)
+{
+    return (internal_temp <= (temp_set + MAX_TEMP_DIFF)) && (external_temp >= temp_set);
+}
+
+static bool check_engine_temp_conditions(double engi_temp)
+{
+    return (engi_temp >= MIN_ENGINE_TEMP) && (engi_temp <= MAX_ENGINE_TEMP);
+}
+
+static bool check_battery_conditions(double batt_soc, double batt_volt)
+{
+    return (batt_soc >= MIN_BATTERY_SOC) && (batt_volt > MIN_BATTERY_VOLTAGE);
+}
+
+static bool check_door_conditions(int door_open)
+{
+    return (door_open == 0);
+}
+
+static bool check_tilt_conditions(double tilt_angle)
+{
+    return (tilt_angle <= MAX_TILT_ANGLE);
+}
+
+/* Condition evaluation with logging */
+static int evaluate_condition_with_logging(bool condition, bool engine_off_state, 
+                                         const char* error_msg, const char* log_msg)
+{
+    if (condition)
+    {
+        return 1;
+    }
+    
+    if (!engine_off_state)
+    {
+        send_encrypted_message(sock_sender, error_msg, CAN_ID_ERROR_DASH);
+        log_toggle_event(log_msg);
+    }
+    return 0;
+}
+
+/* Main function */
 void check_disable_engine(VehicleData *ptr_rec_data)
 {
-    int time = ptr_rec_data->time;
-    double speed = ptr_rec_data->speed;
-    int internal_temp = ptr_rec_data->internal_temp;
-    int external_temp = ptr_rec_data->external_temp;
-    int door_open = ptr_rec_data->door_open;
-    double tilt_angle = ptr_rec_data->tilt_angle;
-    int accel = ptr_rec_data->accel;
-    int brake = ptr_rec_data->brake;
-    int temp_set = ptr_rec_data->temp_set;
-    double batt_soc = ptr_rec_data->batt_soc;
-    double batt_volt = ptr_rec_data->batt_volt;
-    double engi_temp = ptr_rec_data->engi_temp;
-    int gear = ptr_rec_data->gear;
+    bool engine_off_local;
+    int cond1;
+    int cond2;
+    int cond3;
+    int cond4;
+    int cond5;
+    int cond6;
+    
+    engine_off_local = engine_off;
 
-    // Activation conditions
+    /* Check each condition */
+    cond1 = evaluate_condition_with_logging(
+        check_movement_conditions(ptr_rec_data->speed, ptr_rec_data->accel, 
+                                 ptr_rec_data->brake, ptr_rec_data->gear),
+        engine_off_local,
+        "error_brake_not_pressed",
+        "Stop/Start: SWR2.8 (Brake not pressed or car is moving!)");
+    
+    cond2 = evaluate_condition_with_logging(
+        check_temperature_conditions(ptr_rec_data->internal_temp,
+                                   ptr_rec_data->external_temp,
+                                   ptr_rec_data->temp_set),
+        engine_off_local,
+        "error_temperature_out_range",
+        "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
+    
+    cond3 = evaluate_condition_with_logging(
+        check_engine_temp_conditions(ptr_rec_data->engi_temp),
+        engine_off_local,
+        "error_engine_temperature_out_range",
+        "Stop/Start: SWR2.8 (Engine temperature out of range!)");
+    
+    cond4 = evaluate_condition_with_logging(
+        check_battery_conditions(ptr_rec_data->batt_soc, ptr_rec_data->batt_volt),
+        engine_off_local,
+        "error_battery_out_range",
+        "Stop/Start: SWR2.8 (Battery is not in operating range!)");
+    
+    cond5 = evaluate_condition_with_logging(
+        check_door_conditions(ptr_rec_data->door_open),
+        engine_off_local,
+        "error_door_open",
+        "Stop/Start: SWR2.8 (One or more doors are opened!)");
+    
+    cond6 = evaluate_condition_with_logging(
+        check_tilt_conditions(ptr_rec_data->tilt_angle),
+        engine_off_local,
+        "error_tilt_angle",
+        "Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)");
 
-    int cond1 = 0;
-    int cond2 = 0;
-    int cond3 = 0;
-    int cond4 = 0;
-    int cond5 = 0;
-    int cond6 = 0;
-
-    /* Speed, gear, acceleration and brake logic */
-
-    bool movement_cond = (speed == 0 && !accel && brake && !gear);
-
-    if (movement_cond)
+    /* Final decision */
+    if ((cond1 != 0) && (cond2 != 0) && (cond3 != 0) && 
+        (cond4 != 0) && (cond5 != 0) && (cond6 != 0))
     {
-        cond1 = 1;
-    }
-    else
-    {
-        cond1 = 0;
-        send_encrypted_message(sock_sender, "error_brake_not_pressed", CAN_ID_ERROR_DASH);
-        log_toggle_event("Stop/Start: SWR2.8 (Brake not pressed or car is moving!)");
-    }
-
-    /* External and internal temperatures logic */
-
-    bool ext_int_temp_cond = (internal_temp <= (temp_set + MAX_TEMP_DIFF) && external_temp >= temp_set);
-
-    if (ext_int_temp_cond)
-    {
-        cond2 = 1;
-    }
-    else
-    {
-        /* If engine is already off and temperature is out of range,
-        engine won't be turned on (cond2 won't be 0) */
-        if (!engine_off)
-        {
-            cond2 = 0;
-            send_encrypted_message(sock_sender, "error_temperature_out_range", CAN_ID_ERROR_DASH);
-            log_toggle_event("Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
-        }
-    }
-
-    /* Engine temperature logic */
-
-    bool engine_temp_cond = (engi_temp >= MIN_ENGINE_TEMP && engi_temp <= MAX_ENGINE_TEMP);
-
-    if (engine_temp_cond)
-    {
-        cond3 = 1;
-    }
-    else
-    {
-        /* If engine is already off and engine temperature is out of range,
-        engine won't be turned on (cond3 won't be 0) */
-        if (!engine_off)
-        {
-            cond3 = 0;
-            send_encrypted_message(sock_sender, "error_engine_temperature_out_range", CAN_ID_ERROR_DASH);
-            log_toggle_event("Stop/Start: SWR2.8 (Engine temperature out of range!)");
-        }
-    }
-
-    /* Battery logic */
-
-    bool batt_cond = batt_soc >= MIN_BATTERY_SOC && batt_volt > MIN_BATTERY_VOLTAGE;
-
-    if (batt_cond)
-    {
-        cond4 = 1;
-    }
-    else
-    {
-        /* If engine is already off and batery is operating out of range,
-        engine won't be turned on (cond4 won't be 0) */
-        if (!engine_off)
-        {
-            cond4 = 0;
-            send_encrypted_message(sock_sender, "error_battery_out_range", CAN_ID_ERROR_DASH);
-            log_toggle_event("Stop/Start: SWR2.8 (Battery is not in operating range!)");
-        }
-    }
-
-    /* Door logic */
-
-    if (!door_open)
-    {
-        cond5 = 1;
-    }
-    else
-    {
-        /* If engine is already off and at least one door is opened,
-        engine won't be turned on (cond5 won't be 0) */
-        if (!engine_off)
-        {
-        cond5 = 0;
-        send_encrypted_message(sock_sender, "error_door_open", CAN_ID_ERROR_DASH);
-        log_toggle_event("Stop/Start: SWR2.8 (One or more doors are opened!)");
-        }
-    }
-
-    /* Tilt angle logic */
-
-    if (tilt_angle <= MAX_TILT_ANGLE)
-    {
-        cond6 = 1;
-    }
-    else
-    {
-        cond6 = 0;
-        send_encrypted_message(sock_sender, "error_tilt_angle", CAN_ID_ERROR_DASH);
-        log_toggle_event("Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)");
-    }
-
-    /* Check start/stop */
-
-    if (cond1 && cond2 && cond3 && cond4 && cond5 && cond6)
-    {
-        /* Will only attempt to deactivate the engine if it's activated */
-        if (!engine_off)
+        if (engine_off_local == false)
         {
             engine_off = true;
             log_toggle_event("Stop/Start: Engine turned Off");
