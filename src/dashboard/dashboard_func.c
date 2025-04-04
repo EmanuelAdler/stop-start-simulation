@@ -32,6 +32,14 @@ void print_dashboard_status()
 {
     (void)printf("\n=== Dashboard Status ===\n");
     (void)printf("Stop/Start button: %d\n", actuators.start_stop_active);
+    
+    // get bcm data
+    VehicleData *vehicle = &vehicle_data[simu_curr_step];
+    
+    (void)printf("Battery SOC: %.2f%%\n", vehicle->batt_soc);
+    (void)printf("Battery Voltage: %.2fV\n", vehicle->batt_volt);
+    (void)printf("Door Open: %s\n", vehicle->door_open ? "Yes" : "No");
+
     (void)printf("=============================\n");
     (void)fflush(stdout);
 }
@@ -54,6 +62,30 @@ void parse_input_received(char* input)
     else if (strcmp(input, "show_dashboard") == 0)
     {
         print_dashboard_status();
+    }
+}
+
+void process_engine_commands(char* input)
+{
+    if (strcmp(input, "ENGINE OFF") == 0)
+    {
+        log_toggle_event("[INFO] Engine Desactivated by star/stop");
+    } 
+    else if (strcmp(input, "RESTART") == 0)
+    {  
+        log_toggle_event("[INFO] Engine Activated by star/stop");
+    }
+}
+
+void process_errors(char* input)
+{
+    if (strcmp(input, "error_battery_drop") == 0)
+    {
+        log_toggle_event("[INFO] Engine Restart Failed due to battery tension drop");
+    } 
+    else if (strcmp(input, "error_battery_low") == 0)
+    {  
+        log_toggle_event("[INFO] Engine Restart Failed due to battery SOC or tension is under the thresrold");
     }
 }
 
