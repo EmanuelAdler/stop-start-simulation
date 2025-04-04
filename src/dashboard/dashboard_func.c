@@ -19,6 +19,9 @@ bool check_is_valid_can_id(canid_t can_id)
     switch (can_id)
     {
         case CAN_ID_COMMAND:
+        case CAN_ID_ERROR_DASH:
+        case CAN_ID_ECU_RESTART:
+        case CAN_ID_SENSOR_READ:
             is_valid = true;
             break;        
         default:
@@ -31,20 +34,24 @@ bool check_is_valid_can_id(canid_t can_id)
 void print_dashboard_status() 
 {
     (void)printf("\n=== Dashboard Status ===\n");
-    (void)printf("Stop/Start button: %d\n", actuators.start_stop_active);
-    
-    // get bcm data
-    VehicleData *vehicle = &vehicle_data[simu_curr_step];
-    
-    (void)printf("Battery SOC: %.2f%%\n", vehicle->batt_soc);
-    (void)printf("Battery Voltage: %.2fV\n", vehicle->batt_volt);
-    (void)printf("Door Open: %s\n", vehicle->door_open ? "Yes" : "No");
+    (void)printf("Stop/Start button: %d\n", actuators.start_stop_active);       
+    (void)printf("Battery SOC: %.2f%%\n", actuators.batt_soc);
+    (void)printf("Battery Voltage: %.2fV\n", actuators.batt_volt);
+    (void)printf("Door Open: %s\n", actuators.door_status ? "Yes" : "No");
 
     (void)printf("=============================\n");
     (void)fflush(stdout);
 }
 
 void parse_input_received(char* input)
+{
+    process_user_commands(input);
+    process_engine_commands(input);
+    process_sensor_readings(input);
+    process_errors(input);
+}
+
+void process_user_commands(char* input)
 {
     if (strcmp(input, "press_start_stop") == 0)
     {
@@ -69,11 +76,33 @@ void process_engine_commands(char* input)
 {
     if (strcmp(input, "ENGINE OFF") == 0)
     {
-        log_toggle_event("[INFO] Engine Desactivated by star/stop");
+        log_toggle_event("[INFO] Engine Deactivated by Stop/Start");
     } 
     else if (strcmp(input, "RESTART") == 0)
     {  
-        log_toggle_event("[INFO] Engine Activated by star/stop");
+        log_toggle_event("[INFO] Engine Activated by Stop/Start");
+    }
+}
+
+void process_sensor_readings(char* input)
+{
+    /* Check if CAN message is battery SoC */
+    if (sscanf(input, "batt_soc: %lf", &actuators.batt_soc) == 1)
+    {
+        (void)printf("received batt_soc = %.1lf\n", actuators.batt_soc);
+        (void)fflush(stdout);
+    }
+    /* Check if CAN message is battery voltage */
+    else if (sscanf(input, "batt_volt: %lf", &actuators.batt_volt) == 1)
+    {
+        (void)printf("received batt_volt = %lf\n", actuators.batt_volt);
+        (void)fflush(stdout);
+    }
+    /* Check if CAN message is door open */
+    else if (sscanf(input, "door: %d", &actuators.door_status) == 1)
+    {
+        (void)printf("received door = %d\n", actuators.door_status);
+        (void)fflush(stdout);
     }
 }
 
@@ -81,11 +110,11 @@ void process_errors(char* input)
 {
     if (strcmp(input, "error_battery_drop") == 0)
     {
-        log_toggle_event("[INFO] Engine Restart Failed due to battery tension drop");
+        log_toggle_event("[INFO] Engine Restart Failed Due to Battery Tension Drop");
     } 
     else if (strcmp(input, "error_battery_low") == 0)
     {  
-        log_toggle_event("[INFO] Engine Restart Failed due to battery SOC or tension is under the thresrold");
+        log_toggle_event("[INFO] Engine Restart Failed Due to Battery SoC or Tension Under the Threshold");
     }
 }
 
