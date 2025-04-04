@@ -1,4 +1,9 @@
 # Stop/Start (SS) Simulation
+
+![Tests](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/auto-tests.yml/badge.svg)
+![Coverage](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/coverage.yml/badge.svg)
+![Static Analysis](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/linting.yml/badge.svg)
+
 This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
 ## Requirements  
@@ -112,13 +117,28 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 **Workflow File:** `.github/workflows/auto-tests.yml`
 
 **Triggers:**
-- Runs on every pull request to the `develop` branch.
+- Runs on every pull request to the `main` or the `develop` branch.
 
 **Key Steps:**
 - **Checkout Code:** Retrieves the latest code from the repository.
-- **Install Dependencies:** Installs necessary packages, including `can-utils`, `libcunit1-dev`, `lcov`, and required kernel modules.
+- **Install Dependencies:** Installs necessary packages, including `can-utils`, `libcunit1-dev`, and required kernel modules.
 - **Set Up CAN Interface:** Executes `setup_vcan.sh` to configure the virtual CAN interface.
 - **Run Tests:** Executes `make test` to compile and run unit and integration tests.
+
+### 5. Coverage Report Workflow
+**Purpose:** Automatically generates a test coverage report using GCC 14.2.0 and LCOV 2.3-1, including MC/DC and branch coverage.
+
+**Workflow File:** `.github/workflows/coverage.yml`
+
+**Triggers:**
+- Runs on every push to the `main` branch.
+
+**Key Steps:**
+- **Install GCC 14.2.0 & LCOV 2.3-1:** Ensures full support for branch and MC/DC analysis.
+- **Generate Coverage:** Uses `make coverage` to run tests and produce a report.
+- **Publish to GitHub Pages:** The report is deployed to the `gh-pages` branch and can be accessed online.
+
+📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation](https://emanueladler.github.io/stop-start-simulation)
 
 ## Communication Test
 Send a message via CAN:
@@ -134,8 +154,22 @@ docker-compose down
 ## Source code testing
 Install the required libraries for testing:
 ```sh
-sudo apt-get install libssl-dev libcunit1 libcunit1-doc libcunit1-dev lcov
+sudo apt install -y gcc-14 g++-14 make build-essential can-utils clang libssl-dev libcunit1 libcunit1-doc libcunit1-dev
 ```
+
+Install the `lcov` package:
+```sh
+curl -LO https://github.com/linux-test-project/lcov/releases/download/v2.3/lcov-2.3.tar.gz
+tar -xzf lcov-2.3.tar.gz
+cd lcov-2.3
+sudo make install
+```
+
+Run the script to configure the CAN interface:
+```sh
+sudo ./setup_vcan.sh
+```
+
 Then, in the test folder run:
 ```sh
 make test

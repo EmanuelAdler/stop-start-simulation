@@ -13,9 +13,12 @@
 #include <signal.h>
 #include <math.h>
 #include <stdbool.h>
+#include <semaphore.h>
 
 #include "../common_includes/can_id_list.h"
 #include "../common_includes/can_socket.h"
+
+extern sem_t sem_comms;
 
 // Battery sensor parameters
 #define DEFAULT_BATTERY_VOLTAGE     12.0F

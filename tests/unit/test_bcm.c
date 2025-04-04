@@ -14,49 +14,49 @@
 const float SOC_TOLERANCE = 0.001F;
 
 // SOC values for test
-#define TEST_SOC_HIGH              99.9F
-#define TEST_SOC_LOW               0.1F
-#define TEST_SOC_UPDATE_POSITIVE   20.0F
-#define TEST_SOC_UPDATE_NEGATIVE   0.0F
-#define TEST_BATT_SOC_INITIAL      50.0F
+#define TEST_SOC_HIGH 99.9F
+#define TEST_SOC_LOW 0.1F
+#define TEST_SOC_UPDATE_POSITIVE 20.0F
+#define TEST_SOC_UPDATE_NEGATIVE 0.0F
+#define TEST_BATT_SOC_INITIAL 50.0F
 
 // Speeds
-#define SPEED_LOW                  5.0
-#define SPEED_MEDIUM               10.0
-#define SPEED_HIGH                 20.0
-#define TEST_SPEED_INCREASE        10.0
+#define SPEED_LOW 5.0
+#define SPEED_MEDIUM 10.0
+#define SPEED_HIGH 20.0
+#define TEST_SPEED_INCREASE 10.0
 
 // Temperatures
-#define INT_TEMP_1                 25
-#define INT_TEMP_2                 26
-#define EXT_TEMP_1                 30
-#define EXT_TEMP_2                 31
-#define ENGI_TEMP_1                90.0
-#define ENGI_TEMP_2                95.0
+#define INT_TEMP_1 25
+#define INT_TEMP_2 26
+#define EXT_TEMP_1 30
+#define EXT_TEMP_2 31
+#define ENGI_TEMP_1 90.0
+#define ENGI_TEMP_2 95.0
 
 // Inclinations
-#define TILT_1                     2.5
-#define TILT_2                     5.0
+#define TILT_1 2.5
+#define TILT_2 5.0
 
 // Temp set
-#define TEMP_SET_1                 20
-#define TEMP_SET_2                 21
+#define TEMP_SET_1 20
+#define TEMP_SET_2 21
 
 // Battery voltage
-#define BATT_VOLT_1                12.0
-#define BATT_VOLT_2                12.5
+#define BATT_VOLT_1 12.0
+#define BATT_VOLT_2 12.5
 
 // Battery SOC
-#define BATT_SOC_1                80.0
-#define BATT_SOC_2                82.0
+#define BATT_SOC_1 80.0
+#define BATT_SOC_2 82.0
 
 // Delay
-#define TEST_MICRO_SLEEP_DELAY     (100000U)
-#define THREAD_SLEEP_TIME          (200000U)
+#define TEST_MICRO_SLEEP_DELAY (100000U)
+#define THREAD_SLEEP_TIME (200000U)
 
 // Mocked can_socket calls (like in test_instrument_cluster)
 int stub_can_get_send_count(void);
-const char* stub_can_get_last_message(void);
+const char *stub_can_get_last_message(void);
 void stub_can_reset(void);
 
 // We'll do some "fake" CSV logic by renaming real function or controlling environment
@@ -105,7 +105,7 @@ void test_read_csv_fail(void)
     CU_ASSERT_EQUAL(data_size, 0);
     read_csv("nonexistent.csv");
     // It should call perror() and just return
-    CU_ASSERT_EQUAL(data_size, 0); 
+    CU_ASSERT_EQUAL(data_size, 0);
 }
 
 //-------------------------------------
@@ -113,7 +113,7 @@ void test_read_csv_fail(void)
 //-------------------------------------
 void test_read_csv_success(void)
 {
-    // This test expects you to have a small CSV file at "../src/bcm/full_simu.csv" 
+    // This test expects you to have a small CSV file at "../src/bcm/full_simu.csv"
     // with at least 2 lines of real data so we can parse something.
 
     CU_ASSERT_EQUAL(data_size, 0);
@@ -179,7 +179,7 @@ void test_battery_belowzero(void)
 void test_send_data_update_manyfields(void)
 {
     // We'll set [0] and [1] with multiple differences so lines 221..275 get hit
-    simu_curr_step = 1; // so we do [0] vs [1]
+    simu_curr_step = 0; // so we do [0] vs [1]
 
     vehicle_data[0].speed = SPEED_MEDIUM;
     vehicle_data[1].speed = SPEED_HIGH;
@@ -214,7 +214,7 @@ void test_send_data_update_manyfields(void)
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 12);
 
     // Optionally check last message
-    CU_ASSERT_STRING_CONTAINS(stub_can_get_last_message(), "gear: 1");
+    CU_ASSERT_STRING_CONTAINS(stub_can_get_last_message(), "gear: 0");
 }
 
 //-------------------------------------
@@ -232,24 +232,25 @@ void test_simu_speed_smallloop(void)
     simu_order = ORDER_RUN;
 
     int count = 0;
-    while (count < 2) {
+    while (count < 2)
+    {
         pthread_mutex_lock(&mutex_bcm);
         check_order(simu_order);
 
-        if (simu_state == STATE_RUNNING) 
+        if (simu_state == STATE_RUNNING)
         {
             // If there's a next step
-            if (simu_curr_step + 1 != data_size) 
+            if (simu_curr_step + 1 != data_size)
             {
                 double speed0 = vehicle_data[simu_curr_step].speed;
                 double speed1 = vehicle_data[simu_curr_step + 1].speed;
-                if (speed1 - speed0 > 0) 
+                if (speed1 - speed0 > 0)
                 {
                     vehicle_data[simu_curr_step].accel = 1;
                     vehicle_data[simu_curr_step].brake = 0;
                     vehicle_data[simu_curr_step].gear = DRIVE;
-                } 
-                else 
+                }
+                else
                 {
                     vehicle_data[simu_curr_step].brake = 1;
                     vehicle_data[simu_curr_step].accel = 0;
@@ -263,7 +264,7 @@ void test_simu_speed_smallloop(void)
             simu_curr_step++;
 
             // now decide if we want to stop
-            if (simu_curr_step >= data_size) 
+            if (simu_curr_step >= data_size)
             {
                 simu_order = ORDER_STOP;
             }
@@ -293,46 +294,50 @@ void test_simu_speed_step(void)
     vehicle_data[2].speed = SPEED_MEDIUM;
 
     // Mark the simulation as RUNNING
-    simu_state     = STATE_RUNNING;
+    simu_state = STATE_RUNNING;
     simu_curr_step = 0;
-    simu_order     = ORDER_RUN;
+    simu_order = ORDER_RUN;
 
     // Build arrays of pointers
     double *speed[3];
-    int    *accel[3];
-    int    *brake[3];
-    int    *gear[3];
+    int *accel[3];
+    int *brake[3];
+    int *gear[3];
 
     for (int i = 0; i < 3; i++)
     {
-        speed[i]  = &vehicle_data[i].speed;
-        accel[i]  = &vehicle_data[i].accel;
-        brake[i]  = &vehicle_data[i].brake;
-        gear[i]   = &vehicle_data[i].gear;
+        speed[i] = &vehicle_data[i].speed;
+        accel[i] = &vehicle_data[i].accel;
+        brake[i] = &vehicle_data[i].brake;
+        gear[i] = &vehicle_data[i].gear;
     }
 
-    ControlData control_data = { speed, accel, brake, gear };
+    ControlData control_data = {speed, accel, brake, gear};
 
     // 1) First call: index 0 => 1 => speed difference = (5.0 - 0.0) > 0 => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 1);
-    CU_ASSERT_EQUAL(*(accel[0]), 1);    // note the * to dereference
+    CU_ASSERT_EQUAL(simu_curr_step, 0);
+    CU_ASSERT_EQUAL(*(accel[0]), 1); // note the * to dereference
     CU_ASSERT_EQUAL(*(brake[0]), 0);
     CU_ASSERT_EQUAL(*(gear[0]), DRIVE);
+
+    simu_curr_step++;
 
     // 2) Second call => index 1 => 2 => (10.0 - 5.0) > 0 => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 2);
+    CU_ASSERT_EQUAL(simu_curr_step, 1);
     CU_ASSERT_EQUAL(*(accel[1]), 1);
     CU_ASSERT_EQUAL(*(brake[1]), 0);
     CU_ASSERT_EQUAL(*(gear[1]), DRIVE);
 
+    simu_curr_step++;
+
     // 3) Third call => index 2 => if (2+1==3) => ORDER_STOP
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 3);
+    CU_ASSERT_EQUAL(simu_curr_step, 2);
     CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
 }
 
@@ -354,7 +359,7 @@ void test_sensor_battery_updates_soc_when_running(void)
     // Calculate expected SoC after one update
     float expected_iterations = TEST_EXPECTED_IT; // if THREAD_SLEEP_TIME * 2 allows 2 iterations
     float expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
-    if (expected_soc > MAX_BATTERY_SOC) 
+    if (expected_soc > MAX_BATTERY_SOC)
     {
         expected_soc = MAX_BATTERY_SOC;
     }
@@ -367,7 +372,7 @@ void test_sensor_battery_updates_soc_when_running(void)
     pthread_join(thread_id, NULL);
 
     // Get actual updated SoC
-    float actual_soc = (float) vehicle_data[0].batt_soc;
+    float actual_soc = (float)vehicle_data[0].batt_soc;
 
     // Assert the SoC was updated as expected
     CU_ASSERT_DOUBLE_EQUAL(expected_soc, actual_soc, SOC_TOLERANCE);
@@ -408,22 +413,21 @@ void test_simu_speed_performs_control_update(void)
     // Assert: check that control actions were applied
     CU_ASSERT_EQUAL(sim_data[0].accel, 1);
     CU_ASSERT_EQUAL(sim_data[0].brake, 0);
-    CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE);  // assume DRIVE is a defined constant
+    CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE); // assume DRIVE is a defined constant
 }
-
 
 //-------------------------------------
 // Test main
 //-------------------------------------
 int main(void)
 {
-    if (CUE_SUCCESS != CU_initialize_registry()) 
+    if (CUE_SUCCESS != CU_initialize_registry())
     {
         return CU_get_error();
     }
 
     CU_pSuite suite = CU_add_suite("BCM_Func_Suite", init_suite, clean_suite);
-    if (!suite) 
+    if (!suite)
     {
         CU_cleanup_registry();
         return CU_get_error();
