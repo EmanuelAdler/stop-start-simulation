@@ -77,21 +77,24 @@ static bool check_tilt_conditions(double tilt_angle)
 
 /* Condition evaluation with logging */
 
-typedef const char* ErrorMessage;
-typedef const char* LogMessage;
+typedef struct {
+    const char* can_error;    // Message for CAN bus
+    const char* system_log;   // Message for system log
+} EngineConditionMessages;
 
-static int evaluate_condition_with_logging(bool condition, bool engine_off_state, 
-    ErrorMessage error_msg, LogMessage log_msg)
+/* Then modify the evaluation function */
+static int evaluate_condition_with_logging(
+    bool condition, 
+    bool engine_off_state,
+    EngineConditionMessages messages)  // Single parameter for all messages
 {
-    if (condition)
-    {
+    if (condition) {
         return 1;
     }
     
-    if (!engine_off_state)
-    {
-        send_encrypted_message(sock_sender, error_msg, CAN_ID_ERROR_DASH);
-        log_toggle_event(log_msg);
+    if (!engine_off_state) {
+        send_encrypted_message(sock_sender, messages.can_error, CAN_ID_ERROR_DASH);
+        log_toggle_event(messages.system_log);
     }
     return 0;
 }
@@ -114,40 +117,52 @@ void check_disable_engine(VehicleData *ptr_rec_data)
         check_movement_conditions(ptr_rec_data->speed, ptr_rec_data->accel, 
                                  ptr_rec_data->brake, ptr_rec_data->gear),
         engine_off_local,
-        "error_brake_not_pressed",
-        "Stop/Start: SWR2.8 (Brake not pressed or car is moving!)");
+        (EngineConditionMessages){
+            .can_error = "error_brake_not_pressed",
+            .system_log = "Stop/Start: SWR2.8 (Brake not pressed or car is moving!)"
+        });
     
     cond2 = evaluate_condition_with_logging(
         check_temperature_conditions(ptr_rec_data->internal_temp,
                                    ptr_rec_data->external_temp,
                                    ptr_rec_data->temp_set),
         engine_off_local,
-        "error_temperature_out_range",
-        "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)");
+        (EngineConditionMessages){
+            .can_error = "error_temperature_out_range",
+            .system_log = "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+        });
     
     cond3 = evaluate_condition_with_logging(
         check_engine_temp_conditions(ptr_rec_data->engi_temp),
         engine_off_local,
-        "error_engine_temperature_out_range",
-        "Stop/Start: SWR2.8 (Engine temperature out of range!)");
+        (EngineConditionMessages){
+            .can_error = "error_engine_temperature_out_range",
+            .system_log = "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+        });
     
     cond4 = evaluate_condition_with_logging(
         check_battery_conditions(ptr_rec_data->batt_soc, ptr_rec_data->batt_volt),
         engine_off_local,
-        "error_battery_out_range",
-        "Stop/Start: SWR2.8 (Battery is not in operating range!)");
+        (EngineConditionMessages){
+            .can_error = "error_battery_out_range",
+            .system_log = "Stop/Start: SWR2.8 (Battery is not in operating range!)"
+        });
     
     cond5 = evaluate_condition_with_logging(
         check_door_conditions(ptr_rec_data->door_open),
         engine_off_local,
-        "error_door_open",
-        "Stop/Start: SWR2.8 (One or more doors are opened!)");
+        (EngineConditionMessages){
+            .can_error = "error_door_open",
+            .system_log = "Stop/Start: SWR2.8 (One or more doors are opened!)"
+        });
     
     cond6 = evaluate_condition_with_logging(
         check_tilt_conditions(ptr_rec_data->tilt_angle),
         engine_off_local,
-        "error_tilt_angle",
-        "Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)");
+        (EngineConditionMessages){
+            .can_error = "error_tilt_angle",
+            .system_log = "Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)"
+        });
 
     /* Final decision */
     if ((cond1 != 0) && (cond2 != 0) && (cond3 != 0) && 
