@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-04-02 02:59:55</td>
+            <td class="headerValue">2025-04-04 00:22:55</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -102,9 +102,9 @@
 <span id="L22"><span class="lineNum">      22</span>                 :              :<span class="tlaGNC">           7 :     log_file_path = new_path;</span></span>
 <span id="L23"><span class="lineNum">      23</span>                 :              :<span class="tlaGNC">           7 : }</span></span>
 <span id="L24"><span class="lineNum">      24</span>                 :              :             : </span>
-<span id="L25"><span class="lineNum">      25</span>                 :              :<span class="tlaGNC">          23 : void log_toggle_event(char* message) {</span></span>
-<span id="L26"><span class="lineNum">      26</span>         [<span class="tlaGBC" title="Branch 0 was taken 15 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">          23 :     if (logFile == NULL) {</span></span>
-<span id="L27"><span class="lineNum">      27</span>                 :              :<span class="tlaGNC">          15 :         return;</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :              :<span class="tlaGNC">          22 : void log_toggle_event(char* message) {</span></span>
+<span id="L26"><span class="lineNum">      26</span>         [<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">          22 :     if (logFile == NULL) {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :              :<span class="tlaGNC">          14 :         return;</span></span>
 <span id="L28"><span class="lineNum">      28</span>                 :              :             :     }</span>
 <span id="L29"><span class="lineNum">      29</span>                 :              :             : </span>
 <span id="L30"><span class="lineNum">      30</span>                 :              :<span class="tlaGNC">           8 :     pthread_mutex_lock(&amp;logMutex);</span></span>
