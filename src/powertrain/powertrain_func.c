@@ -76,8 +76,12 @@ static bool check_tilt_conditions(double tilt_angle)
 }
 
 /* Condition evaluation with logging */
+
+typedef const char* ErrorMessage;
+typedef const char* LogMessage;
+
 static int evaluate_condition_with_logging(bool condition, bool engine_off_state, 
-                                         const char* error_msg, const char* log_msg)
+    ErrorMessage error_msg, LogMessage log_msg)
 {
     if (condition)
     {
