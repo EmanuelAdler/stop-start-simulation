@@ -11,6 +11,10 @@
 #define MOCK_SOCKET       (999)
 #define FILE_LINE_SIZE    (256)
 
+static const double kDelta             = 0.001;
+static const double kBattSocReceived   = 55.0;
+static const double kBattVoltReceived  = 12.7;
+
 //-------------------------------------
 // Setup the CUnit Suite
 //-------------------------------------
@@ -120,6 +124,104 @@ void test_print_dashboard_status(void)
     CU_ASSERT_TRUE(file_contains_substring(params_str));
 }
 
+//-------------------------------------
+// Test 3: Test the variants of inputs received by the dashboard
+//-------------------------------------
+void test_parse_input_variants(void)
+{
+    // 1) Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_dashboard_variants.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
+    // 2) Redirect stdout to a temporary file
+    const char *stdout_file = "/tmp/test_dashboard_variants_stdout.txt";
+    FILE *fp_stdout = fopen(stdout_file, "w");
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fp_stdout);
+
+    int saved_stdout_fd = dup(STDOUT_FILENO);
+    int temp_fd = fileno(fp_stdout);
+    dup2(temp_fd, STDOUT_FILENO);
+
+    // 3) Test case 1: "press_start_stop" => activates the system
+    parse_input_received("press_start_stop");
+    // Assert that start_stop_active became true
+    CU_ASSERT_TRUE(actuators.start_stop_active);
+    // Assert log message "[INFO] System Activated" exists
+    f_susbtring_data param_activated = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] System Activated"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(param_activated));
+
+    // 4) Test case 2: "press_start_stop" => deactivates the system
+    parse_input_received("press_start_stop");
+    CU_ASSERT_FALSE(actuators.start_stop_active);
+    f_susbtring_data param_deactivated = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] System Deactivated"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(param_deactivated));
+
+    // 5) Test case 3: "show_dashboard" => calls print_dashboard_status()
+    parse_input_received("show_dashboard");
+
+    // Restore stdout to stop redirection
+    fflush(stdout);
+    dup2(saved_stdout_fd, STDOUT_FILENO);
+    close(saved_stdout_fd);
+    fclose(fp_stdout);
+
+    // Assert print_dashboard_status wrote to the stdout file
+    f_susbtring_data dash_status_title = { stdout_file, "=== Dashboard Status ===" };
+    CU_ASSERT_TRUE(file_contains_substring(dash_status_title));
+    f_susbtring_data dash_stop_start = { stdout_file, "Stop/Start button: 0" };
+    CU_ASSERT_TRUE(file_contains_substring(dash_stop_start));
+
+    // 6) Test case 4: "ENGINE OFF" => logs "[INFO] Engine Deactivated by Stop/Start"
+    parse_input_received("ENGINE OFF");
+    f_susbtring_data engine_off_str = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] Engine Deactivated by Stop/Start"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(engine_off_str));
+
+    // 7) Test case 5: "RESTART" => logs "[INFO] Engine Activated by Stop/Start"
+    parse_input_received("RESTART");
+    f_susbtring_data engine_restart_str = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] Engine Activated by Stop/Start"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(engine_restart_str));
+
+    // 8) Test case 6: Sensor readings (batt_soc, batt_volt, door)
+    parse_input_received("batt_soc: 55.0");
+    CU_ASSERT_DOUBLE_EQUAL(actuators.batt_soc, kBattSocReceived, kDelta);
+
+    parse_input_received("batt_volt: 12.7");
+    CU_ASSERT_DOUBLE_EQUAL(actuators.batt_volt, kBattVoltReceived, kDelta);
+
+    parse_input_received("door: 1");
+    CU_ASSERT_TRUE(actuators.door_status);
+
+    // 9) Test case 7: Error messages
+    parse_input_received("error_battery_drop");
+    f_susbtring_data err_drop = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] Engine Restart Failed Due to Battery Tension Drop"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_drop));
+
+    parse_input_received("error_battery_low");
+    f_susbtring_data err_low = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] Engine Restart Failed Due to Battery SoC or Tension Under the Threshold"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_low));
+
+    // 10) Finalize and clean up
+    cleanup_logging_system();
+}
+
 int main(void)
 {
     // Initialize CUnit test registry
@@ -136,6 +238,7 @@ int main(void)
     // Add tests
     CU_add_test(suite, "process_received_frame coverage", test_process_received_frame);
     CU_add_test(suite, "print_dashboard_status", test_print_dashboard_status);
+    CU_add_test(suite, "test_parse_input_variants", test_parse_input_variants);
 
     // Run all tests in verbose mode
     CU_basic_set_mode(CU_BRM_VERBOSE);
