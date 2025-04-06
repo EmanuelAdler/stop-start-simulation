@@ -38,6 +38,7 @@ void print_dashboard_status()
     (void)printf("Battery SOC: %.2f%%\n", actuators.batt_soc);
     (void)printf("Battery Voltage: %.2fV\n", actuators.batt_volt);
     (void)printf("Door Open: %s\n", actuators.door_status ? "Yes" : "No");
+    (void)printf("System Disabled Warning: %s\n", actuators.error_system ? "Yes" : "No");
 
     (void)printf("=============================\n");
     (void)fflush(stdout);
@@ -115,6 +116,12 @@ void process_errors(char* input)
     else if (strcmp(input, "error_battery_low") == 0)
     {  
         log_toggle_event("[INFO] Engine Restart Failed Due to Battery SoC or Tension Under the Threshold");
+    }
+    else if (strcmp(input, "system_disabled_error") == 0)
+    {  
+        actuators.start_stop_active = false;
+        actuators.error_system = 1;
+        log_toggle_event("[INFO] System Disabled Due to an Error");
     }
 }
 

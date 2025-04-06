@@ -13,6 +13,7 @@
 typedef struct {
     bool start_stop_active; // 0 = off, 1 = on
     int door_status; // 0 = closed, 1 = open
+    int error_system; // 0 = no, 1 = yes
     double batt_soc;
     double batt_volt;
 } Actuators;

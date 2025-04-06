@@ -36,6 +36,12 @@ void parse_input_received_powertrain(char *input)
             log_toggle_event("Stop/Start: System Deactivated");
         }
     }
+    if (strcmp(input, "system_disabled_error") == 0)
+    {
+        start_stop_manual = false;
+
+        log_toggle_event("Stop/Start: System Deactivated Due to an Error");
+    }
     /* Check if CAN message is speed */
     if (sscanf(input, "speed: %lf", &rec_data.speed) == 1)
     {
