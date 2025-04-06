@@ -218,6 +218,15 @@ void test_parse_input_variants(void)
     };
     CU_ASSERT_TRUE(file_contains_substring(err_low));
 
+    parse_input_received("system_disabled_error");
+    f_susbtring_data err_disab = {
+        "/tmp/test_dashboard_variants.log",
+        "[INFO] System Disabled Due to an Error"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_disab));
+    CU_ASSERT_FALSE(actuators.start_stop_active);
+    CU_ASSERT_TRUE(actuators.error_system);
+
     // 10) Finalize and clean up
     cleanup_logging_system();
 }
