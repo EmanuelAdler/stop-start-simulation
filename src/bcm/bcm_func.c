@@ -19,6 +19,13 @@
 #define VOLTAGE_OFFSET_VALUE (-0.8f)
 #define SOC_THRESHOLD (30.0f)
 #define VOLTAGE_DEC (0.5f)
+#define SAFETY_TIMEOUT (2000)
+#define SEC_TO_MS  1000ULL       // Seconds -> milliseconds
+#define NSEC_TO_MS 1000000ULL    // Nanoseconds -> microseconds (in ms)
+#define DOOR_OK_STATUS_1 (0)
+#define DOOR_OK_STATUS_2 (1)
+#define ENGINE_TEMP_OK_STATUS (120.0)
+#define TILT_OK_STATUS (60.0)
 
 // Global variables definitions
 pthread_mutex_t mutex_bcm;
@@ -34,7 +41,9 @@ int sock = -1;
 char send_msg[AES_BLOCK_SIZE + 1] = {0};
 bool test_mode = false;
 sem_t sem_comms;
-
+bool fault_active = false;
+int fault_start_time = 0;
+const int safety_timeout_ms = SAFETY_TIMEOUT;
 bool data_updated = false;
 
 // Sleep for a given number of microseconds
@@ -45,6 +54,23 @@ void sleep_microseconds(long int microseconds)
     tsc.tv_nsec = (microseconds % MICRO_CONSTANT_CONV) * NANO_CONSTANT_CONV;
     nanosleep(&tsc, NULL);
 }
+
+int getCurrentTimeMs_real(void)
+{
+    struct timespec tss;
+    clock_gettime(CLOCK_MONOTONIC, &tss);
+
+    unsigned long long wideMs = ((unsigned long long)tss.tv_sec * SEC_TO_MS)
+                     + (tss.tv_nsec / NSEC_TO_MS);
+
+    return (int)wideMs;
+}
+#ifdef UNIT_TEST
+    int mock_time_ms = 0;
+    int getCurrentTimeMs(void) { return mock_time_ms; }
+#else
+    int getCurrentTimeMs(void) { return getCurrentTimeMs_real(); }
+#endif
 
 void read_csv_default(void)
 {
@@ -292,6 +318,58 @@ void send_data_update(void)
     send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
 }
 
+// Function to evaluate system health
+void check_health_signals(void)
+{
+    int doorVal     = vehicle_data[simu_curr_step].door_open;
+    double engTemp  = vehicle_data[simu_curr_step].engi_temp;
+    double tilt     = vehicle_data[simu_curr_step].tilt_angle;
+
+    bool invalidDoor = (doorVal != DOOR_OK_STATUS_1 && doorVal != DOOR_OK_STATUS_2);
+
+    bool engineOvertemp = (engTemp > ENGINE_TEMP_OK_STATUS);
+
+    bool excessiveTilt = (tilt > TILT_OK_STATUS);
+
+    bool anyAdverseCondition = (invalidDoor || engineOvertemp || excessiveTilt);
+
+    if (anyAdverseCondition)
+    {
+        if (!fault_active)
+        {
+            fault_active = true;
+            fault_start_time = getCurrentTimeMs(); 
+        }
+        else
+        {
+            int elapsed = getCurrentTimeMs() - fault_start_time;
+            if (elapsed >= safety_timeout_ms)
+            {
+                send_encrypted_message(sock, "system_disabled_error", CAN_ID_COMMAND);
+                log_toggle_event("Fault: SWR6.4 (System Disabling Error)");
+                if (invalidDoor)
+                {
+                    log_toggle_event("Fault: SWR6.4 (Invalid door status)");
+                }
+                if (engineOvertemp)
+                {
+                    log_toggle_event("Fault: SWR6.4 (Engine overtemperature)");
+                }
+                if (excessiveTilt)
+                {
+                    log_toggle_event("Fault: SWR6.4 (Excessive tilt value)");
+                }
+
+                simu_order = ORDER_STOP;
+            }
+        }
+    }
+    else
+    {
+        fault_active = false;
+    }
+}
+
 // Communication thread function
 void *comms(void *arg)
 {
@@ -310,6 +388,7 @@ void *comms(void *arg)
             send_data_update();
             data_updated = false; // ready to update data again after sending
             simu_curr_step++;
+            check_health_signals();
         }
         pthread_mutex_unlock(&mutex_bcm);
         sleep_microseconds(THREAD_SLEEP_TIME);
