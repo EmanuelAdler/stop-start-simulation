@@ -19,7 +19,7 @@
 extern const unsigned char AES_USER_KEY[AES_BLOCK_SIZE];
 extern const unsigned char AES_USER_IV[AES_BLOCK_SIZE];
 
-//define common functions for sender and receiver
+//define common functions for CAN communications
 int create_can_socket(const char *interface);
 void close_can_socket(int sock);
 

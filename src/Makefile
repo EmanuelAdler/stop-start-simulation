@@ -24,8 +24,6 @@ $(shell mkdir -p $(BIN_DIR))
 # Final Executables
 #===============================================================================
 TARGETS = \
-  $(BIN_DIR)/sender \
-  $(BIN_DIR)/receiver \
   $(BIN_DIR)/instrument_cluster \
   $(BIN_DIR)/dashboard \
   $(BIN_DIR)/bcm \
@@ -47,28 +45,6 @@ $(BIN_DIR)/can_socket.o: $(COMMON_DIR)/can_socket.c $(COMMON_DIR)/can_socket.h
 # 2) logging.o
 $(BIN_DIR)/logging.o: $(COMMON_DIR)/logging.c $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
-
-#===============================================================================
-# Sender
-#===============================================================================
-$(BIN_DIR)/sender.o: $(SRC_DIR)/sender.c \
-                     $(COMMON_DIR)/can_socket.h \
-                     $(COMMON_DIR)/logging.h
-	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
-
-$(BIN_DIR)/sender: $(BIN_DIR)/sender.o $(COMMON_OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
-
-#===============================================================================
-# Receiver
-#===============================================================================
-$(BIN_DIR)/receiver.o: $(SRC_DIR)/receiver.c \
-                       $(COMMON_DIR)/can_socket.h \
-                       $(COMMON_DIR)/logging.h
-	$(CC) $(CFLAGS) -I$(COMMON_DIR) -c $< -o $@
-
-$(BIN_DIR)/receiver: $(BIN_DIR)/receiver.o $(COMMON_OBJ)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDLFLAGS)
 
 #===============================================================================
 # Instrument Cluster
@@ -194,7 +170,3 @@ $(BIN_DIR)/powertrain: $(POWERTRAIN_OBJS) $(COMMON_OBJ)
 #===============================================================================
 clean:
 	rm -rf $(BIN_DIR)/*
-
-run: all
-	$(BIN_DIR)/sender & \
-	$(BIN_DIR)/receiver
