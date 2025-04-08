@@ -340,6 +340,9 @@ static void test_parse_input_variants(void)
     parse_input_received_powertrain("press_start_stop");
     CU_ASSERT_FALSE(start_stop_manual); // toggled back to false
 
+    parse_input_received_powertrain("system_disabled_error");
+    CU_ASSERT_FALSE(start_stop_manual); // toggled to false
+
     // 2) Speed
     parse_input_received_powertrain("speed: 45.7");
     CU_ASSERT_DOUBLE_EQUAL(rec_data.speed, kSpeedReceived, kDelta);

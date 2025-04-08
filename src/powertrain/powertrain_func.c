@@ -203,6 +203,7 @@ void handle_engine_restart_logic(
             else
             {
                 send_encrypted_message(sock_sender, "error_battery_low", CAN_ID_ERROR_DASH);
+                send_encrypted_message(sock_sender, "system_disabled_error", CAN_ID_COMMAND);
                 log_toggle_event("Fault: SWR3.5 (Low Battery)");
             }
         }

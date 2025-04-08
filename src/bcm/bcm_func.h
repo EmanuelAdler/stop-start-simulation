@@ -17,6 +17,7 @@
 
 #include "../common_includes/can_id_list.h"
 #include "../common_includes/can_socket.h"
+#include "../common_includes/logging.h"
 
 extern sem_t sem_comms;
 
@@ -84,15 +85,20 @@ extern VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
 extern int sock;
 extern char send_msg[];
 extern bool test_mode;
+extern bool fault_active;
+extern int fault_start_time;
+extern const int safety_timeout_ms;
 
 // Function prototypes for simulation functions (for unit testing purposes)
 void sleep_microseconds(long int microseconds);
+int getCurrentTimeMs_real(void);
 void read_csv_default(void);
 void read_csv(const char *path);
 void check_order(int order);
 void simu_speed_step(VehicleData *sim_data, ControlData controls);
 void* simu_speed(void *arg);
 void send_data_update(void);
+void check_health_signals(void);
 void* comms(void *arg);
 void update_battery_soc(double vehicle_speed);
 void* sensor_battery(void *arg);
