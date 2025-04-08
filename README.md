@@ -34,6 +34,23 @@ Check the running containers:
 docker ps
 ```
 
+## Communication Test
+Send a message via CAN:
+```sh
+echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
+```
+
+To stop the containers:
+```sh
+docker-compose down
+```
+
+## Checking the logs
+When the container is running, execute:
+```sh
+docker exec -it <container> cat /app/logs/diagnostics.log
+```
+
 ## Local Linting with Pre-Commit & Clang-Tidy
 To maintain code quality and ensure MISRA-C compliance, we use clang-tidy locally through pre-commit hooks. This lets you catch issues before pushing changes to GitHub.
 
@@ -142,20 +159,3 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 - **Publish to GitHub Pages:** The report is deployed to the `gh-pages` branch and can be accessed online.
 
 📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation](https://emanueladler.github.io/stop-start-simulation)
-
-## Communication Test
-Send a message via CAN:
-```sh
-echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
-```
-
-To stop the containers:
-```sh
-docker-compose down
-```
-
-## Checking the logs
-When the container is running, execute:
-```sh
-docker exec -it <container> cat /app/logs/diagnostics.log
-```
