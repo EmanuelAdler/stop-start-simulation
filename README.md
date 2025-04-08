@@ -6,6 +6,9 @@
 
 This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
+## Project guidelines
+The rules regarding this project management like commiting, creating issues and naming branches are contained in the [report](report.md) file.
+
 ## Requirements  
 - Ubuntu or another Linux system compatible with SocketCAN and GCC 14
 - Docker  
