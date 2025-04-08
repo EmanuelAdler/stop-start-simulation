@@ -7,7 +7,7 @@
 This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
 ## Requirements  
-- Ubuntu or another Linux system compatible with SocketCAN
+- Ubuntu or another Linux system compatible with SocketCAN and GCC 14
 - Docker  
 
 ## CAN Interface Setup  
