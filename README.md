@@ -6,8 +6,11 @@
 
 This project consists of an application that simulates the behaviour of an automotive stop/start system.
 
+## Project guidelines
+The rules regarding this project management like commiting, creating issues and naming branches are contained in the [report](report.md) file.
+
 ## Requirements  
-- Ubuntu or another Linux system compatible with SocketCAN
+- Ubuntu or another Linux system compatible with SocketCAN and GCC 14
 - Docker  
 
 ## CAN Interface Setup  
@@ -29,6 +32,23 @@ docker-compose up --build
 Check the running containers:
 ```sh
 docker ps
+```
+
+## Communication Test
+Send a message via CAN:
+```sh
+echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
+```
+
+To stop the containers:
+```sh
+docker-compose down
+```
+
+## Checking the logs
+When the container is running, execute:
+```sh
+docker exec -it <container> cat /app/logs/diagnostics.log
 ```
 
 ## Local Linting with Pre-Commit & Clang-Tidy
@@ -139,48 +159,3 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 - **Publish to GitHub Pages:** The report is deployed to the `gh-pages` branch and can be accessed online.
 
 📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation](https://emanueladler.github.io/stop-start-simulation)
-
-## Communication Test
-Send a message via CAN:
-```sh
-echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
-```
-
-To stop the containers:
-```sh
-docker-compose down
-```
-
-## Source code testing
-Install the required libraries for testing:
-```sh
-sudo apt install -y gcc-14 g++-14 make build-essential can-utils clang libssl-dev libcunit1 libcunit1-doc libcunit1-dev
-```
-
-Install the `lcov` package:
-```sh
-curl -LO https://github.com/linux-test-project/lcov/releases/download/v2.3/lcov-2.3.tar.gz
-tar -xzf lcov-2.3.tar.gz
-cd lcov-2.3
-sudo make install
-```
-
-Run the script to configure the CAN interface:
-```sh
-sudo ./setup_vcan.sh
-```
-
-Then, in the test folder run:
-```sh
-make test
-```
-or
-```sh
-make coverage
-```
-
-## Checking the logs
-When the container is running, execute:
-```sh
-docker exec -it <container> cat /app/logs/diagnostics.log
-```
