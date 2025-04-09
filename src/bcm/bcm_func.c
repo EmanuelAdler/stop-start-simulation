@@ -106,20 +106,7 @@ void read_csv(const char *path)
         {
             char clean_token[CSV_MAX_TOKEN_SIZE];
             strncpy(clean_token, token, sizeof(clean_token));
-            // Remove surrounding quotes if any
-            if (clean_token[0] == '"' && clean_token[strlen(clean_token) - 1] == '"')
-            {
-                memmove(clean_token, clean_token + 1, strlen(clean_token) - 1);
-                clean_token[strlen(clean_token) - 1] = '\0';
-            }
-            // Replace comma with dot in numeric values
-            for (char *p_aux = clean_token; *p_aux; p_aux++)
-            {
-                if (*p_aux == ',')
-                {
-                    *p_aux = '.';
-                }
-            }
+            
             switch (field)
             {
             case CSV_NUM_FIELD_0:
