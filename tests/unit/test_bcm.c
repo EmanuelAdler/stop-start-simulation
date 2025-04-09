@@ -9,8 +9,9 @@
 #include "../../src/common_includes/logging.h"
 
 #define CSV_FILE_PATH "../src/bcm/full_simu.csv"
-#define TEST_EXPECTED_IT  (2.0F)
-#define FILE_LINE_SIZE    (256)
+#define TEST_EXPECTED_IT     (2.0F)
+#define TEST_EXPECTED_IT_INT (2)
+#define FILE_LINE_SIZE       (256)
 
 // Tolerances
 const float SOC_TOLERANCE = 0.001F;
@@ -654,6 +655,47 @@ void test_check_health_signals_door_status(void)
 }
 
 //-------------------------------------
+// 10)  comms() bounded‑loop verification
+//-------------------------------------
+void test_comms_thread_expected_iterations(void)
+{
+    /* -------- Arrange ------------------------------------------------- */
+    sem_init(&sem_comms, 0, TEST_EXPECTED_IT_INT);   /* pre‑post semaphore    */
+    pthread_mutex_init(&mutex_bcm, NULL);
+
+    stub_can_reset();
+
+    data_size      = 1;          /* a single VehicleData entry is enough */
+    simu_curr_step = 0;
+    simu_state     = STATE_RUNNING;
+    simu_order     = ORDER_RUN;
+    data_updated   = true;       /* first iteration will send immediately */
+
+    test_mode = false;           /* irrelevant because loop is bounded   */
+
+    /* -------- Act ----------------------------------------------------- */
+    pthread_t tid;
+    pthread_create(&tid, NULL, comms, NULL);
+    pthread_join(tid, NULL);     /* loop finishes after TEST_EXPECTED_IT_INT */
+
+    /* -------- Assert -------------------------------------------------- */
+    /* 1) send_data_update() called once per iteration → 12 frames each  */
+    int expected_frames = TEST_EXPECTED_IT_INT * 12;
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), expected_frames);
+
+    /* 2) simu_curr_step incremented exactly TEST_EXPECTED_IT_INT times      */
+    CU_ASSERT_EQUAL(simu_curr_step, TEST_EXPECTED_IT_INT);
+
+    /* 3) data_updated was cleared by the last iteration                 */
+    CU_ASSERT_FALSE(data_updated);
+
+    /* -------- Cleanup ------------------------------------------------- */
+    pthread_mutex_destroy(&mutex_bcm);
+    sem_destroy(&sem_comms);
+}
+
+
+//-------------------------------------
 // Test main
 //-------------------------------------
 int main(void)
@@ -688,6 +730,7 @@ int main(void)
     CU_add_test(suite, "check_health_signals_persisted", test_check_health_signals_persisted);
     CU_add_test(suite, "check_health_signals_engine_temp", test_check_health_signals_engine_temp);
     CU_add_test(suite, "check_health_signals_door_status", test_check_health_signals_door_status);
+    CU_add_test(suite, "comms expected iterations", test_comms_thread_expected_iterations);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

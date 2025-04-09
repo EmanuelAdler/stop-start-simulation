@@ -88,6 +88,7 @@ extern bool test_mode;
 extern bool fault_active;
 extern int fault_start_time;
 extern const int safety_timeout_ms;
+extern bool data_updated;
 
 // Function prototypes for simulation functions (for unit testing purposes)
 void sleep_microseconds(long int microseconds);

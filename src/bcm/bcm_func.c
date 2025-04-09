@@ -361,7 +361,13 @@ void check_health_signals(void)
 void *comms(void *arg)
 {
     (void)arg;
-    while (!test_mode)
+    #ifdef UNIT_TEST
+        int max_iterations = 2;
+        int iter;
+        for (iter = 0; iter < max_iterations; ++iter)
+    #else
+        while (!test_mode)
+    #endif
     {
         sem_wait(&sem_comms);
 
