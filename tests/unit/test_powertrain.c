@@ -133,6 +133,9 @@ static void test_check_disable_engine_fail_cond1(void)
     start_stop_manual    = true;
     engine_off = false; // so the error branch triggers
 
+    // Reset the stub counter
+    stub_can_reset();
+
     VehicleData data_test = base_ok_data();
     data_test.brake = BRAKE_FAIL; // failing condition speed==0 && !accel && brake => now brake=0 => else branch
 
@@ -140,6 +143,12 @@ static void test_check_disable_engine_fail_cond1(void)
 
     // cond1 = 0 => engine_off should remain false
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about brake not being pressed
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_brake_not_pressed");
 }
 
 // 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5)
