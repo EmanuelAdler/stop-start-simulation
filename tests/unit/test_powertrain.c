@@ -52,6 +52,13 @@
 #define TEST_BYTE_7 0x77
 #define TEST_BYTE_8 0x88
 
+//-------------------------------------
+// Declare the extra "mock" functions created
+//-------------------------------------
+int stub_can_get_send_count(void);
+const char* stub_can_get_last_message(void);
+void stub_can_reset(void);
+
 static const double kSpeedReceived     = 45.7;
 static const double kTiltReceived      = 4.2;
 static const double kBattSocReceived   = 81.5;
@@ -95,7 +102,7 @@ static VehicleData base_ok_data(void)
 // ----------------------------------------------------------------------
 // Unit tests
 
-// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active
+// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active (SWR5.1)
 static void test_check_disable_engine_all_ok(void)
 {
     // Test example of "check_disable_engine()"
@@ -104,9 +111,20 @@ static void test_check_disable_engine_all_ok(void)
 
     VehicleData data_test = base_ok_data();
 
+    // Reset the stub counter
+    stub_can_reset();
+
+    // Call the function
     check_disable_engine(&data_test);
 
+    // Check if the engine was turned off
     CU_ASSERT_TRUE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about turning the engine off
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "ENGINE OFF");
 }
 
 // 2) Fail cond1 => e.g. brake=0
