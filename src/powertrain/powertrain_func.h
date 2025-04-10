@@ -25,9 +25,7 @@ extern bool engine_off;
 
 void check_disable_engine(VehicleData *ptr_rec_data);
 void handle_engine_restart_logic(
-    VehicleData *data,
-    bool *is_restarting,
-    struct timespec *restart_start);
+    VehicleData *data);
 void *function_start_stop(void *arg);
 void *powertrain_comms(void *arg);
 void sleep_microseconds_pw(long int msec);
