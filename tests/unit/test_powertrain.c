@@ -52,6 +52,7 @@
 #define TEST_BYTE_7 0x77
 #define TEST_BYTE_8 0x88
 #define ERROR_BATTERY_VOLTAGE 10.2F
+#define FILE_LINE_SIZE    (256)
 
 //-------------------------------------
 // Declare the extra "mock" functions created
@@ -80,6 +81,33 @@ static struct can_frame mock_frame_to_return;
 //-------------------------------------
 int stub_can_get_send_count(void);
 const char* stub_can_get_last_message(void);
+
+typedef struct
+{
+    const char *filepath;
+    const char *substring;
+} f_susbtring_data;
+
+/* Utility to search for a substring in a file */
+static bool file_contains_substring(f_susbtring_data struct_f_subs)
+{
+    FILE *fpath = fopen(struct_f_subs.filepath, "r");
+    if (!fpath)
+    {
+        return false;
+    }
+
+    char line[FILE_LINE_SIZE];
+    bool found = false;
+    while (fgets(line, sizeof(line), fpath)) {
+        if (strstr(line, struct_f_subs.substring)) {
+            found = true;
+            break;
+        }
+    }
+    fclose(fpath);
+    return found;
+}
 
 //-------------------------------------
 // Setup the CUnit Suite
@@ -295,6 +323,10 @@ static void test_handle_engine_restart(void)
 {
     // Testing if engine will restart successfully if conditions are met
 
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_handle_engine_restart.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     // Ensure manual=on, start_stop active
     start_stop_manual = true;
     engine_off = true;
@@ -319,6 +351,13 @@ static void test_handle_engine_restart(void)
     // Check if last message is about restarting
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "RESTART");
 
+    // Check received log message
+    f_susbtring_data restart_ok = {
+        "/tmp/test_handle_engine_restart.log",
+        "Stop/Start: Engine turned On"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(restart_ok));
+
     // Now we'll test if when the battery SoC drops the engine won't restart
 
     // Reset the stub counter
@@ -336,8 +375,18 @@ static void test_handle_engine_restart(void)
     // Check if the stub was called
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
 
-    // Check if last message is about restarting
+    // Check if last message is about error
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "system_disabled_error");
+
+    // Check received log message
+    f_susbtring_data sys_disable = {
+        "/tmp/test_handle_engine_restart.log",
+        "Fault: SWR3.5 (Low Battery)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(sys_disable));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 9) Check powertrain communication via CAN
