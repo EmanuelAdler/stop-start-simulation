@@ -151,7 +151,7 @@ static void test_check_disable_engine_fail_cond1(void)
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_brake_not_pressed");
 }
 
-// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5)
+// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5) (SWR2.6)
 static void test_check_disable_engine_fail_cond2(void)
 {
     start_stop_manual    = true;
@@ -170,7 +170,7 @@ static void test_check_disable_engine_fail_cond2(void)
     // Check if the stub was called
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
 
-    // Check if last message is about brake not being pressed
+    // Check if last message is about external or internal temperature out of range
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_temperature_out_range");
 }
 
