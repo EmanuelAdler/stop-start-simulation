@@ -286,9 +286,14 @@ static void test_check_disable_engine(void)
 // 9) Check restart logic
 static void test_handle_engine_restart(void)
 {
+    // Testing if engine will restart successfully if conditions are met
+
     // Ensure manual=on, start_stop active
     start_stop_manual = true;
     engine_off = true;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = {
         .prev_brake = BRAKE_OK, 
@@ -303,6 +308,35 @@ static void test_handle_engine_restart(void)
     handle_engine_restart_logic(&data_test, &is_restarting, &tss);
 
     CU_ASSERT_TRUE(is_restarting);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about restarting
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "RESTART");
+
+    // Now we'll test if when the battery SoC drops the engine won't restart
+
+    // Reset the stub counter
+    stub_can_reset();
+
+    engine_off = true;    
+    data_test.batt_soc = BATT_SOC_LOW;
+    data_test.prev_brake = BRAKE_OK, 
+    data_test.brake      = BRAKE_FAIL, // brake_released
+    is_restarting = false;
+
+    clock_gettime(CLOCK_MONOTONIC, &tss);
+
+    handle_engine_restart_logic(&data_test, &is_restarting, &tss);
+
+    CU_ASSERT_FALSE(is_restarting);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
+
+    // Check if last message is about restarting
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "system_disabled_error");
 }
 
 // 9) Check powertrain communication via CAN
