@@ -197,7 +197,7 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_engine_temperature_out_range");
 }
 
-// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2 (SWR2.3 and SWR4.4)
+// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2 (SWR2.3, SWR4.3 and SWR4.4)
 static void test_check_disable_engine_fail_cond4(void)
 {
     start_stop_manual    = true;
