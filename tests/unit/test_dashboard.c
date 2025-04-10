@@ -10,6 +10,7 @@
 
 #define MOCK_SOCKET       (999)
 #define FILE_LINE_SIZE    (256)
+#define CAN_ID_MOCK       (0x7A0U)
 
 static const double kDelta             = 0.001;
 static const double kBattSocReceived   = 55.0;
@@ -236,7 +237,7 @@ void test_parse_input_variants(void)
 //-------------------------------------
 void test_invalid_can_id_dashboard(void)
 {
-    CU_ASSERT_FALSE(check_is_valid_can_id(CMD_ABORT));
+    CU_ASSERT_FALSE(check_is_valid_can_id(CAN_ID_MOCK));
 }
 
 int main(void)
