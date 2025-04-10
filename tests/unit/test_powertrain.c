@@ -174,11 +174,14 @@ static void test_check_disable_engine_fail_cond2(void)
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_temperature_out_range");
 }
 
-// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60
+// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60 (SWR2.2)
 static void test_check_disable_engine_fail_cond3_inactive(void)
 {
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.engi_temp = ENG_TEMP_FAIL; // below MIN_ENGINE_TEMP(70)
@@ -186,6 +189,12 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about engine temperature out of range
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_engine_temperature_out_range");
 }
 
 // 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2
