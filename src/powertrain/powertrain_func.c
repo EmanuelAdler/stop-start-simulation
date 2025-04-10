@@ -171,7 +171,7 @@ void check_disable_engine(VehicleData *ptr_rec_data)
         if (engine_off_local == false)
         {
             engine_off = true;
-            send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ENGINE_OFF);
+            send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ECU_RESTART);
             log_toggle_event("Stop/Start: Engine turned Off");
         }
     }
