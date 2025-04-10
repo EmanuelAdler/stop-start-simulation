@@ -90,6 +90,7 @@ void test_print_dashboard_status(void)
 {
     // 1) Set the actuator state as we like
     actuators.start_stop_active = false;
+    actuators.error_system = true;
 
     // 2) Saves the state of the “real” stdout
     int saved_stdout_fd = dup(STDOUT_FILENO);
@@ -121,7 +122,18 @@ void test_print_dashboard_status(void)
     CU_ASSERT_TRUE(file_contains_substring(params_str));
 
     params_str.substring = "Stop/Start button: 0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
 
+    params_str.substring = "Battery SOC: 0.0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "Battery Voltage: 0.0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "Door Open: No";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "System Disabled Warning: Yes";
     CU_ASSERT_TRUE(file_contains_substring(params_str));
 }
 
