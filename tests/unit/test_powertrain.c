@@ -165,6 +165,10 @@ static void test_check_disable_engine_all_ok(void)
 // 2) Fail cond1 => e.g. brake=0
 static void test_check_disable_engine_fail_cond1(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond1.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false; // so the error branch triggers
 
@@ -184,11 +188,25 @@ static void test_check_disable_engine_fail_cond1(void)
 
     // Check if last message is about brake not being pressed
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_brake_not_pressed");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond1.log",
+        "Stop/Start: SWR2.8 (Brake not pressed or car is moving!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5) (SWR2.6)
 static void test_check_disable_engine_fail_cond2(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond2.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
 
@@ -207,11 +225,25 @@ static void test_check_disable_engine_fail_cond2(void)
 
     // Check if last message is about external or internal temperature out of range
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_temperature_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond2.log",
+        "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60 (SWR2.2)
 static void test_check_disable_engine_fail_cond3_inactive(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond3.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
 
@@ -230,11 +262,25 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
 
     // Check if last message is about engine temperature out of range
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_engine_temperature_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond3.log",
+        "Stop/Start: SWR2.8 (Engine temperature out of range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2 (SWR2.3, SWR4.3 and SWR4.4)
 static void test_check_disable_engine_fail_cond4(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond4.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
 
@@ -254,11 +300,25 @@ static void test_check_disable_engine_fail_cond4(void)
 
     // Check if last message is about battery operating out of range
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_battery_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond4.log",
+        "Stop/Start: SWR2.8 (Battery is not in operating range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 6) Fail cond5 => door_open != 0 (SWR2.7)
 static void test_check_disable_engine_fail_cond5(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond5.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
 
@@ -277,11 +337,25 @@ static void test_check_disable_engine_fail_cond5(void)
 
     // Check if last message is about any door opened
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_door_open");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond5.log",
+        "Stop/Start: SWR2.8 (One or more doors are opened!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 7) Fail cond6 => tilt_angle > 5 (SWR2.9)
 static void test_check_disable_engine_fail_cond6(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond6.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
 
@@ -300,6 +374,16 @@ static void test_check_disable_engine_fail_cond6(void)
 
     // Check if last message is about tilt angle greater than maximum limit
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_tilt_angle");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond6.log",
+        "Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 8) engine_off=false => then if ANY cond related to movement succeeds => triggers engine deactivation

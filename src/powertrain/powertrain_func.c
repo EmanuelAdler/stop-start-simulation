@@ -137,7 +137,7 @@ void check_disable_engine(VehicleData *ptr_rec_data)
         engine_off_local,
         (EngineConditionMessages){
             .can_error = "error_engine_temperature_out_range",
-            .system_log = "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+            .system_log = "Stop/Start: SWR2.8 (Engine temperature out of range!)"
         });
     
     cond4 = evaluate_condition_with_logging(
