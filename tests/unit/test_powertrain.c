@@ -51,6 +51,7 @@
 #define TEST_BYTE_6 0x66
 #define TEST_BYTE_7 0x77
 #define TEST_BYTE_8 0x88
+#define ERROR_BATTERY_VOLTAGE 10.2F
 
 static const double kSpeedReceived     = 45.7;
 static const double kTiltReceived      = 4.2;
@@ -66,6 +67,12 @@ static char mock_log_toggle_event_msg[LOG_EVENT_MSG_SIZE] = {0};
 
 static bool mock_receive_can_frame_enable = false;
 static struct can_frame mock_frame_to_return;
+
+//-------------------------------------
+// Declare the extra "mock" functions created
+//-------------------------------------
+int stub_can_get_send_count(void);
+const char* stub_can_get_last_message(void);
 
 //-------------------------------------
 // Setup the CUnit Suite
@@ -392,6 +399,22 @@ static void test_parse_input_variants(void)
     CU_ASSERT_EQUAL(rec_data.gear, GEAR_RECEIVED);
 }
 
+static void test_restart_monitor_battery_drop(void)
+{
+    VehicleData data_test = base_ok_data();
+    data_test.batt_volt = ERROR_BATTERY_VOLTAGE;
+
+    bool is_restarting = true;
+    struct timespec start_ts;
+    clock_gettime(CLOCK_MONOTONIC, &start_ts);
+
+    handle_engine_restart_logic(&data_test, &is_restarting, &start_ts);
+
+    CU_ASSERT_FALSE(is_restarting);
+    CU_ASSERT_TRUE(stub_can_get_send_count() >= 2);
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_battery_drop");
+}
+
 int main(void)
 {
     // Initialize CUnit test registry
@@ -421,6 +444,7 @@ int main(void)
     CU_add_test(suite, "test_process_can_frame",   test_process_can_frame);
     CU_add_test(suite, "function_start_stop test", test_function_start_stop);
     CU_add_test(suite, "test_parse_input_variants", test_parse_input_variants);
+    CU_add_test(suite, "restart_monitor_battery_drop", test_restart_monitor_battery_drop);
 
     // Run all tests in verbose mode
     CU_basic_set_mode(CU_BRM_VERBOSE);
