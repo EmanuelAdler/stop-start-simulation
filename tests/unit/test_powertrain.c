@@ -244,11 +244,14 @@ static void test_check_disable_engine_fail_cond5(void)
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_door_open");
 }
 
-// 7) Fail cond6 => tilt_angle > 5
+// 7) Fail cond6 => tilt_angle > 5 (SWR2.9)
 static void test_check_disable_engine_fail_cond6(void)
 {
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.tilt_angle = TILT_FAIL; // triggers the else for cond6
@@ -256,6 +259,12 @@ static void test_check_disable_engine_fail_cond6(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about tilt angle greater than maximum limit
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_tilt_angle");
 }
 
 // 8) engine_off=false => then if ANY cond related to movement succeeds => triggers engine deactivation
