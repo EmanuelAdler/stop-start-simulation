@@ -221,11 +221,14 @@ static void test_check_disable_engine_fail_cond4(void)
     CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_battery_out_range");
 }
 
-// 6) Fail cond5 => door_open != 0
+// 6) Fail cond5 => door_open != 0 (SWR2.7)
 static void test_check_disable_engine_fail_cond5(void)
 {
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.door_open = DOOR_FAIL; // triggers the else for cond5
@@ -233,6 +236,12 @@ static void test_check_disable_engine_fail_cond5(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about any door opened
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_door_open");
 }
 
 // 7) Fail cond6 => tilt_angle > 5
