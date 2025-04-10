@@ -231,6 +231,14 @@ void test_parse_input_variants(void)
     cleanup_logging_system();
 }
 
+//-------------------------------------
+// Test 4: Test invalid CAN ID for dashboard
+//-------------------------------------
+void test_invalid_can_id_dashboard(void)
+{
+    CU_ASSERT_FALSE(check_is_valid_can_id(CMD_ABORT));
+}
+
 int main(void)
 {
     // Initialize CUnit test registry
@@ -247,7 +255,8 @@ int main(void)
     // Add tests
     CU_add_test(suite, "process_received_frame coverage", test_process_received_frame);
     CU_add_test(suite, "print_dashboard_status", test_print_dashboard_status);
-    CU_add_test(suite, "test_parse_input_variants", test_parse_input_variants);
+    CU_add_test(suite, "parse_input_variants", test_parse_input_variants);
+    CU_add_test(suite, "invalid_can_id_dashboard", test_invalid_can_id_dashboard);
 
     // Run all tests in verbose mode
     CU_basic_set_mode(CU_BRM_VERBOSE);
