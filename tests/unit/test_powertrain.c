@@ -157,12 +157,21 @@ static void test_check_disable_engine_fail_cond2(void)
     start_stop_manual    = true;
     engine_off = false;
 
+    // Reset the stub counter
+    stub_can_reset();
+
     VehicleData data_test = base_ok_data();
     data_test.internal_temp = TEMP_FAIL; // triggers the else for cond2
 
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about brake not being pressed
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_temperature_out_range");
 }
 
 // 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60
