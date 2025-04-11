@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-04-04 00:22:55</td>
+            <td class="headerValue">2025-04-11 11:33:48</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -93,45 +93,45 @@
 <span id="L13"><span class="lineNum">      13</span>                 :              :             : </span>
 <span id="L14"><span class="lineNum">      14</span>                 :              :             : static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;</span>
 <span id="L15"><span class="lineNum">      15</span>                 :              :             : </span>
-<span id="L16"><span class="lineNum">      16</span>                 :              :<span class="tlaGNC">           7 : bool init_logging_system(void) {</span></span>
-<span id="L17"><span class="lineNum">      17</span>                 :              :<span class="tlaGNC">           7 :     logFile = fopen(log_file_path, &quot;a&quot;);</span></span>
-<span id="L18"><span class="lineNum">      18</span>                 :              :<span class="tlaGNC">           7 :     return (logFile != NULL);</span></span>
+<span id="L16"><span class="lineNum">      16</span>                 :              :<span class="tlaGNC">          18 : bool init_logging_system(void) {</span></span>
+<span id="L17"><span class="lineNum">      17</span>                 :              :<span class="tlaGNC">          18 :     logFile = fopen(log_file_path, &quot;a&quot;);</span></span>
+<span id="L18"><span class="lineNum">      18</span>                 :              :<span class="tlaGNC">          18 :     return (logFile != NULL);</span></span>
 <span id="L19"><span class="lineNum">      19</span>                 :              :             : }</span>
 <span id="L20"><span class="lineNum">      20</span>                 :              :             : </span>
-<span id="L21"><span class="lineNum">      21</span>                 :              :<span class="tlaGNC">           7 : void set_log_file_path(const char *new_path) {</span></span>
-<span id="L22"><span class="lineNum">      22</span>                 :              :<span class="tlaGNC">           7 :     log_file_path = new_path;</span></span>
-<span id="L23"><span class="lineNum">      23</span>                 :              :<span class="tlaGNC">           7 : }</span></span>
+<span id="L21"><span class="lineNum">      21</span>                 :              :<span class="tlaGNC">          18 : void set_log_file_path(const char *new_path) {</span></span>
+<span id="L22"><span class="lineNum">      22</span>                 :              :<span class="tlaGNC">          18 :     log_file_path = new_path;</span></span>
+<span id="L23"><span class="lineNum">      23</span>                 :              :<span class="tlaGNC">          18 : }</span></span>
 <span id="L24"><span class="lineNum">      24</span>                 :              :             : </span>
-<span id="L25"><span class="lineNum">      25</span>                 :              :<span class="tlaGNC">          22 : void log_toggle_event(char* message) {</span></span>
-<span id="L26"><span class="lineNum">      26</span>         [<span class="tlaGBC" title="Branch 0 was taken 14 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 8 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">          22 :     if (logFile == NULL) {</span></span>
-<span id="L27"><span class="lineNum">      27</span>                 :              :<span class="tlaGNC">          14 :         return;</span></span>
+<span id="L25"><span class="lineNum">      25</span>                 :              :<span class="tlaGNC">          37 : void log_toggle_event(char* message) {</span></span>
+<span id="L26"><span class="lineNum">      26</span>         [<span class="tlaGBC" title="Branch 0 was taken 8 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 29 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">          37 :     if (logFile == NULL) {</span></span>
+<span id="L27"><span class="lineNum">      27</span>                 :              :<span class="tlaGNC">           8 :         return;</span></span>
 <span id="L28"><span class="lineNum">      28</span>                 :              :             :     }</span>
 <span id="L29"><span class="lineNum">      29</span>                 :              :             : </span>
-<span id="L30"><span class="lineNum">      30</span>                 :              :<span class="tlaGNC">           8 :     pthread_mutex_lock(&amp;logMutex);</span></span>
+<span id="L30"><span class="lineNum">      30</span>                 :              :<span class="tlaGNC">          29 :     pthread_mutex_lock(&amp;logMutex);</span></span>
 <span id="L31"><span class="lineNum">      31</span>                 :              :             : </span>
 <span id="L32"><span class="lineNum">      32</span>                 :              :             :     // Get current time</span>
 <span id="L33"><span class="lineNum">      33</span>                 :              :             :     time_t rawtime;</span>
-<span id="L34"><span class="lineNum">      34</span>                 :              :<span class="tlaGNC">           8 :     time(&amp;rawtime);</span></span>
-<span id="L35"><span class="lineNum">      35</span>                 :              :<span class="tlaGNC">           8 :     struct tm *timeinfo = localtime(&amp;rawtime);</span></span>
+<span id="L34"><span class="lineNum">      34</span>                 :              :<span class="tlaGNC">          29 :     time(&amp;rawtime);</span></span>
+<span id="L35"><span class="lineNum">      35</span>                 :              :<span class="tlaGNC">          29 :     struct tm *timeinfo = localtime(&amp;rawtime);</span></span>
 <span id="L36"><span class="lineNum">      36</span>                 :              :             : </span>
 <span id="L37"><span class="lineNum">      37</span>                 :              :             :     char timeStr[TIME_STR_SIZE];</span>
-<span id="L38"><span class="lineNum">      38</span>                 :              :<span class="tlaGNC">           8 :     strftime(timeStr, sizeof(timeStr), &quot;%Y-%m-%d %H:%M:%S&quot;, timeinfo);</span></span>
+<span id="L38"><span class="lineNum">      38</span>                 :              :<span class="tlaGNC">          29 :     strftime(timeStr, sizeof(timeStr), &quot;%Y-%m-%d %H:%M:%S&quot;, timeinfo);</span></span>
 <span id="L39"><span class="lineNum">      39</span>                 :              :             : </span>
 <span id="L40"><span class="lineNum">      40</span>                 :              :             :     // Write the event</span>
-<span id="L41"><span class="lineNum">      41</span>                 :              :<span class="tlaGNC">           8 :     fprintf(logFile, &quot;[%s] %s\n&quot;, timeStr, message);</span></span>
-<span id="L42"><span class="lineNum">      42</span>                 :              :<span class="tlaGNC">           8 :     fflush(logFile);</span></span>
+<span id="L41"><span class="lineNum">      41</span>                 :              :<span class="tlaGNC">          29 :     fprintf(logFile, &quot;[%s] %s\n&quot;, timeStr, message);</span></span>
+<span id="L42"><span class="lineNum">      42</span>                 :              :<span class="tlaGNC">          29 :     fflush(logFile);</span></span>
 <span id="L43"><span class="lineNum">      43</span>                 :              :             : </span>
-<span id="L44"><span class="lineNum">      44</span>                 :              :<span class="tlaGNC">           8 :     pthread_mutex_unlock(&amp;logMutex);</span></span>
+<span id="L44"><span class="lineNum">      44</span>                 :              :<span class="tlaGNC">          29 :     pthread_mutex_unlock(&amp;logMutex);</span></span>
 <span id="L45"><span class="lineNum">      45</span>                 :              :             : }</span>
 <span id="L46"><span class="lineNum">      46</span>                 :              :             : </span>
-<span id="L47"><span class="lineNum">      47</span>                 :              :<span class="tlaGNC">           7 : void cleanup_logging_system(void)</span></span>
+<span id="L47"><span class="lineNum">      47</span>                 :              :<span class="tlaGNC">          18 : void cleanup_logging_system(void)</span></span>
 <span id="L48"><span class="lineNum">      48</span>                 :              :             : {</span>
-<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaGBC" title="Branch 0 was taken 6 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           7 :     if (logFile)</span></span>
+<span id="L49"><span class="lineNum">      49</span>         [<span class="tlaGBC" title="Branch 0 was taken 17 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">          18 :     if (logFile)</span></span>
 <span id="L50"><span class="lineNum">      50</span>                 :              :             :     {</span>
-<span id="L51"><span class="lineNum">      51</span>                 :              :<span class="tlaGNC">           6 :         fclose(logFile);</span></span>
-<span id="L52"><span class="lineNum">      52</span>                 :              :<span class="tlaGNC">           6 :         logFile = NULL;</span></span>
+<span id="L51"><span class="lineNum">      51</span>                 :              :<span class="tlaGNC">          17 :         fclose(logFile);</span></span>
+<span id="L52"><span class="lineNum">      52</span>                 :              :<span class="tlaGNC">          17 :         logFile = NULL;</span></span>
 <span id="L53"><span class="lineNum">      53</span>                 :              :             :     }</span>
-<span id="L54"><span class="lineNum">      54</span>                 :              :<span class="tlaGNC">           7 : }</span></span>
+<span id="L54"><span class="lineNum">      54</span>                 :              :<span class="tlaGNC">          18 : }</span></span>
         </pre>
               </td>
             </tr>

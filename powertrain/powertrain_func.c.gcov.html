@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryMed">88.9&nbsp;%</td>
-            <td class="headerCovTableEntry">108</td>
+            <td class="headerCovTableEntryHi">94.8&nbsp;%</td>
             <td class="headerCovTableEntry">96</td>
+            <td class="headerCovTableEntry">91</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-04-04 00:22:55</td>
+            <td class="headerValue">2025-04-11 11:33:48</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -49,18 +49,18 @@
             <td></td>
             <td></td>
             <td class="headerItem">Branches:</td>
-            <td class="headerCovTableEntryLo">71.8&nbsp;%</td>
-            <td class="headerCovTableEntry">78</td>
-            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntryLo">74.3&nbsp;%</td>
+            <td class="headerCovTableEntry">70</td>
+            <td class="headerCovTableEntry">52</td>
           </tr>
           <tr>
             <td></td>
             <td></td>
             <td></td>
             <td class="headerItem">MC/DC:</td>
-            <td class="headerCovTableEntryLo">70.5&nbsp;%</td>
-            <td class="headerCovTableEntry">78</td>
-            <td class="headerCovTableEntry">55</td>
+            <td class="headerCovTableEntryLo">72.9&nbsp;%</td>
+            <td class="headerCovTableEntry">70</td>
+            <td class="headerCovTableEntry">51</td>
           </tr>
                   <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -218,7 +218,7 @@
 <span id="L137"><span class="lineNum">     137</span>                 :              :             :         engine_off_local,</span>
 <span id="L138"><span class="lineNum">     138</span>                 :              :<span class="tlaGNC">          10 :         (EngineConditionMessages){</span></span>
 <span id="L139"><span class="lineNum">     139</span>                 :              :             :             .can_error = &quot;error_engine_temperature_out_range&quot;,</span>
-<span id="L140"><span class="lineNum">     140</span>                 :              :             :             .system_log = &quot;Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)&quot;</span>
+<span id="L140"><span class="lineNum">     140</span>                 :              :             :             .system_log = &quot;Stop/Start: SWR2.8 (Engine temperature out of range!)&quot;</span>
 <span id="L141"><span class="lineNum">     141</span>                 :              :             :         });</span>
 <span id="L142"><span class="lineNum">     142</span>                 :              :             :     </span>
 <span id="L143"><span class="lineNum">     143</span>                 :              :<span class="tlaGNC">          10 :     cond4 = evaluate_condition_with_logging(</span></span>
@@ -254,102 +254,102 @@
 <span id="L171"><span class="lineNum">     171</span>         [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           4 :         if (engine_off_local == false)</span></span>
 <span id="L172"><span class="lineNum">     172</span>                 :              :             :         {</span>
 <span id="L173"><span class="lineNum">     173</span>                 :              :<span class="tlaGNC">           3 :             engine_off = true;</span></span>
-<span id="L174"><span class="lineNum">     174</span>                 :              :<span class="tlaGNC">           3 :             log_toggle_event(&quot;Stop/Start: Engine turned Off&quot;);</span></span>
-<span id="L175"><span class="lineNum">     175</span>                 :              :             :         }</span>
-<span id="L176"><span class="lineNum">     176</span>                 :              :             :     }</span>
-<span id="L177"><span class="lineNum">     177</span>                 :              :<span class="tlaGNC">          10 : }</span></span>
-<span id="L178"><span class="lineNum">     178</span>                 :              :             : </span>
-<span id="L179"><span class="lineNum">     179</span>                 :              :<span class="tlaGNC">           3 : void handle_engine_restart_logic(</span></span>
-<span id="L180"><span class="lineNum">     180</span>                 :              :             :     VehicleData *data,</span>
-<span id="L181"><span class="lineNum">     181</span>                 :              :             :     bool *engine_is_restarting,</span>
-<span id="L182"><span class="lineNum">     182</span>                 :              :             :     struct timespec *engine_restart_start)</span>
-<span id="L183"><span class="lineNum">     183</span>                 :              :             : {</span>
-<span id="L184"><span class="lineNum">     184</span>                 :              :             :     /* Restart trigger detection */</span>
-<span id="L185"><span class="lineNum">     185</span>   [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span><span class="tlaGBC" title="Branch 2 was taken 3 times"> + </span><span class="tlaUNC" title="Branch 3 was not taken"> - </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span><span class="tlaGBC" title="True sense of expression &quot;1&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;1&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           3 :     if (engine_off &amp;&amp; !(*engine_is_restarting))</span></span>
-<span id="L186"><span class="lineNum">     186</span>                 :              :             :     {</span>
-<span id="L187"><span class="lineNum">     187</span>   [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 2 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 3 was taken 1 time"> + </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span><span class="tlaGBC" title="True sense of expression &quot;1&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :         const bool brake_released = (data-&gt;prev_brake &amp;&amp; !data-&gt;brake);</span></span>
-<span id="L188"><span class="lineNum">     188</span>   [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span><span class="tlaUNC" title="Branch 2 was not taken"> - </span><span class="tlaGBC" title="Branch 3 was taken 3 times"> + </span>]:[<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span><span class="tlaUNC" title="True sense of expression &quot;1&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :         const bool accelerator_pressed = (!data-&gt;prev_accel &amp;&amp; data-&gt;accel);</span></span>
-<span id="L189"><span class="lineNum">     189</span>                 :              :             : </span>
-<span id="L190"><span class="lineNum">     190</span>   [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 2 was not taken"> - </span><span class="tlaGBC" title="Branch 3 was taken 2 times"> + </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span><span class="tlaUNC" title="True sense of expression &quot;1&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :         if (brake_released || accelerator_pressed)</span></span>
-<span id="L191"><span class="lineNum">     191</span>                 :              :             :         {</span>
-<span id="L192"><span class="lineNum">     192</span>                 :              :             :             /* Battery check */</span>
-<span id="L193"><span class="lineNum">     193</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span><span class="tlaGBC" title="True sense of expression &quot;1&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;1&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           1 :             if (data-&gt;batt_volt &gt;= MIN_BATTERY_VOLTAGE &amp;&amp;</span></span>
-<span id="L194"><span class="lineNum">     194</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:              :<span class="tlaGNC">           1 :                 data-&gt;batt_soc &gt;= MIN_BATTERY_SOC)</span></span>
-<span id="L195"><span class="lineNum">     195</span>                 :              :             :             {</span>
-<span id="L196"><span class="lineNum">     196</span>                 :              :<span class="tlaGNC">           1 :                 send_encrypted_message(sock_sender, &quot;RESTART&quot;, CAN_ID_ECU_RESTART);</span></span>
-<span id="L197"><span class="lineNum">     197</span>                 :              :<span class="tlaGNC">           1 :                 log_toggle_event(&quot;Stop/Start: Engine turned On&quot;);</span></span>
-<span id="L198"><span class="lineNum">     198</span>                 :              :<span class="tlaGNC">           1 :                 engine_off = false;</span></span>
-<span id="L199"><span class="lineNum">     199</span>                 :              :<span class="tlaGNC">           1 :                 clock_gettime(CLOCK_MONOTONIC, engine_restart_start);</span></span>
-<span id="L200"><span class="lineNum">     200</span>                 :              :<span class="tlaGNC">           1 :                 *engine_is_restarting = true;</span></span>
-<span id="L201"><span class="lineNum">     201</span>                 :              :             :             }</span>
-<span id="L202"><span class="lineNum">     202</span>                 :              :             :             else</span>
-<span id="L203"><span class="lineNum">     203</span>                 :              :             :             {</span>
-<span id="L204"><span class="lineNum">     204</span>                 :              :<span class="tlaUNC">           0 :                 send_encrypted_message(sock_sender, &quot;error_battery_low&quot;, CAN_ID_ERROR_DASH);</span></span>
-<span id="L205"><span class="lineNum">     205</span>                 :              :<span class="tlaUNC">           0 :                 log_toggle_event(&quot;Fault: SWR3.5 (Low Battery)&quot;);</span></span>
-<span id="L206"><span class="lineNum">     206</span>                 :              :             :             }</span>
-<span id="L207"><span class="lineNum">     207</span>                 :              :             :         }</span>
-<span id="L208"><span class="lineNum">     208</span>                 :              :             :     }</span>
-<span id="L209"><span class="lineNum">     209</span>                 :              :             : </span>
-<span id="L210"><span class="lineNum">     210</span>                 :              :             :     /* Update previous states */</span>
-<span id="L211"><span class="lineNum">     211</span>                 :              :<span class="tlaGNC">           3 :     data-&gt;prev_brake = data-&gt;brake;</span></span>
-<span id="L212"><span class="lineNum">     212</span>                 :              :<span class="tlaGNC">           3 :     data-&gt;prev_accel = data-&gt;accel;</span></span>
-<span id="L213"><span class="lineNum">     213</span>                 :              :             : </span>
-<span id="L214"><span class="lineNum">     214</span>                 :              :             :     /* Restart monitoring */</span>
-<span id="L215"><span class="lineNum">     215</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :     if (*engine_is_restarting)</span></span>
-<span id="L216"><span class="lineNum">     216</span>                 :              :             :     {</span>
-<span id="L217"><span class="lineNum">     217</span>                 :              :             :         struct timespec now;</span>
-<span id="L218"><span class="lineNum">     218</span>                 :              :<span class="tlaGNC">           1 :         clock_gettime(CLOCK_MONOTONIC, &amp;now);</span></span>
-<span id="L219"><span class="lineNum">     219</span>                 :              :             : </span>
-<span id="L220"><span class="lineNum">     220</span>                 :              :<span class="tlaGNC">           1 :         const long elapsed_us =</span></span>
-<span id="L221"><span class="lineNum">     221</span>                 :              :<span class="tlaGNC">           1 :             ((now.tv_sec - engine_restart_start-&gt;tv_sec) * MICROSECS_IN_ONESEC) +</span></span>
-<span id="L222"><span class="lineNum">     222</span>                 :              :<span class="tlaGNC">           1 :             ((now.tv_nsec - engine_restart_start-&gt;tv_nsec) / NANO_TO_MICRO);</span></span>
-<span id="L223"><span class="lineNum">     223</span>                 :              :             : </span>
-<span id="L224"><span class="lineNum">     224</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           1 :         if (elapsed_us &gt; MICROSECS_IN_ONESEC)</span></span>
-<span id="L225"><span class="lineNum">     225</span>                 :              :             :         {</span>
-<span id="L226"><span class="lineNum">     226</span>                 :              :<span class="tlaUNC">           0 :             *engine_is_restarting = false; // Successful restart</span></span>
-<span id="L227"><span class="lineNum">     227</span>                 :              :             :         }</span>
-<span id="L228"><span class="lineNum">     228</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           1 :         else if (data-&gt;batt_volt &lt; MIN_BATTERY_VOLTAGE)</span></span>
-<span id="L229"><span class="lineNum">     229</span>                 :              :             :         {</span>
-<span id="L230"><span class="lineNum">     230</span>                 :              :<span class="tlaUNC">           0 :             send_encrypted_message(sock_sender, &quot;ABORT&quot;, CAN_ID_ECU_RESTART);</span></span>
-<span id="L231"><span class="lineNum">     231</span>                 :              :<span class="tlaUNC">           0 :             send_encrypted_message(sock_sender, &quot;error_battery_drop&quot;, CAN_ID_ERROR_DASH);</span></span>
-<span id="L232"><span class="lineNum">     232</span>                 :              :<span class="tlaUNC">           0 :             log_toggle_event(&quot;Fault: SWR3.4 (Battery Drop)&quot;);</span></span>
-<span id="L233"><span class="lineNum">     233</span>                 :              :<span class="tlaUNC">           0 :             *engine_is_restarting = false;</span></span>
-<span id="L234"><span class="lineNum">     234</span>                 :              :             :         }</span>
-<span id="L235"><span class="lineNum">     235</span>                 :              :             :     }</span>
-<span id="L236"><span class="lineNum">     236</span>                 :              :<span class="tlaGNC">           3 : }</span></span>
+<span id="L174"><span class="lineNum">     174</span>                 :              :<span class="tlaGNC">           3 :             send_encrypted_message(sock_sender, &quot;ENGINE OFF&quot;, CAN_ID_ECU_RESTART);</span></span>
+<span id="L175"><span class="lineNum">     175</span>                 :              :<span class="tlaGNC">           3 :             log_toggle_event(&quot;Stop/Start: Engine turned Off&quot;);</span></span>
+<span id="L176"><span class="lineNum">     176</span>                 :              :             :         }</span>
+<span id="L177"><span class="lineNum">     177</span>                 :              :             :     }</span>
+<span id="L178"><span class="lineNum">     178</span>                 :              :<span class="tlaGNC">          10 : }</span></span>
+<span id="L179"><span class="lineNum">     179</span>                 :              :             : </span>
+<span id="L180"><span class="lineNum">     180</span>                 :              :<span class="tlaGNC">           4 : void handle_engine_restart_logic(</span></span>
+<span id="L181"><span class="lineNum">     181</span>                 :              :             :     VehicleData *data)</span>
+<span id="L182"><span class="lineNum">     182</span>                 :              :             : {</span>
+<span id="L183"><span class="lineNum">     183</span>                 :              :             :     /* Restart trigger detection */</span>
+<span id="L184"><span class="lineNum">     184</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           4 :     if (engine_off)</span></span>
+<span id="L185"><span class="lineNum">     185</span>                 :              :             :     {</span>
+<span id="L186"><span class="lineNum">     186</span>   [<span class="tlaGBC" title="Branch 0 was taken 3 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 2 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 3 was taken 1 time"> + </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span><span class="tlaGBC" title="True sense of expression &quot;1&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           4 :         const bool brake_released = (data-&gt;prev_brake &amp;&amp; !data-&gt;brake);</span></span>
+<span id="L187"><span class="lineNum">     187</span>   [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span><span class="tlaUNC" title="Branch 2 was not taken"> - </span><span class="tlaGBC" title="Branch 3 was taken 4 times"> + </span>]:[<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span><span class="tlaUNC" title="True sense of expression &quot;1&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           4 :         const bool accelerator_pressed = (!data-&gt;prev_accel &amp;&amp; data-&gt;accel);</span></span>
+<span id="L188"><span class="lineNum">     188</span>                 :              :             : </span>
+<span id="L189"><span class="lineNum">     189</span>   [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 2 was not taken"> - </span><span class="tlaGBC" title="Branch 3 was taken 2 times"> + </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span><span class="tlaUNC" title="True sense of expression &quot;1&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           4 :         if (brake_released || accelerator_pressed)</span></span>
+<span id="L190"><span class="lineNum">     190</span>                 :              :             :         {</span>
+<span id="L191"><span class="lineNum">     191</span>                 :              :             :             /* Battery check */</span>
+<span id="L192"><span class="lineNum">     192</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:[<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span><span class="tlaGBC" title="True sense of expression &quot;1&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;1&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :             if (data-&gt;batt_volt &gt;= MIN_BATTERY_VOLTAGE &amp;&amp;</span></span>
+<span id="L193"><span class="lineNum">     193</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:              :<span class="tlaGNC">           2 :                 data-&gt;batt_soc &gt;= MIN_BATTERY_SOC)</span></span>
+<span id="L194"><span class="lineNum">     194</span>                 :              :             :             {</span>
+<span id="L195"><span class="lineNum">     195</span>                 :              :<span class="tlaGNC">           1 :                 send_encrypted_message(sock_sender, &quot;RESTART&quot;, CAN_ID_ECU_RESTART);</span></span>
+<span id="L196"><span class="lineNum">     196</span>                 :              :<span class="tlaGNC">           1 :                 log_toggle_event(&quot;Stop/Start: Engine turned On&quot;);</span></span>
+<span id="L197"><span class="lineNum">     197</span>                 :              :<span class="tlaGNC">           1 :                 engine_off = false;</span></span>
+<span id="L198"><span class="lineNum">     198</span>                 :              :             :             }</span>
+<span id="L199"><span class="lineNum">     199</span>                 :              :             :             else</span>
+<span id="L200"><span class="lineNum">     200</span>                 :              :             :             {</span>
+<span id="L201"><span class="lineNum">     201</span>                 :              :<span class="tlaGNC">           1 :                 send_encrypted_message(sock_sender, &quot;error_battery_low&quot;, CAN_ID_ERROR_DASH);</span></span>
+<span id="L202"><span class="lineNum">     202</span>                 :              :<span class="tlaGNC">           1 :                 send_encrypted_message(sock_sender, &quot;system_disabled_error&quot;, CAN_ID_COMMAND);</span></span>
+<span id="L203"><span class="lineNum">     203</span>                 :              :<span class="tlaGNC">           1 :                 log_toggle_event(&quot;Fault: SWR3.5 (Low Battery)&quot;);</span></span>
+<span id="L204"><span class="lineNum">     204</span>                 :              :             :             }</span>
+<span id="L205"><span class="lineNum">     205</span>                 :              :             :         }</span>
+<span id="L206"><span class="lineNum">     206</span>                 :              :             :     }</span>
+<span id="L207"><span class="lineNum">     207</span>                 :              :             : </span>
+<span id="L208"><span class="lineNum">     208</span>                 :              :             :     /* Update previous states */</span>
+<span id="L209"><span class="lineNum">     209</span>                 :              :<span class="tlaGNC">           4 :     data-&gt;prev_brake = data-&gt;brake;</span></span>
+<span id="L210"><span class="lineNum">     210</span>                 :              :<span class="tlaGNC">           4 :     data-&gt;prev_accel = data-&gt;accel;</span></span>
+<span id="L211"><span class="lineNum">     211</span>                 :              :<span class="tlaGNC">           4 : }</span></span>
+<span id="L212"><span class="lineNum">     212</span>                 :              :             : </span>
+<span id="L213"><span class="lineNum">     213</span>                 :              :<span class="tlaGNC">           1 : void *function_start_stop(void *arg)</span></span>
+<span id="L214"><span class="lineNum">     214</span>                 :              :             : {</span>
+<span id="L215"><span class="lineNum">     215</span>                 :              :<span class="tlaGNC">           1 :     VehicleData *ptr_rec_data = (VehicleData *)arg;</span></span>
+<span id="L216"><span class="lineNum">     216</span>                 :              :             :     static int prev_brake = 0;</span>
+<span id="L217"><span class="lineNum">     217</span>                 :              :             :     static int prev_accel = 0;</span>
+<span id="L218"><span class="lineNum">     218</span>                 :              :             : </span>
+<span id="L219"><span class="lineNum">     219</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :     while (!test_mode_powertrain)</span></span>
+<span id="L220"><span class="lineNum">     220</span>                 :              :             :     {</span>
+<span id="L221"><span class="lineNum">     221</span>                 :              :<span class="tlaGNC">           2 :         int lock_result = pthread_mutex_lock(&amp;mutex_powertrain);</span></span>
+<span id="L222"><span class="lineNum">     222</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (lock_result != 0)</span></span>
+<span id="L223"><span class="lineNum">     223</span>                 :              :             :         {</span>
+<span id="L224"><span class="lineNum">     224</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
+<span id="L225"><span class="lineNum">     225</span>                 :              :             :         }</span>
+<span id="L226"><span class="lineNum">     226</span>                 :              :             : </span>
+<span id="L227"><span class="lineNum">     227</span>                 :              :             :         /* Only check Stop/Start if the driver have enabled it */</span>
+<span id="L228"><span class="lineNum">     228</span>                 :              :             : </span>
+<span id="L229"><span class="lineNum">     229</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           2 :         if (start_stop_manual)</span></span>
+<span id="L230"><span class="lineNum">     230</span>                 :              :             :         {</span>
+<span id="L231"><span class="lineNum">     231</span>                 :              :             :             /* Check the conditions to activate Stop/Start */</span>
+<span id="L232"><span class="lineNum">     232</span>                 :              :             : </span>
+<span id="L233"><span class="lineNum">     233</span>                 :              :<span class="tlaGNC">           2 :             check_disable_engine(ptr_rec_data);</span></span>
+<span id="L234"><span class="lineNum">     234</span>                 :              :             : </span>
+<span id="L235"><span class="lineNum">     235</span>                 :              :<span class="tlaGNC">           2 :             printf(&quot;Start/Stop = %d\n&quot;, engine_off);</span></span>
+<span id="L236"><span class="lineNum">     236</span>                 :              :<span class="tlaGNC">           2 :             fflush(stdout);</span></span>
 <span id="L237"><span class="lineNum">     237</span>                 :              :             : </span>
-<span id="L238"><span class="lineNum">     238</span>                 :              :<span class="tlaGNC">           1 : void *function_start_stop(void *arg)</span></span>
-<span id="L239"><span class="lineNum">     239</span>                 :              :             : {</span>
-<span id="L240"><span class="lineNum">     240</span>                 :              :<span class="tlaGNC">           1 :     VehicleData *ptr_rec_data = (VehicleData *)arg;</span></span>
-<span id="L241"><span class="lineNum">     241</span>                 :              :             :     static int prev_brake = 0;</span>
-<span id="L242"><span class="lineNum">     242</span>                 :              :             :     static int prev_accel = 0;</span>
-<span id="L243"><span class="lineNum">     243</span>                 :              :             :     static bool engine_is_restarting = false;</span>
-<span id="L244"><span class="lineNum">     244</span>                 :              :             :     static struct timespec engine_restart_start_time;</span>
-<span id="L245"><span class="lineNum">     245</span>                 :              :             : </span>
-<span id="L246"><span class="lineNum">     246</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           3 :     while (!test_mode_powertrain)</span></span>
-<span id="L247"><span class="lineNum">     247</span>                 :              :             :     {</span>
-<span id="L248"><span class="lineNum">     248</span>                 :              :<span class="tlaGNC">           2 :         int lock_result = pthread_mutex_lock(&amp;mutex_powertrain);</span></span>
-<span id="L249"><span class="lineNum">     249</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (lock_result != 0)</span></span>
-<span id="L250"><span class="lineNum">     250</span>                 :              :             :         {</span>
-<span id="L251"><span class="lineNum">     251</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
-<span id="L252"><span class="lineNum">     252</span>                 :              :             :         }</span>
-<span id="L253"><span class="lineNum">     253</span>                 :              :             : </span>
-<span id="L254"><span class="lineNum">     254</span>                 :              :             :         /* Only check Stop/Start if the driver have enabled it */</span>
+<span id="L238"><span class="lineNum">     238</span>                 :              :<span class="tlaGNC">           2 :             handle_engine_restart_logic(</span></span>
+<span id="L239"><span class="lineNum">     239</span>                 :              :             :                 ptr_rec_data);</span>
+<span id="L240"><span class="lineNum">     240</span>                 :              :             :         }</span>
+<span id="L241"><span class="lineNum">     241</span>                 :              :             : </span>
+<span id="L242"><span class="lineNum">     242</span>                 :              :<span class="tlaGNC">           2 :         int unlock_result = pthread_mutex_unlock(&amp;mutex_powertrain);</span></span>
+<span id="L243"><span class="lineNum">     243</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (unlock_result != 0)</span></span>
+<span id="L244"><span class="lineNum">     244</span>                 :              :             :         {</span>
+<span id="L245"><span class="lineNum">     245</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
+<span id="L246"><span class="lineNum">     246</span>                 :              :             :         }</span>
+<span id="L247"><span class="lineNum">     247</span>                 :              :             : </span>
+<span id="L248"><span class="lineNum">     248</span>                 :              :<span class="tlaGNC">           2 :         sleep_microseconds_pw(SLEEP_TIME_US);</span></span>
+<span id="L249"><span class="lineNum">     249</span>                 :              :             :     }</span>
+<span id="L250"><span class="lineNum">     250</span>                 :              :<span class="tlaGNC">           1 :     return NULL;</span></span>
+<span id="L251"><span class="lineNum">     251</span>                 :              :             : }</span>
+<span id="L252"><span class="lineNum">     252</span>                 :              :             : </span>
+<span id="L253"><span class="lineNum">     253</span>                 :              :<span class="tlaGNC">           1 : void *powertrain_comms(void *arg)</span></span>
+<span id="L254"><span class="lineNum">     254</span>                 :              :             : {</span>
 <span id="L255"><span class="lineNum">     255</span>                 :              :             : </span>
-<span id="L256"><span class="lineNum">     256</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           2 :         if (start_stop_manual)</span></span>
-<span id="L257"><span class="lineNum">     257</span>                 :              :             :         {</span>
-<span id="L258"><span class="lineNum">     258</span>                 :              :             :             /* Check the conditions to activate Stop/Start */</span>
-<span id="L259"><span class="lineNum">     259</span>                 :              :             : </span>
-<span id="L260"><span class="lineNum">     260</span>                 :              :<span class="tlaGNC">           2 :             check_disable_engine(ptr_rec_data);</span></span>
-<span id="L261"><span class="lineNum">     261</span>                 :              :             : </span>
-<span id="L262"><span class="lineNum">     262</span>                 :              :<span class="tlaGNC">           2 :             printf(&quot;Start/Stop = %d\n&quot;, engine_off);</span></span>
-<span id="L263"><span class="lineNum">     263</span>                 :              :<span class="tlaGNC">           2 :             fflush(stdout);</span></span>
-<span id="L264"><span class="lineNum">     264</span>                 :              :             : </span>
-<span id="L265"><span class="lineNum">     265</span>                 :              :<span class="tlaGNC">           2 :             handle_engine_restart_logic(</span></span>
-<span id="L266"><span class="lineNum">     266</span>                 :              :             :                 ptr_rec_data,</span>
-<span id="L267"><span class="lineNum">     267</span>                 :              :             :                 &amp;engine_is_restarting,</span>
-<span id="L268"><span class="lineNum">     268</span>                 :              :             :                 &amp;engine_restart_start_time);</span>
-<span id="L269"><span class="lineNum">     269</span>                 :              :             :         }</span>
+<span id="L256"><span class="lineNum">     256</span>                 :              :<span class="tlaGNC">           1 :     (void)printf(&quot;Listening for CAN frames...\n&quot;);</span></span>
+<span id="L257"><span class="lineNum">     257</span>                 :              :<span class="tlaGNC">           1 :     (void)fflush(stdout);</span></span>
+<span id="L258"><span class="lineNum">     258</span>                 :              :             : </span>
+<span id="L259"><span class="lineNum">     259</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           2 :     while (!test_mode_powertrain)</span></span>
+<span id="L260"><span class="lineNum">     260</span>                 :              :             :     {</span>
+<span id="L261"><span class="lineNum">     261</span>                 :              :<span class="tlaGNC">           2 :         int lock_result = pthread_mutex_lock(&amp;mutex_powertrain);</span></span>
+<span id="L262"><span class="lineNum">     262</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (lock_result != 0)</span></span>
+<span id="L263"><span class="lineNum">     263</span>                 :              :             :         {</span>
+<span id="L264"><span class="lineNum">     264</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
+<span id="L265"><span class="lineNum">     265</span>                 :              :             :         }</span>
+<span id="L266"><span class="lineNum">     266</span>                 :              :             : </span>
+<span id="L267"><span class="lineNum">     267</span>                 :              :             :         /* CAN Communication logic */</span>
+<span id="L268"><span class="lineNum">     268</span>                 :              :             : </span>
+<span id="L269"><span class="lineNum">     269</span>                 :              :<span class="tlaGNC">           2 :         process_received_frame_powertrain(sock_receiver);</span></span>
 <span id="L270"><span class="lineNum">     270</span>                 :              :             : </span>
 <span id="L271"><span class="lineNum">     271</span>                 :              :<span class="tlaGNC">           2 :         int unlock_result = pthread_mutex_unlock(&amp;mutex_powertrain);</span></span>
 <span id="L272"><span class="lineNum">     272</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (unlock_result != 0)</span></span>
@@ -357,39 +357,10 @@
 <span id="L274"><span class="lineNum">     274</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
 <span id="L275"><span class="lineNum">     275</span>                 :              :             :         }</span>
 <span id="L276"><span class="lineNum">     276</span>                 :              :             : </span>
-<span id="L277"><span class="lineNum">     277</span>                 :              :<span class="tlaGNC">           2 :         sleep_microseconds_pw(SLEEP_TIME_US);</span></span>
+<span id="L277"><span class="lineNum">     277</span>                 :              :<span class="tlaGNC">           2 :         sleep_microseconds_pw(COMMS_TIME_US);</span></span>
 <span id="L278"><span class="lineNum">     278</span>                 :              :             :     }</span>
-<span id="L279"><span class="lineNum">     279</span>                 :              :<span class="tlaGNC">           1 :     return NULL;</span></span>
+<span id="L279"><span class="lineNum">     279</span>                 :              :<span class="tlaUNC">           0 :     return NULL;</span></span>
 <span id="L280"><span class="lineNum">     280</span>                 :              :             : }</span>
-<span id="L281"><span class="lineNum">     281</span>                 :              :             : </span>
-<span id="L282"><span class="lineNum">     282</span>                 :              :<span class="tlaGNC">           1 : void *powertrain_comms(void *arg)</span></span>
-<span id="L283"><span class="lineNum">     283</span>                 :              :             : {</span>
-<span id="L284"><span class="lineNum">     284</span>                 :              :             : </span>
-<span id="L285"><span class="lineNum">     285</span>                 :              :<span class="tlaGNC">           1 :     (void)printf(&quot;Listening for CAN frames...\n&quot;);</span></span>
-<span id="L286"><span class="lineNum">     286</span>                 :              :<span class="tlaGNC">           1 :     (void)fflush(stdout);</span></span>
-<span id="L287"><span class="lineNum">     287</span>                 :              :             : </span>
-<span id="L288"><span class="lineNum">     288</span>         [<span class="tlaGBC" title="Branch 0 was taken 2 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           2 :     while (!test_mode_powertrain)</span></span>
-<span id="L289"><span class="lineNum">     289</span>                 :              :             :     {</span>
-<span id="L290"><span class="lineNum">     290</span>                 :              :<span class="tlaGNC">           2 :         int lock_result = pthread_mutex_lock(&amp;mutex_powertrain);</span></span>
-<span id="L291"><span class="lineNum">     291</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (lock_result != 0)</span></span>
-<span id="L292"><span class="lineNum">     292</span>                 :              :             :         {</span>
-<span id="L293"><span class="lineNum">     293</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
-<span id="L294"><span class="lineNum">     294</span>                 :              :             :         }</span>
-<span id="L295"><span class="lineNum">     295</span>                 :              :             : </span>
-<span id="L296"><span class="lineNum">     296</span>                 :              :             :         /* CAN Communication logic */</span>
-<span id="L297"><span class="lineNum">     297</span>                 :              :             : </span>
-<span id="L298"><span class="lineNum">     298</span>                 :              :<span class="tlaGNC">           2 :         process_received_frame_powertrain(sock_receiver);</span></span>
-<span id="L299"><span class="lineNum">     299</span>                 :              :             : </span>
-<span id="L300"><span class="lineNum">     300</span>                 :              :<span class="tlaGNC">           2 :         int unlock_result = pthread_mutex_unlock(&amp;mutex_powertrain);</span></span>
-<span id="L301"><span class="lineNum">     301</span>         [<span class="tlaUNC" title="Branch 0 was not taken"> - </span><span class="tlaGBC" title="Branch 1 was taken 2 times"> + </span>]:      [<span class="tlaUNC" title="True sense of expression &quot;0&quot; was not sensitized"> t </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">           2 :         if (unlock_result != 0)</span></span>
-<span id="L302"><span class="lineNum">     302</span>                 :              :             :         {</span>
-<span id="L303"><span class="lineNum">     303</span>                 :              :<span class="tlaUNC">           0 :             return NULL;</span></span>
-<span id="L304"><span class="lineNum">     304</span>                 :              :             :         }</span>
-<span id="L305"><span class="lineNum">     305</span>                 :              :             : </span>
-<span id="L306"><span class="lineNum">     306</span>                 :              :<span class="tlaGNC">           2 :         sleep_microseconds_pw(COMMS_TIME_US);</span></span>
-<span id="L307"><span class="lineNum">     307</span>                 :              :             :     }</span>
-<span id="L308"><span class="lineNum">     308</span>                 :              :<span class="tlaUNC">           0 :     return NULL;</span></span>
-<span id="L309"><span class="lineNum">     309</span>                 :              :             : }</span>
         </pre>
               </td>
             </tr>
