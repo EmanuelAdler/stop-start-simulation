@@ -1,6 +1,7 @@
 #include "bcm_func.h"
 
 #define CAN_INTERFACE       ("vcan0")
+#define ERROR_CODE          (1)
 
 int main(void)
 {
@@ -9,6 +10,11 @@ int main(void)
     if (sock < 0)
     {
         return EXIT_FAILURE;
+    }
+
+    if (!init_logging_system()) {
+        fprintf(stderr, "Failed to open log file for writing.\n");
+        return ERROR_CODE;
     }
 
     // Set simulation order to RUN
@@ -42,6 +48,7 @@ int main(void)
     sem_destroy(&sem_comms);
 
     close_can_socket(sock);
+    cleanup_logging_system();
 
     return EXIT_SUCCESS;
 }

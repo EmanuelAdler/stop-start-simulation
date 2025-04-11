@@ -6,9 +6,12 @@
 #include <unistd.h>
 
 #include "../../src/bcm/bcm_func.h"
+#include "../../src/common_includes/logging.h"
 
 #define CSV_FILE_PATH "../src/bcm/full_simu.csv"
-#define TEST_EXPECTED_IT (2.0F)
+#define TEST_EXPECTED_IT     (2.0F)
+#define TEST_EXPECTED_IT_INT (2)
+#define FILE_LINE_SIZE       (256)
 
 // Tolerances
 const float SOC_TOLERANCE = 0.001F;
@@ -33,10 +36,12 @@ const float SOC_TOLERANCE = 0.001F;
 #define EXT_TEMP_2 31
 #define ENGI_TEMP_1 90.0
 #define ENGI_TEMP_2 95.0
+#define ENGI_TEMP_3 125.0
 
 // Inclinations
 #define TILT_1 2.5
 #define TILT_2 5.0
+#define TILT_3 80.0
 
 // Temp set
 #define TEMP_SET_1 20
@@ -50,19 +55,22 @@ const float SOC_TOLERANCE = 0.001F;
 #define BATT_SOC_1 80.0
 #define BATT_SOC_2 82.0
 
+// Battery SOC
+#define DOOR_VALID 0
+#define DOOR_INVALID 2
+
 // Delay
 #define TEST_MICRO_SLEEP_DELAY (100000U)
 #define THREAD_SLEEP_TIME (200000U)
+#define MOCK_TIME_1S (1000)
+#define MOCK_TIME_25S (2500)
 
 // Mocked can_socket calls (like in test_instrument_cluster)
 int stub_can_get_send_count(void);
 const char *stub_can_get_last_message(void);
 void stub_can_reset(void);
 
-// We'll do some "fake" CSV logic by renaming real function or controlling environment
-// or we can force read_csv() to fail by renaming the path.
-
-// If you can't easily manipulate the real CSV file, you could stub out read_csv as well.
+extern int mock_time_ms;
 
 //-------------------------------------
 // Suite init/cleanup
@@ -93,6 +101,33 @@ static void CU_ASSERT_STRING_CONTAINS(const char *haystack, const char *needle)
     CU_ASSERT_PTR_NOT_NULL_FATAL(needle);
     // if haystack doesn't contain needle => fail
     CU_ASSERT_PTR_NOT_NULL(strstr(haystack, needle));
+}
+
+typedef struct
+{
+    const char *filepath;
+    const char *substring;
+} f_susbtring_data;
+
+/* Utility to search for a substring in a file */
+static bool file_contains_substring(f_susbtring_data struct_f_subs)
+{
+    FILE *fpath = fopen(struct_f_subs.filepath, "r");
+    if (!fpath)
+    {
+        return false;
+    }
+
+    char line[FILE_LINE_SIZE];
+    bool found = false;
+    while (fgets(line, sizeof(line), fpath)) {
+        if (strstr(line, struct_f_subs.substring)) {
+            found = true;
+            break;
+        }
+    }
+    fclose(fpath);
+    return found;
 }
 
 //-------------------------------------
@@ -416,6 +451,242 @@ void test_simu_speed_performs_control_update(void)
     CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE); // assume DRIVE is a defined constant
 }
 
+void test_getCurrentTimeMsReal(void)
+{
+    // Grab the initial time in ms.
+    int before_ms = getCurrentTimeMs_real();
+    // Sleep for 100ms.
+    sleep_microseconds(TEST_MICRO_SLEEP_DELAY);
+
+    int after_ms = getCurrentTimeMs_real();
+
+    // Check that after_ms is at least ~100ms greater than before_ms.
+    // We use a small margin of error, since actual scheduling can vary slightly.
+    CU_ASSERT_TRUE((after_ms - before_ms) >= 80);
+}
+
+void test_check_health_signals_immediate(void)
+{
+    // Reset global states
+    fault_active = false;
+    fault_start_time = 0;
+    simu_curr_step = 0;
+    simu_state = STATE_RUNNING;
+    simu_order = ORDER_RUN;
+
+    // We'll assume time starts at zero
+    mock_time_ms = 0;
+
+    // 1) Create a “doorVal” that is invalid => triggers `invalidDoor`
+    vehicle_data[0].door_open = DOOR_INVALID;  // invalid
+    vehicle_data[0].engi_temp = ENGI_TEMP_2; // normal
+    vehicle_data[0].tilt_angle = TILT_1; // normal
+
+    // 2) Call check_health_signals()
+    check_health_signals();
+
+    // 3) Since the fault is new, we expect:
+    //    fault_active == true, fault_start_time = 0, but system is NOT yet stopped
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(fault_start_time, 0);
+    CU_ASSERT_EQUAL(simu_order, ORDER_RUN); // not stopped yet
+}
+
+void test_check_health_signals_persisted(void)
+{
+    set_log_file_path("/tmp/test_check_health_signals_persisted.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
+    // Reset global states
+    fault_active = false;
+    fault_start_time = 0;
+    simu_curr_step = 0;
+    simu_state = STATE_RUNNING;
+    simu_order = ORDER_RUN;
+
+    mock_time_ms = 0;
+
+    // 1) Create a “tilt_angle” that is above 60 => triggers `excessiveTilt`
+    vehicle_data[0].door_open = DOOR_VALID;   // normal
+    vehicle_data[0].engi_temp = ENGI_TEMP_1;  // normal
+    vehicle_data[0].tilt_angle = TILT_3; // triggers fault
+
+    // 2) First call sets fault_active = true, fault_start_time=0
+    check_health_signals();
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(fault_start_time, 0);
+
+    // 3) Simulate time passing < safety_timeout_ms
+    mock_time_ms = MOCK_TIME_1S; // 1 second
+    check_health_signals();
+
+    // Still under 2 seconds => not stopped
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(simu_order, ORDER_RUN);
+
+    // 4) Simulate time passing >= safety_timeout_ms (2 seconds)
+    mock_time_ms = MOCK_TIME_25S; // 2.5 seconds
+    check_health_signals();
+
+    // Now we expect the code to set simu_order = ORDER_STOP
+    CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
+
+    f_susbtring_data err_disab = {
+        "/tmp/test_check_health_signals_persisted.log",
+        "Fault: SWR6.4 (System Disabling Error)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_disab));
+
+    f_susbtring_data err_tilt = {
+        "/tmp/test_check_health_signals_persisted.log",
+        "Fault: SWR6.4 (Excessive tilt value)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_tilt));
+
+    cleanup_logging_system();
+}
+
+void test_check_health_signals_engine_temp(void)
+{
+    set_log_file_path("/tmp/test_check_health_signals_engine_temp.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
+    // Reset global states
+    fault_active = false;
+    fault_start_time = 0;
+    simu_curr_step = 0;
+    simu_state = STATE_RUNNING;
+    simu_order = ORDER_RUN;
+
+    mock_time_ms = 0;
+
+    // 1) Create a engi_temp that is above 120 => triggers `engineOvertemp`
+    vehicle_data[0].door_open = DOOR_VALID;   // normal
+    vehicle_data[0].engi_temp = ENGI_TEMP_3;  // triggers fault
+    vehicle_data[0].tilt_angle = TILT_1; // normal
+
+    // 2) First call sets fault_active = true, fault_start_time=0
+    check_health_signals();
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(fault_start_time, 0);
+
+    // 3) Simulate time passing < safety_timeout_ms
+    mock_time_ms = MOCK_TIME_1S; // 1 second
+    check_health_signals();
+
+    // Still under 2 seconds => not stopped
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(simu_order, ORDER_RUN);
+
+    // 4) Simulate time passing >= safety_timeout_ms (2 seconds)
+    mock_time_ms = MOCK_TIME_25S; // 2.5 seconds
+    check_health_signals();
+
+    // Now we expect the code to set simu_order = ORDER_STOP
+    CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
+
+    f_susbtring_data err_disab = {
+        "/tmp/test_check_health_signals_engine_temp.log",
+        "Fault: SWR6.4 (System Disabling Error)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_disab));
+
+    f_susbtring_data err_overtemp = {
+        "/tmp/test_check_health_signals_engine_temp.log",
+        "Fault: SWR6.4 (Engine overtemperature)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_overtemp));
+
+    cleanup_logging_system();
+}
+
+void test_check_health_signals_door_status(void)
+{
+    set_log_file_path("/tmp/test_check_health_signals_door_status.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
+    // Reset global states
+    fault_active = false;
+    fault_start_time = 0;
+    simu_curr_step = 0;
+    simu_state = STATE_RUNNING;
+    simu_order = ORDER_RUN;
+
+    mock_time_ms = 0;
+
+    // 1) Create an invalid door_open status => triggers `invalidDoor`
+    vehicle_data[0].door_open = DOOR_INVALID;   // triggers fault
+    vehicle_data[0].engi_temp = ENGI_TEMP_1;  // normal
+    vehicle_data[0].tilt_angle = TILT_1; // normal
+
+    // 2) First call sets fault_active = true, fault_start_time=0
+    check_health_signals();
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(fault_start_time, 0);
+
+    // 3) Simulate time passing < safety_timeout_ms
+    mock_time_ms = MOCK_TIME_1S; // 1 second
+    check_health_signals();
+
+    // Still under 2 seconds => not stopped
+    CU_ASSERT_TRUE(fault_active);
+    CU_ASSERT_EQUAL(simu_order, ORDER_RUN);
+
+    // 4) Simulate time passing >= safety_timeout_ms (2 seconds)
+    mock_time_ms = MOCK_TIME_25S; // 2.5 seconds
+    check_health_signals();
+
+    // Now we expect the code to set simu_order = ORDER_STOP
+    CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
+
+    f_susbtring_data err_disab = {
+        "/tmp/test_check_health_signals_door_status.log",
+        "Fault: SWR6.4 (System Disabling Error)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_disab));
+
+    f_susbtring_data err_door = {
+        "/tmp/test_check_health_signals_door_status.log",
+        "Fault: SWR6.4 (Invalid door status)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(err_door));
+
+    cleanup_logging_system();
+}
+
+//-------------------------------------
+// 10)  comms() bounded‑loop verification
+//-------------------------------------
+void test_comms_thread_expected_iterations(void)
+{
+    /* -------- Arrange ------------------------------------------------- */
+    sem_init(&sem_comms, 0, TEST_EXPECTED_IT_INT);   /* pre‑post semaphore    */
+    pthread_mutex_init(&mutex_bcm, NULL);
+
+    stub_can_reset();
+
+    data_size      = 1;          /* a single VehicleData entry is enough */
+    simu_curr_step = 0;
+    simu_state     = STATE_RUNNING;
+    simu_order     = ORDER_RUN;
+    data_updated   = true;       /* first iteration will send immediately */
+
+    /* -------- Act ----------------------------------------------------- */
+    pthread_t tid;
+    pthread_create(&tid, NULL, comms, NULL);
+    pthread_join(tid, NULL);     /* loop finishes after TEST_EXPECTED_IT_INT */
+
+    /* -------- Assert -------------------------------------------------- */
+
+    /* data_updated was cleared by the last iteration                 */
+    CU_ASSERT_FALSE(data_updated);
+
+    /* -------- Cleanup ------------------------------------------------- */
+    pthread_mutex_destroy(&mutex_bcm);
+    sem_destroy(&sem_comms);
+}
+
+
 //-------------------------------------
 // Test main
 //-------------------------------------
@@ -446,6 +717,12 @@ int main(void)
     CU_add_test(suite, "simu_speed_step direct call", test_simu_speed_step);
     CU_add_test(suite, "sensor_battery_updates_soc_when_running", test_sensor_battery_updates_soc_when_running);
     CU_add_test(suite, "simu_speed_performs_control_update", test_simu_speed_performs_control_update);
+    CU_add_test(suite, "getCurrentTimeMsReal", test_getCurrentTimeMsReal);
+    CU_add_test(suite, "check_health_signals_immediate", test_check_health_signals_immediate);
+    CU_add_test(suite, "check_health_signals_persisted", test_check_health_signals_persisted);
+    CU_add_test(suite, "check_health_signals_engine_temp", test_check_health_signals_engine_temp);
+    CU_add_test(suite, "check_health_signals_door_status", test_check_health_signals_door_status);
+    CU_add_test(suite, "comms expected iterations", test_comms_thread_expected_iterations);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

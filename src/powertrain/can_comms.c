@@ -36,6 +36,12 @@ void parse_input_received_powertrain(char *input)
             log_toggle_event("Stop/Start: System Deactivated");
         }
     }
+    if (strcmp(input, "system_disabled_error") == 0)
+    {
+        start_stop_manual = false;
+
+        log_toggle_event("Stop/Start: System Deactivated Due to an Error");
+    }
     /* Check if CAN message is speed */
     if (sscanf(input, "speed: %lf", &rec_data.speed) == 1)
     {
@@ -129,14 +135,6 @@ void process_received_frame_powertrain(int sock)
         {
             if (check_is_valid_can_id_powertrain(frame.can_id))
             {
-                (void)printf("Received CAN ID: %X Data: ", frame.can_id);
-                for (int i = 0; i < frame.can_dlc; i++)
-                {
-                    (void)printf("%02X ", frame.data[i]);
-                }
-                (void)printf("\n");
-                (void)fflush(stdout);
-
                 if (frame.can_dlc == CAN_DATA_LENGTH)
                 {
                     memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);

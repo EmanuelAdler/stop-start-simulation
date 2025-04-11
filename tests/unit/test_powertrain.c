@@ -51,6 +51,15 @@
 #define TEST_BYTE_6 0x66
 #define TEST_BYTE_7 0x77
 #define TEST_BYTE_8 0x88
+#define ERROR_BATTERY_VOLTAGE 10.2F
+#define FILE_LINE_SIZE    (256)
+
+//-------------------------------------
+// Declare the extra "mock" functions created
+//-------------------------------------
+int stub_can_get_send_count(void);
+const char* stub_can_get_last_message(void);
+void stub_can_reset(void);
 
 static const double kSpeedReceived     = 45.7;
 static const double kTiltReceived      = 4.2;
@@ -66,6 +75,33 @@ static char mock_log_toggle_event_msg[LOG_EVENT_MSG_SIZE] = {0};
 
 static bool mock_receive_can_frame_enable = false;
 static struct can_frame mock_frame_to_return;
+
+typedef struct
+{
+    const char *filepath;
+    const char *substring;
+} f_susbtring_data;
+
+/* Utility to search for a substring in a file */
+static bool file_contains_substring(f_susbtring_data struct_f_subs)
+{
+    FILE *fpath = fopen(struct_f_subs.filepath, "r");
+    if (!fpath)
+    {
+        return false;
+    }
+
+    char line[FILE_LINE_SIZE];
+    bool found = false;
+    while (fgets(line, sizeof(line), fpath)) {
+        if (strstr(line, struct_f_subs.substring)) {
+            found = true;
+            break;
+        }
+    }
+    fclose(fpath);
+    return found;
+}
 
 //-------------------------------------
 // Setup the CUnit Suite
@@ -95,7 +131,7 @@ static VehicleData base_ok_data(void)
 // ----------------------------------------------------------------------
 // Unit tests
 
-// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active
+// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active (SWR5.1)
 static void test_check_disable_engine_all_ok(void)
 {
     // Test example of "check_disable_engine()"
@@ -104,16 +140,34 @@ static void test_check_disable_engine_all_ok(void)
 
     VehicleData data_test = base_ok_data();
 
+    // Reset the stub counter
+    stub_can_reset();
+
+    // Call the function
     check_disable_engine(&data_test);
 
+    // Check if the engine was turned off
     CU_ASSERT_TRUE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about turning the engine off
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "ENGINE OFF");
 }
 
 // 2) Fail cond1 => e.g. brake=0
 static void test_check_disable_engine_fail_cond1(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond1.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false; // so the error branch triggers
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.brake = BRAKE_FAIL; // failing condition speed==0 && !accel && brake => now brake=0 => else branch
@@ -122,13 +176,36 @@ static void test_check_disable_engine_fail_cond1(void)
 
     // cond1 = 0 => engine_off should remain false
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about brake not being pressed
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_brake_not_pressed");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond1.log",
+        "Stop/Start: SWR2.8 (Brake not pressed or car is moving!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
-// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5)
+// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5) (SWR2.6)
 static void test_check_disable_engine_fail_cond2(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond2.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.internal_temp = TEMP_FAIL; // triggers the else for cond2
@@ -136,13 +213,36 @@ static void test_check_disable_engine_fail_cond2(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about external or internal temperature out of range
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_temperature_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond2.log",
+        "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
-// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60
+// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60 (SWR2.2)
 static void test_check_disable_engine_fail_cond3_inactive(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond3.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.engi_temp = ENG_TEMP_FAIL; // below MIN_ENGINE_TEMP(70)
@@ -150,13 +250,36 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about engine temperature out of range
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_engine_temperature_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond3.log",
+        "Stop/Start: SWR2.8 (Engine temperature out of range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
-// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2
+// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2 (SWR2.3, SWR4.3 and SWR4.4)
 static void test_check_disable_engine_fail_cond4(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond4.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.batt_soc  = BATT_SOC_LOW; // below 70
@@ -165,13 +288,36 @@ static void test_check_disable_engine_fail_cond4(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about battery operating out of range
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_battery_out_range");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond4.log",
+        "Stop/Start: SWR2.8 (Battery is not in operating range!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
-// 6) Fail cond5 => door_open != 0
+// 6) Fail cond5 => door_open != 0 (SWR2.7)
 static void test_check_disable_engine_fail_cond5(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond5.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.door_open = DOOR_FAIL; // triggers the else for cond5
@@ -179,13 +325,36 @@ static void test_check_disable_engine_fail_cond5(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about any door opened
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_door_open");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond5.log",
+        "Stop/Start: SWR2.8 (One or more doors are opened!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
-// 7) Fail cond6 => tilt_angle > 5
+// 7) Fail cond6 => tilt_angle > 5 (SWR2.9)
 static void test_check_disable_engine_fail_cond6(void)
 {
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_check_disable_engine_fail_cond6.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     start_stop_manual    = true;
     engine_off = false;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = base_ok_data();
     data_test.tilt_angle = TILT_FAIL; // triggers the else for cond6
@@ -193,6 +362,22 @@ static void test_check_disable_engine_fail_cond6(void)
     check_disable_engine(&data_test);
 
     CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about tilt angle greater than maximum limit
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_tilt_angle");
+
+    // Check received log message
+    f_susbtring_data check_cond = {
+        "/tmp/test_check_disable_engine_fail_cond6.log",
+        "Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(check_cond));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 8) engine_off=false => then if ANY cond related to movement succeeds => triggers engine deactivation
@@ -214,9 +399,18 @@ static void test_check_disable_engine(void)
 // 9) Check restart logic
 static void test_handle_engine_restart(void)
 {
+    // Testing if engine will restart successfully if conditions are met
+
+    // Set up the log file and initialize the logging system
+    set_log_file_path("/tmp/test_handle_engine_restart.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
     // Ensure manual=on, start_stop active
     start_stop_manual = true;
     engine_off = true;
+
+    // Reset the stub counter
+    stub_can_reset();
 
     VehicleData data_test = {
         .prev_brake = BRAKE_OK, 
@@ -224,13 +418,53 @@ static void test_handle_engine_restart(void)
         .batt_volt  = BATT_VOLT_OK, 
         .batt_soc   = BATT_SOC_OK
     };
-    bool is_restarting = false;
-    struct timespec tss;
-    clock_gettime(CLOCK_MONOTONIC, &tss);
 
-    handle_engine_restart_logic(&data_test, &is_restarting, &tss);
+    handle_engine_restart_logic(&data_test);
 
-    CU_ASSERT_TRUE(is_restarting);
+    CU_ASSERT_FALSE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 1);
+
+    // Check if last message is about restarting
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "RESTART");
+
+    // Check received log message
+    f_susbtring_data restart_ok = {
+        "/tmp/test_handle_engine_restart.log",
+        "Stop/Start: Engine turned On"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(restart_ok));
+
+    // Now we'll test if when the battery SoC drops the engine won't restart
+
+    // Reset the stub counter
+    stub_can_reset();
+
+    engine_off = true;    
+    data_test.batt_soc = BATT_SOC_LOW;
+    data_test.prev_brake = BRAKE_OK, 
+    data_test.brake      = BRAKE_FAIL, // brake_released
+
+    handle_engine_restart_logic(&data_test);
+
+    CU_ASSERT_TRUE(engine_off);
+
+    // Check if the stub was called
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
+
+    // Check if last message is about error
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "system_disabled_error");
+
+    // Check received log message
+    f_susbtring_data sys_disable = {
+        "/tmp/test_handle_engine_restart.log",
+        "Fault: SWR3.5 (Low Battery)"
+    };
+    CU_ASSERT_TRUE(file_contains_substring(sys_disable));
+
+    // Finalize and clean up
+    cleanup_logging_system();
 }
 
 // 9) Check powertrain communication via CAN
@@ -339,6 +573,9 @@ static void test_parse_input_variants(void)
 
     parse_input_received_powertrain("press_start_stop");
     CU_ASSERT_FALSE(start_stop_manual); // toggled back to false
+
+    parse_input_received_powertrain("system_disabled_error");
+    CU_ASSERT_FALSE(start_stop_manual); // toggled to false
 
     // 2) Speed
     parse_input_received_powertrain("speed: 45.7");
