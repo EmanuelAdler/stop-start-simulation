@@ -165,6 +165,9 @@ void test_parse_input_variants(void)
         "[INFO] System Activated"
     };
     CU_ASSERT_TRUE(file_contains_substring(param_activated));
+    // Assert that the message is in the stdout file
+    f_susbtring_data activated_status_title = { stdout_file, "[INFO] System Activated" };
+    CU_ASSERT_TRUE(file_contains_substring(activated_status_title));
 
     // 4) Test case 2: "press_start_stop" => deactivates the system
     parse_input_received("press_start_stop");
@@ -174,6 +177,9 @@ void test_parse_input_variants(void)
         "[INFO] System Deactivated"
     };
     CU_ASSERT_TRUE(file_contains_substring(param_deactivated));
+    // Assert that the message is in the stdout file
+    f_susbtring_data deactivated_status_title = { stdout_file, "[INFO] System Deactivated" };
+    CU_ASSERT_TRUE(file_contains_substring(deactivated_status_title));
 
     // 5) Test case 3: "show_dashboard" => calls print_dashboard_status()
     parse_input_received("show_dashboard");
