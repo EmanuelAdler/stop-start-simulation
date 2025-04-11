@@ -61,10 +61,14 @@ void process_user_commands(char* input)
         if (actuators.start_stop_active) 
         {
             log_toggle_event("[INFO] System Activated");
+            (void)printf("[INFO] System Activated\n");
+            (void)fflush(stdout);
         } 
         else 
         {
             log_toggle_event("[INFO] System Deactivated");
+            (void)printf("[INFO] System Deactivated\n");
+            (void)fflush(stdout);
         }
     }
     else if (strcmp(input, "show_dashboard") == 0)

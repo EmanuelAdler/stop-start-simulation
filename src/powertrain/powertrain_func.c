@@ -137,7 +137,7 @@ void check_disable_engine(VehicleData *ptr_rec_data)
         engine_off_local,
         (EngineConditionMessages){
             .can_error = "error_engine_temperature_out_range",
-            .system_log = "Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)"
+            .system_log = "Stop/Start: SWR2.8 (Engine temperature out of range!)"
         });
     
     cond4 = evaluate_condition_with_logging(
@@ -171,19 +171,17 @@ void check_disable_engine(VehicleData *ptr_rec_data)
         if (engine_off_local == false)
         {
             engine_off = true;
-            send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ENGINE_OFF);
+            send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ECU_RESTART);
             log_toggle_event("Stop/Start: Engine turned Off");
         }
     }
 }
 
 void handle_engine_restart_logic(
-    VehicleData *data,
-    bool *engine_is_restarting,
-    struct timespec *engine_restart_start)
+    VehicleData *data)
 {
     /* Restart trigger detection */
-    if (engine_off && !(*engine_is_restarting))
+    if (engine_off)
     {
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
@@ -197,8 +195,6 @@ void handle_engine_restart_logic(
                 send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
                 log_toggle_event("Stop/Start: Engine turned On");
                 engine_off = false;
-                clock_gettime(CLOCK_MONOTONIC, engine_restart_start);
-                *engine_is_restarting = true;
             }
             else
             {
@@ -212,29 +208,6 @@ void handle_engine_restart_logic(
     /* Update previous states */
     data->prev_brake = data->brake;
     data->prev_accel = data->accel;
-
-    /* Restart monitoring */
-    if (*engine_is_restarting)
-    {
-        struct timespec now;
-        clock_gettime(CLOCK_MONOTONIC, &now);
-
-        const long elapsed_us =
-            ((now.tv_sec - engine_restart_start->tv_sec) * MICROSECS_IN_ONESEC) +
-            ((now.tv_nsec - engine_restart_start->tv_nsec) / NANO_TO_MICRO);
-
-        if (elapsed_us > MICROSECS_IN_ONESEC)
-        {
-            *engine_is_restarting = false; // Successful restart
-        }
-        else if (data->batt_volt < MIN_BATTERY_VOLTAGE)
-        {
-            send_encrypted_message(sock_sender, "ABORT", CAN_ID_ECU_RESTART);
-            send_encrypted_message(sock_sender, "error_battery_drop", CAN_ID_ERROR_DASH);
-            log_toggle_event("Fault: SWR3.4 (Battery Drop)");
-            *engine_is_restarting = false;
-        }
-    }
 }
 
 void *function_start_stop(void *arg)
@@ -242,8 +215,6 @@ void *function_start_stop(void *arg)
     VehicleData *ptr_rec_data = (VehicleData *)arg;
     static int prev_brake = 0;
     static int prev_accel = 0;
-    static bool engine_is_restarting = false;
-    static struct timespec engine_restart_start_time;
 
     while (!test_mode_powertrain)
     {
@@ -265,9 +236,7 @@ void *function_start_stop(void *arg)
             fflush(stdout);
 
             handle_engine_restart_logic(
-                ptr_rec_data,
-                &engine_is_restarting,
-                &engine_restart_start_time);
+                ptr_rec_data);
         }
 
         int unlock_result = pthread_mutex_unlock(&mutex_powertrain);

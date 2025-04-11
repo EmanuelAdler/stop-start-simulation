@@ -10,6 +10,7 @@
 
 #define MOCK_SOCKET       (999)
 #define FILE_LINE_SIZE    (256)
+#define CAN_ID_MOCK       (0x7A0U)
 
 static const double kDelta             = 0.001;
 static const double kBattSocReceived   = 55.0;
@@ -89,6 +90,7 @@ void test_print_dashboard_status(void)
 {
     // 1) Set the actuator state as we like
     actuators.start_stop_active = false;
+    actuators.error_system = true;
 
     // 2) Saves the state of the “real” stdout
     int saved_stdout_fd = dup(STDOUT_FILENO);
@@ -120,7 +122,18 @@ void test_print_dashboard_status(void)
     CU_ASSERT_TRUE(file_contains_substring(params_str));
 
     params_str.substring = "Stop/Start button: 0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
 
+    params_str.substring = "Battery SOC: 0.0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "Battery Voltage: 0.0";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "Door Open: No";
+    CU_ASSERT_TRUE(file_contains_substring(params_str));
+
+    params_str.substring = "System Disabled Warning: Yes";
     CU_ASSERT_TRUE(file_contains_substring(params_str));
 }
 
@@ -152,6 +165,9 @@ void test_parse_input_variants(void)
         "[INFO] System Activated"
     };
     CU_ASSERT_TRUE(file_contains_substring(param_activated));
+    // Assert that the message is in the stdout file
+    f_susbtring_data activated_status_title = { stdout_file, "[INFO] System Activated" };
+    CU_ASSERT_TRUE(file_contains_substring(activated_status_title));
 
     // 4) Test case 2: "press_start_stop" => deactivates the system
     parse_input_received("press_start_stop");
@@ -161,6 +177,9 @@ void test_parse_input_variants(void)
         "[INFO] System Deactivated"
     };
     CU_ASSERT_TRUE(file_contains_substring(param_deactivated));
+    // Assert that the message is in the stdout file
+    f_susbtring_data deactivated_status_title = { stdout_file, "[INFO] System Deactivated" };
+    CU_ASSERT_TRUE(file_contains_substring(deactivated_status_title));
 
     // 5) Test case 3: "show_dashboard" => calls print_dashboard_status()
     parse_input_received("show_dashboard");
@@ -236,7 +255,7 @@ void test_parse_input_variants(void)
 //-------------------------------------
 void test_invalid_can_id_dashboard(void)
 {
-    CU_ASSERT_FALSE(check_is_valid_can_id(CMD_ABORT));
+    CU_ASSERT_FALSE(check_is_valid_can_id(CAN_ID_MOCK));
 }
 
 int main(void)
