@@ -76,12 +76,6 @@ static char mock_log_toggle_event_msg[LOG_EVENT_MSG_SIZE] = {0};
 static bool mock_receive_can_frame_enable = false;
 static struct can_frame mock_frame_to_return;
 
-//-------------------------------------
-// Declare the extra "mock" functions created
-//-------------------------------------
-int stub_can_get_send_count(void);
-const char* stub_can_get_last_message(void);
-
 typedef struct
 {
     const char *filepath;
