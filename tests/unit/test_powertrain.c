@@ -18,7 +18,7 @@
 #define TEMP_FAIL              (31)
 #define TEMP_SET_OK            (25)
 #define ENG_TEMP_OK            (90)
-#define ENG_TEMP_FAIL          (60)
+#define ENG_TEMP_FAIL          (15)
 #define BATT_SOC_OK            (80.0)
 #define BATT_SOC_LOW           (60.0)
 #define BATT_VOLT_OK           (12.5)
@@ -245,7 +245,7 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
     stub_can_reset();
 
     VehicleData data_test = base_ok_data();
-    data_test.engi_temp = ENG_TEMP_FAIL; // below MIN_ENGINE_TEMP(70)
+    data_test.engi_temp = ENG_TEMP_FAIL; // below MIN_ENGINE_TEMP(20)
 
     check_disable_engine(&data_test);
 
