@@ -36,7 +36,7 @@ pthread_mutex_t mutex_powertrain;
 #define MAX_TEMP_DIFF 5
 
 #define MAX_ENGINE_TEMP 105
-#define MIN_ENGINE_TEMP 70
+#define MIN_ENGINE_TEMP 20
 
 /* CAN communication sockets*/
 int sock_sender = -1;
