@@ -4,6 +4,7 @@ build/
 tests/obj/
 coverage_report/
 coverage.info
+docs/xml/
 
 # Editor and temporary files
 .vscode/
