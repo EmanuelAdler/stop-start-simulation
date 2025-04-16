@@ -5,12 +5,21 @@ Check Disable Engine
 -----------------------------------
 .. _check_disable_engine:
 
-**Requirement**: :ref:`SWR1.1`
+.. c:function:: void check_disable_engine(VehicleData *ptr_rec_data)
+
+   Implements requirement :ref:`SWR1.1`
+
+   This function evaluates engine disable conditions based on sensor readings
+   such as speed, acceleration, brake status, and temperature.
+
+   It logs system messages and CAN errors according to defined failure modes.
+
+   File: ``powertrain/powertrain_func.c``
 
 .. literalinclude:: ../../src/powertrain/powertrain_func.c
    :language: c
    :lines: 107-182
-   :caption: src/powertrain/powertrain_func.c (check_disable_engine)
+   :caption: check_disable_engine function implementation
 
 .. _test_engine_stop:
 

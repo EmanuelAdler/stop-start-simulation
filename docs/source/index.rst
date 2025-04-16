@@ -16,8 +16,6 @@ Welcome to Stop-Start Simulation's documentation!
    tests
    api/index
 
-.. mdinclude:: requirements.md
-
 Indices and tables
 ==================
 

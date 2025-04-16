@@ -89,9 +89,11 @@ with open("source/traceability.rst", "w") as f:
             test_str = f"\n       - {test_str}"
         else:
             test_str = "N/A"
+            
+        soft_req = ":ref:`" + req + "`"
         
         f.write(f"""
-   * - {req}
+   * - {soft_req}
      - {code_str}
      - {test_str}""")
         
