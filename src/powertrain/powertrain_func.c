@@ -100,6 +100,10 @@ static int evaluate_condition_with_logging(
 }
 
 /* Main function */
+/**
+ * @brief Check each condition for disable the engine.
+ * @requirement SWR1.1
+ */
 void check_disable_engine(VehicleData *ptr_rec_data)
 {
     bool engine_off_local;
