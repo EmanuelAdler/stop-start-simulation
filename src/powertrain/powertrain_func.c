@@ -181,6 +181,10 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
 }
 
+/**
+ * @brief Handle the engine restart logic.
+ * @requirement SWR1.1
+ */
 void handle_engine_restart_logic(
     VehicleData *data)
 {
@@ -214,6 +218,10 @@ void handle_engine_restart_logic(
     data->prev_accel = data->accel;
 }
 
+/**
+ * @brief Handle the stop start logic.
+ * @requirement SWR1.2
+ */
 void *function_start_stop(void *arg)
 {
     VehicleData *ptr_rec_data = (VehicleData *)arg;

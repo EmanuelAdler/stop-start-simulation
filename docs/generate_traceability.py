@@ -1,18 +1,38 @@
 import re
 from pathlib import Path
 
+# def parse_files(directory, pattern, tag_name):
+#     results = {}
+#     for path in directory.glob(f'**/{pattern}'):  # Recursive search
+#         with open(path) as f:
+#             content = f.read()
+#             # Match requirement tags and function names
+#             matches = re.findall(
+#                 fr'{tag_name}\s+(\S+).*?(\w+)\s*\(',
+#                 content, re.DOTALL
+#             )
+#             for req, func in matches:
+#                 # Store relative path for src, filename only for tests
+#                 file_ref = str(path.relative_to(directory)) if "src" in str(directory) else path.name
+#                 results.setdefault(req, []).append({
+#                     "func": func,
+#                     "file": file_ref
+#                 })
+#     return results
+
 def parse_files(directory, pattern, tag_name):
     results = {}
-    for path in directory.glob(f'**/{pattern}'):  # Recursive search
+    for path in directory.glob(f'**/{pattern}'):
         with open(path) as f:
             content = f.read()
-            # Match requirement tags and function names
-            matches = re.findall(
+            # Find ALL occurrences of the tag
+            matches = re.finditer(
                 fr'{tag_name}\s+(\S+).*?(\w+)\s*\(',
                 content, re.DOTALL
             )
-            for req, func in matches:
-                # Store relative path for src, filename only for tests
+            for match in matches:
+                req = match.group(1)
+                func = match.group(2)
                 file_ref = str(path.relative_to(directory)) if "src" in str(directory) else path.name
                 results.setdefault(req, []).append({
                     "func": func,
@@ -56,10 +76,24 @@ with open("source/traceability.rst", "w") as f:
             for item in tests.get(req, [])
         ]
         
+        # Transform into reST bullet list if multiple entries
+        code_str = "\n       - ".join(code_entries)
+        test_str = "\n       - ".join(test_entries)
+
+        if code_entries:
+            code_str = f"\n       - {code_str}"
+        else:
+            code_str = "N/A"
+
+        if test_entries:
+            test_str = f"\n       - {test_str}"
+        else:
+            test_str = "N/A"
+        
         f.write(f"""
    * - {req}
-     - {"<br>".join(code_entries) or "N/A"}
-     - {"<br>".join(test_entries) or "N/A"}""")
+     - {code_str}
+     - {test_str}""")
         
     # Add at least one valid row even if empty
     f.writelines(["   * - No entries\n     - \n     - \n"] if not all_reqs else "")

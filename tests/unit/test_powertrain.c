@@ -403,6 +403,12 @@ static void test_check_disable_engine(void)
 }
 
 // 9) Check restart logic
+/**
+ * @test test_handle_engine_restart
+ * @brief Tests engine restart functionality
+ * @req SWR1.1
+ * @file unit/test_powertrain.c
+ */
 static void test_handle_engine_restart(void)
 {
     // Testing if engine will restart successfully if conditions are met
@@ -533,6 +539,12 @@ static void test_process_can_frame(void)
 }
 
 // 11) Check thread for stop/start function
+/**
+ * @test test_function_start_stop
+ * @brief Tests stop start functionality
+ * @req SWR1.2
+ * @file unit/test_powertrain.c
+ */
 static void test_function_start_stop(void)
 {
     // 1. Initialize relevant globals
