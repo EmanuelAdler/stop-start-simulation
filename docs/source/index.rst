@@ -12,6 +12,7 @@ Welcome to Stop-Start Simulation's documentation!
 
    requirements
    traceability
+   code_functions
    tests
    api/index
 
