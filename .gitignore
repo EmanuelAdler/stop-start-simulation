@@ -6,6 +6,7 @@ coverage_report/
 coverage.info
 docs/xml/
 docs/source/traceability.rst
+docs/.venv
 
 # Editor and temporary files
 .vscode/
