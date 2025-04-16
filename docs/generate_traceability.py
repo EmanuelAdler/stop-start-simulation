@@ -21,7 +21,7 @@ def parse_files(directory, pattern, tag_name):
     return results
 
 # Path configurations
-project_root = Path("../../")
+project_root = Path("../")
 src_dir = project_root / "src"
 tests_dir = project_root / "tests"
 
@@ -52,7 +52,7 @@ with open("source/traceability.rst", "w") as f:
         
         # Format test cases
         test_entries = [
-            f":c:func:`{item['func']}`" 
+            f":c:func:`{item['func']}` ({item['file']})" 
             for item in tests.get(req, [])
         ]
         
@@ -60,3 +60,6 @@ with open("source/traceability.rst", "w") as f:
    * - {req}
      - {"<br>".join(code_entries) or "N/A"}
      - {"<br>".join(test_entries) or "N/A"}""")
+        
+    # Add at least one valid row even if empty
+    f.writelines(["   * - No entries\n     - \n     - \n"] if not all_reqs else "")

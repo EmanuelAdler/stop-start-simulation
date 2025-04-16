@@ -136,7 +136,7 @@ static VehicleData base_ok_data(void)
  * @test test_check_disable_engine_all_ok
  * @brief Tests engine start functionality
  * @req SWR1.1
- * @file test_powertrain.c
+ * @file unit/test_powertrain.c
  */
 static void test_check_disable_engine_all_ok(void)
 {
