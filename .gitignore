@@ -5,6 +5,7 @@ tests/obj/
 coverage_report/
 coverage.info
 docs/xml/
+docs/source/traceability.rst
 
 # Editor and temporary files
 .vscode/
