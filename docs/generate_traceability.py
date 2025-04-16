@@ -1,25 +1,6 @@
 import re
 from pathlib import Path
 
-# def parse_files(directory, pattern, tag_name):
-#     results = {}
-#     for path in directory.glob(f'**/{pattern}'):  # Recursive search
-#         with open(path) as f:
-#             content = f.read()
-#             # Match requirement tags and function names
-#             matches = re.findall(
-#                 fr'{tag_name}\s+(\S+).*?(\w+)\s*\(',
-#                 content, re.DOTALL
-#             )
-#             for req, func in matches:
-#                 # Store relative path for src, filename only for tests
-#                 file_ref = str(path.relative_to(directory)) if "src" in str(directory) else path.name
-#                 results.setdefault(req, []).append({
-#                     "func": func,
-#                     "file": file_ref
-#                 })
-#     return results
-
 def parse_files(directory, pattern, tag_name):
     results = {}
     for path in directory.glob(f'**/{pattern}'):
