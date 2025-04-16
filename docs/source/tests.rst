@@ -7,7 +7,7 @@ Check Disable Engine - Case All OK
 
 .. c:function:: static void test_check_disable_engine_all_ok(void)
 
-   Implements tests for :ref:`SWR1.1`
+   Implements tests for :ref:`SWR5.1`
 
    This function tests engine disable conditions based on sensor readings
    such as speed, acceleration, brake status, and temperature.

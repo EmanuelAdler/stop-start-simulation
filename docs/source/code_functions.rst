@@ -7,7 +7,7 @@ Check Disable Engine
 
 .. c:function:: void check_disable_engine(VehicleData *ptr_rec_data)
 
-   Implements requirement :ref:`SWR1.1`
+   Implements requirement :ref:`SWR5.1`
 
    This function evaluates engine disable conditions based on sensor readings
    such as speed, acceleration, brake status, and temperature.
