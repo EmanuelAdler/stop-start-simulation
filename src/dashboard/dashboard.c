@@ -12,8 +12,31 @@
 #define SUCCESS_CODE       (0)
 #define ERROR_CODE         (1)
 
+/* UI */
+
+// Define the variables (only once in your entire program)
+ValuePanel *panel_dash = NULL;
+ScrollPanel *panel_log = NULL;
+
 int main(void) 
 {
+    /* UI */
+
+    if (!initscr()) {
+        fprintf(stderr, "Error initializing ncurses.\n");
+        return ERROR_CODE;
+    }
+    cbreak();
+	noecho();
+
+    init_colors();
+
+    // Create scroll panels
+    panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, 1, "Dashboard");
+    panel_log = create_titled_scroll_panel(VALUE_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, 45, "Message Log");
+
+    /* CAN communication */
+
     int sock = -1;
     sock = create_can_socket(CAN_INTERFACE);
     if (sock < 0)
@@ -26,12 +49,14 @@ int main(void)
         return ERROR_CODE;
     }
 
-    (void)printf("Listening for CAN frames...\n");
-    (void)fflush(stdout);
+    add_to_log(panel_log, "Waiting CAN frames...");
 
     process_received_frame(sock);
 
     close_can_socket(sock);
     cleanup_logging_system();
+
+    endwin();
+
     return SUCCESS_CODE;
 }
