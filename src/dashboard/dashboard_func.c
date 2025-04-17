@@ -116,7 +116,7 @@ void process_sensor_readings(char *input)
         int len = snprintf(NULL, 0, "%d", actuators.door_status);
         char *result = malloc(len + 1);
         snprintf(result, len + 1, "%d", actuators.door_status);
-        update_value_panel(panel_dash, 5, result, NORMAL_TEXT);
+        update_value_panel(panel_dash, DOOR_ROW, result, NORMAL_TEXT);
         free(result);
     }
 
@@ -126,7 +126,7 @@ void process_sensor_readings(char *input)
         int len = snprintf(NULL, 0, "%lf", actuators.batt_soc);
         char *result = malloc(len + 1);
         snprintf(result, len + 1, "%lf", actuators.batt_soc);
-        update_value_panel(panel_dash, 8, result, NORMAL_TEXT);
+        update_value_panel(panel_dash, BATT_SOC_ROW, result, NORMAL_TEXT);
         free(result);
     }
     /* Check if CAN message is battery voltage */
@@ -135,7 +135,7 @@ void process_sensor_readings(char *input)
         int len = snprintf(NULL, 0, "%lf", actuators.batt_volt);
         char *result = malloc(len + 1);
         snprintf(result, len + 1, "%lf", actuators.batt_volt);
-        update_value_panel(panel_dash, 7, result, NORMAL_TEXT);
+        update_value_panel(panel_dash, BATT_VOLT_ROW, result, NORMAL_TEXT);
         free(result);
     }
     /* Check if CAN message is engine temperature */

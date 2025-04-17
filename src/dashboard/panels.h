@@ -17,6 +17,8 @@
 #define VALUE_PANEL_WIDTH 40
 #define VALUE_PANEL_NUM_ROWS 6
 
+#define VALUE_PRINT_COL 32
+
 #define SPEED_ROW       1
 #define TILT_ROW        2
 #define IN_TEMP_ROW     3
@@ -43,6 +45,9 @@ typedef struct {
 #define SCROLL_PANEL_HEIGHT 20
 #define SCROLL_PANEL_WIDTH 40
 #define SCROLL_PANEL_MAX_LINE_LENGTH 256
+
+#define TMSTMP_SIZE 20
+#define TMSTMP_FORMAT   12
 
 typedef struct {
     WINDOW *win;

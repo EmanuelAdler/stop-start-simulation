@@ -25,48 +25,50 @@ void add_to_log(ScrollPanel *panel, const char *text)
 {
     // Get timestamp
     time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char timestamp[20];
-    strftime(timestamp, sizeof(timestamp), "%H:%M:%S", t);
+    struct tm *t_struct = localtime(&now);
+    char timestamp[TMSTMP_SIZE];
+    strftime(timestamp, sizeof(timestamp), "%H:%M:%S", t_struct);
 
     // Calculate available width (accounting for borders and timestamp)
     int available_width = panel->width - 4; // 1 char border each side + space
 
     // Create display line (truncate if too long)
-    char display[SCROLL_PANEL_MAX_LINE_LENGTH + 20];
+    char display[SCROLL_PANEL_MAX_LINE_LENGTH + TMSTMP_SIZE];
     snprintf(display, sizeof(display), "[%s] %.*s",
-             timestamp, available_width - 12, text); // 12 chars for timestamp format
+             timestamp, available_width - TMSTMP_FORMAT, text); // 12 chars for timestamp format
 
     // Get current cursor position
-    int y, x;
-    getyx(panel->win, y, x);
+    int y_cord;
+    int x_cord;
+    getyx(panel->win, y_cord, x_cord);
 
     // If at bottom, scroll first
-    if (y >= panel->height - 2)
+    if (y_cord >= panel->height - 2)
     {
         wscrl(panel->win, 1);
-        y = panel->height - 2; // Stay above bottom border
+        y_cord = panel->height - 2; // Stay above bottom border
     }
     else
     {
-        y++; // Move to next line
+        y_cord++; // Move to next line
     }
 
     // Write text inside borders (1,1 is inside the top-left border)
-    mvwprintw(panel->win, y, 1, "%s", display);
+    mvwprintw(panel->win, y_cord, 1, "%s", display);
     panel->line_count++;
 
     wrefresh(panel->win);
 }
 
-ScrollPanel *create_titled_scroll_panel(int height, int width, int y, int x, const char *title)
+ScrollPanel *create_titled_scroll_panel(int height, int width, int y_cord, int x_cord, const char *title)
 {
     ScrollPanel *panel = malloc(sizeof(ScrollPanel));
-    panel->win = newwin(height, width, y, x);
+    panel->win = newwin(height, width, y_cord, x_cord);
 
     // Draw box with title
     box(panel->win, 0, 0);
-    mvwprintw(panel->win, 0, (width - strlen(title) - 4) / 2, " %s ", title);
+    size_t tmp = (width - strlen(title) - 4) / 2;
+    mvwprintw(panel->win, 0, (int)tmp, " %s ", title);
 
     panel->height = height;
     panel->width = width;
@@ -79,10 +81,10 @@ ScrollPanel *create_titled_scroll_panel(int height, int width, int y, int x, con
 
 // Value panel functions
 
-ValuePanel *create_value_panel(int height, int width, int y, int x, const char *title)
+ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title)
 {
     ValuePanel *panel = malloc(sizeof(ValuePanel));
-    panel->win = newwin(height, width, y, x);
+    panel->win = newwin(height, width, y_cord, x_cord);
     panel->height = height;
     panel->width = width;
 
@@ -92,7 +94,7 @@ ValuePanel *create_value_panel(int height, int width, int y, int x, const char *
     // Draw box with centered title
     box(panel->win, 0, 0);
     wattron(panel->win, A_BOLD);
-    mvwprintw(panel->win, 0, (width - strlen(title) - 4) / 2, " %s ", title);
+    mvwprintw(panel->win, 0, (int)(width - strlen(title) - 4) / 2, " %s ", title);
     wattroff(panel->win, A_BOLD);
 
     // Print labels
@@ -137,7 +139,7 @@ ValuePanel *create_value_panel(int height, int width, int y, int x, const char *
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair)
 {
     // Fixed value column position (right after labels)
-    int value_col = 32; // Adjust based on your longest label
+    int value_col = VALUE_PRINT_COL; // Adjust based on your longest label
 
     // Calculate max available space
     int max_width = panel->width - value_col - 2; // -2 for right border

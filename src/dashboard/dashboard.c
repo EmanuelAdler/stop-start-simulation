@@ -33,7 +33,7 @@ int main(void)
 
     // Create scroll panels
     panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, 1, "Dashboard");
-    panel_log = create_titled_scroll_panel(VALUE_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, 45, "Message Log");
+    panel_log = create_titled_scroll_panel(VALUE_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, MSG_LOG_PANEL_OFFSET, "Message Log");
 
     /* CAN communication */
 
