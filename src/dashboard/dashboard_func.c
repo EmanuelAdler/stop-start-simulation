@@ -88,7 +88,7 @@ void process_sensor_readings(char *input)
     {
         int len = snprintf(NULL, 0, "%lf", actuators.speed);
         char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%lf", actuators.speed);
+        snprintf(result, len + 1, "%.1lf", actuators.speed);
         update_value_panel(panel_dash, SPEED_ROW, result, NORMAL_TEXT);
         free(result);
     }
@@ -125,7 +125,7 @@ void process_sensor_readings(char *input)
     {
         int len = snprintf(NULL, 0, "%lf", actuators.batt_soc);
         char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%lf", actuators.batt_soc);
+        snprintf(result, len + 1, "%.1lf", actuators.batt_soc);
         update_value_panel(panel_dash, BATT_SOC_ROW, result, NORMAL_TEXT);
         free(result);
     }
@@ -134,7 +134,7 @@ void process_sensor_readings(char *input)
     {
         int len = snprintf(NULL, 0, "%lf", actuators.batt_volt);
         char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%lf", actuators.batt_volt);
+        snprintf(result, len + 1, "%.1lf", actuators.batt_volt);
         update_value_panel(panel_dash, BATT_VOLT_ROW, result, NORMAL_TEXT);
         free(result);
     }
@@ -143,7 +143,7 @@ void process_sensor_readings(char *input)
     {
         int len = snprintf(NULL, 0, "%lf", actuators.engi_temp);
         char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%lf", actuators.engi_temp);
+        snprintf(result, len + 1, "%.1lf", actuators.engi_temp);
         update_value_panel(panel_dash, ENGI_TEMP_ROW, result, NORMAL_TEXT);
         free(result);
     }
@@ -180,6 +180,15 @@ void process_sensor_readings(char *input)
         char *result = malloc(len + 1);
         snprintf(result, len + 1, "%d", actuators.brake);
         update_value_panel(panel_dash, BRAKE_ROW, result, NORMAL_TEXT);
+        free(result);
+    }
+    /* Check if CAN message is tilt angle */
+    else if (sscanf(input, "tilt: %lf", actuators.tilt_angle) == 1)
+    {
+        int len = snprintf(NULL, 0, "%lf", actuators.tilt_angle);
+        char *result = malloc(len + 1);
+        snprintf(result, len + 1, "%.1lf", actuators.tilt_angle);
+        update_value_panel(panel_dash, TILT_ROW, result, NORMAL_TEXT);
         free(result);
     }
 }

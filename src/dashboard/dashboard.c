@@ -14,7 +14,7 @@
 
 /* UI */
 
-// Define the variables (only once in your entire program)
+// Define the variables
 ValuePanel *panel_dash = NULL;
 ScrollPanel *panel_log = NULL;
 

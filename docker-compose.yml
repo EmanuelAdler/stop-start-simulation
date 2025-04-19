@@ -12,7 +12,7 @@ services:
     environment:
       - TERM=xterm-256color
       - COLUMNS=130
-      - LINES=20
+      - LINES=25
     cap_add:
       - SYS_PTRACE  # Needed for terminal operations
 
