@@ -7,8 +7,8 @@ ENV LOG_DIR=/app/logs
 
 # Set TERMINAL
 ENV TERM xterm-256color
-ENV LINES 25
-ENV COLUMNS 100
+ENV LINES 30
+ENV COLUMNS 120
 
 # Obtain updated packages for the application
 RUN apt update && apt install -y \

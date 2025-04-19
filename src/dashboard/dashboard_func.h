@@ -14,6 +14,7 @@
 #include "panels.h"
 
 #define MSG_LOG_PANEL_OFFSET    45
+#define ERROR_LOG_SIZE          50
 
 typedef struct {
     bool start_stop_active; // 0 = off, 1 = on

@@ -21,8 +21,6 @@ bool check_is_valid_can_id_powertrain(canid_t can_id)
 
 void parse_input_received_powertrain(char *input)
 {
-    printf("%s\n", input);
-    fflush(stdout);
     if (strcmp(input, "press_start_stop") == 0)
     {
         start_stop_manual = !start_stop_manual;

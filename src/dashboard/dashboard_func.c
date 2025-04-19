@@ -239,14 +239,16 @@ void process_received_frame(int sock)
                     if (received_bytes == AES_BLOCK_SIZE)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
+                        add_to_log(panel_log, encrypted_data);
                         parse_input_received(decrypted_message);
                         received_bytes = 0;
                     }
                 }
                 else
                 {
-                    //(void)printf("Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
-                    //(void)fflush(stdout);
+                    char error_log[ERROR_LOG_SIZE];
+                    snprintf(error_log, sizeof(ERROR_LOG_SIZE), "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
+                    add_to_log(panel_log, error_log);
                 }
             }
         }
