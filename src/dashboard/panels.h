@@ -6,16 +6,16 @@
 #include <string.h>
 
 // Color pair definitions
-#define GREEN_TEXT 1
-#define RED_TEXT 2
+#define GREEN_TEXT  1
+#define RED_TEXT    2
 #define YELLOW_TEXT 3
 #define NORMAL_TEXT 4
 
 // Value panel
 
-#define VALUE_PANEL_HEIGHT 20
-#define VALUE_PANEL_WIDTH 40
-#define VALUE_PANEL_NUM_ROWS 6
+#define VALUE_PANEL_HEIGHT      20
+#define VALUE_PANEL_WIDTH       40
+#define VALUE_PANEL_NUM_ROWS    6
 
 #define VALUE_PRINT_COL 32
 
@@ -27,9 +27,9 @@
 #define ENGI_TEMP_ROW   6
 #define BATT_VOLT_ROW   7
 #define BATT_SOC_ROW    8
-#define ACCEL_ROW       9
-#define BRAKE_ROW       10
-#define GEAR_ROW        11
+#define ACCEL_ROW       10
+#define BRAKE_ROW       11
+#define GEAR_ROW        12
 
 #define SYSTEM_ST_ROW   16
 #define ENGINE_ST_ROW   17
@@ -42,12 +42,12 @@ typedef struct {
 
 // Scroll panel
 
-#define SCROLL_PANEL_HEIGHT 20
-#define SCROLL_PANEL_WIDTH 40
-#define SCROLL_PANEL_MAX_LINE_LENGTH 256
+#define SCROLL_PANEL_HEIGHT     20
+#define SCROLL_PANEL_WIDTH      46
+#define BORDER_MARGIN           2
 
-#define TMSTMP_SIZE 20
-#define TMSTMP_FORMAT   12
+#define TMSTMP_SIZE     10
+#define MAX_MSG_WIDTH           (SCROLL_PANEL_WIDTH - TMSTMP_SIZE - 2)
 
 typedef struct {
     WINDOW *win;
@@ -62,11 +62,11 @@ extern ScrollPanel *panel_log;
 
 void init_colors();
 
-ScrollPanel* create_titled_scroll_panel(int height, int width, int y, int x, const char *title);
+ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, const char *title);
 
 void add_to_log(ScrollPanel *panel, const char *text);
 
-ValuePanel* create_value_panel(int height, int width, int y, int x, const char *title);
+ValuePanel* create_value_panel(int height, int width, int y_coord, int x_coord, const char *title);
 
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair);
 

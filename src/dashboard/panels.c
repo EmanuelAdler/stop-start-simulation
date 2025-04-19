@@ -23,56 +23,89 @@ void init_colors()
 
 void add_to_log(ScrollPanel *panel, const char *text)
 {
-    // Get timestamp
+    // Timestamp setup
     time_t now = time(NULL);
-    struct tm *t_struct = localtime(&now);
+    struct tm tm_info;
+    localtime_r(&now, &tm_info);
     char timestamp[TMSTMP_SIZE];
-    strftime(timestamp, sizeof(timestamp), "%H:%M:%S", t_struct);
+    strftime(timestamp, sizeof(timestamp), "%H:%M:%S", &tm_info);
+    // The time shown depends on docker container time settings
 
-    // Calculate available width (accounting for borders and timestamp)
-    int available_width = panel->width - 4; // 1 char border each side + space
+    // Clean text
+    char clean_text[MAX_MSG_WIDTH];
+    int data_index = 0;
+    for (int i = 0; text[i] && data_index < MAX_MSG_WIDTH - 1; i++)
+    {
+        if (isprint(text[i]))
+        {
+            clean_text[data_index++] = text[i];
+        }
+    }
+    clean_text[data_index] = '\0';
 
-    // Create display line (truncate if too long)
-    char display[SCROLL_PANEL_MAX_LINE_LENGTH + TMSTMP_SIZE];
-    snprintf(display, sizeof(display), "[%s] %.*s",
-             timestamp, available_width - TMSTMP_FORMAT, text); // 12 chars for timestamp format
+    int content_width = panel->width - 2;
+    char line[content_width + 1];
 
-    // Get current cursor position
-    int y_cord;
-    int x_cord;
-    getyx(panel->win, y_cord, x_cord);
+    snprintf(line, sizeof(line), "%s | %.*s", timestamp,
+             content_width - TMSTMP_SIZE + 1,
+             clean_text);
 
-    // If at bottom, scroll first
-    if (y_cord >= panel->height - 2)
+    if (panel->line_count >= panel->height - 2)
     {
         wscrl(panel->win, 1);
-        y_cord = panel->height - 2; // Stay above bottom border
     }
     else
     {
-        y_cord++; // Move to next line
+        panel->line_count++;
     }
 
-    // Write text inside borders (1,1 is inside the top-left border)
-    mvwprintw(panel->win, y_cord, 1, "%s", display);
-    panel->line_count++;
+    // Clear the line fully before printing new content
+    wmove(panel->win, panel->line_count, 1);
+    wclrtoeol(panel->win); // this ensures there's no leftover text!
+    mvwprintw(panel->win, panel->line_count, 1, "%.*s", content_width, line);
 
+    box(panel->win, 0, 0);
     wrefresh(panel->win);
 }
 
-ScrollPanel *create_titled_scroll_panel(int height, int width, int y_cord, int x_cord, const char *title)
+ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, const char *title)
 {
     ScrollPanel *panel = malloc(sizeof(ScrollPanel));
-    panel->win = newwin(height, width, y_cord, x_cord);
+    if (!panel){
+        return NULL;
+    }
 
-    // Draw box with title
-    box(panel->win, 0, 0);
-    size_t tmp = (width - strlen(title) - 4) / 2;
-    mvwprintw(panel->win, 0, (int)tmp, " %s ", title);
+    panel->win = newwin(height, width, y_coord, x_coord);
+    if (!panel->win)
+    {
+        free(panel);
+        return NULL;
+    }
 
+    // Initialize properties
     panel->height = height;
     panel->width = width;
     panel->line_count = 0;
+
+    // Draw border with simple title (matches your dashboard style)
+    box(panel->win, 0, 0);
+    if (title)
+    {
+        int max_title_width = width - 4; // Account for border and padding
+        int title_len = (int)strlen(title);
+
+        // Center the title with truncation if needed
+        int pos = 2;
+        if (title_len > max_title_width)
+        {
+            mvwprintw(panel->win, 0, pos, " %.*s ", max_title_width, title);
+        }
+        else
+        {
+            pos = (width - title_len) / 2;
+            mvwprintw(panel->win, 0, pos, " %s ", title);
+        }
+    }
 
     scrollok(panel->win, TRUE);
     wrefresh(panel->win);

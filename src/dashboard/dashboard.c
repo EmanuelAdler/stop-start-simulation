@@ -8,32 +8,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CAN_INTERFACE      ("vcan0")
-#define SUCCESS_CODE       (0)
-#define ERROR_CODE         (1)
+#define CAN_INTERFACE ("vcan0")
+#define SUCCESS_CODE (0)
+#define ERROR_CODE (1)
 
 /* UI */
 
-// Define the variables
+// Define the panel objects
 ValuePanel *panel_dash = NULL;
 ScrollPanel *panel_log = NULL;
 
-int main(void) 
+int main(void)
 {
     /* UI */
 
-    if (!initscr()) {
+    if (!initscr())
+    {
         fprintf(stderr, "Error initializing ncurses.\n");
         return ERROR_CODE;
     }
     cbreak();
-	noecho();
+    noecho();
 
     init_colors();
 
-    // Create scroll panels
-    panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, 1, "Dashboard");
-    panel_log = create_titled_scroll_panel(VALUE_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, MSG_LOG_PANEL_OFFSET, "Message Log");
+    // Create panels
+    panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, 1, "Dashboard");
+    panel_log = create_log_panel(VALUE_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, MSG_LOG_PANEL_OFFSET, "Message Log");
 
     /* CAN communication */
 
@@ -44,7 +45,8 @@ int main(void)
         return ERROR_CODE;
     }
 
-    if (!init_logging_system()) {
+    if (!init_logging_system())
+    {
         fprintf(stderr, "Failed to open log file for writing.\n");
         return ERROR_CODE;
     }

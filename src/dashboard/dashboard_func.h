@@ -13,13 +13,15 @@
 // ncurses UI
 #include "panels.h"
 
-#define MSG_LOG_PANEL_OFFSET    45
-#define ERROR_LOG_SIZE          50
+#define MSG_LOG_PANEL_OFFSET 42
+#define ERROR_LOG_SIZE 60
+#define PRINT_FRAME_SIZE 36
 
-typedef struct {
+typedef struct
+{
     bool start_stop_active; // 0 = off, 1 = on
-    int door_status; // 0 = closed, 1 = open
-    int error_system; // 0 = no, 1 = yes
+    int door_status;        // 0 = closed, 1 = open
+    int error_system;       // 0 = no, 1 = yes
     double batt_soc;
     double batt_volt;
     double speed;
@@ -37,10 +39,10 @@ extern Actuators actuators;
 
 void process_received_frame(int sock);
 bool check_is_valid_can_id(canid_t can_id);
-void parse_input_received(char* input);
-void process_user_commands(char* input);
-void process_engine_commands(char* input);
-void process_sensor_readings(char* input);
-void process_errors(char* input);
+void parse_input_received(char *input);
+void process_user_commands(char *input);
+void process_engine_commands(char *input);
+void process_sensor_readings(char *input);
+void process_errors(char *input);
 
 #endif

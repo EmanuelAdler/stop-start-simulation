@@ -183,7 +183,7 @@ void process_sensor_readings(char *input)
         free(result);
     }
     /* Check if CAN message is tilt angle */
-    else if (sscanf(input, "tilt: %lf", actuators.tilt_angle) == 1)
+    else if (sscanf(input, "tilt: %lf", &actuators.tilt_angle) == 1)
     {
         int len = snprintf(NULL, 0, "%lf", actuators.tilt_angle);
         char *result = malloc(len + 1);
@@ -239,15 +239,24 @@ void process_received_frame(int sock)
                     if (received_bytes == AES_BLOCK_SIZE)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                        add_to_log(panel_log, encrypted_data);
                         parse_input_received(decrypted_message);
                         received_bytes = 0;
+
+                        /* Add received frame to log panel */
+                        char frame_msg[PRINT_FRAME_SIZE];
+                        int offset = snprintf(frame_msg, sizeof(frame_msg), "Recv:");
+
+                        for (size_t i = 0; i < frame.can_dlc; i++)
+                        {
+                            offset += snprintf(frame_msg + offset, sizeof(frame_msg) - offset, " %02X", frame.data[i]);
+                        }
+                        add_to_log(panel_log, frame_msg);
                     }
                 }
                 else
                 {
                     char error_log[ERROR_LOG_SIZE];
-                    snprintf(error_log, sizeof(ERROR_LOG_SIZE), "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
+                    snprintf(error_log, ERROR_LOG_SIZE, "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
                     add_to_log(panel_log, error_log);
                 }
             }
