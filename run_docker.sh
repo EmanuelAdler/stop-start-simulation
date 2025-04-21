@@ -19,6 +19,6 @@ for service in "${services[@]}"; do
 done
 
 # ecu_dashboard will only run with "docker-compose run"
-gnome-terminal --geometry 88x22 -- bash -c "docker-compose run ecu_dashboard; exec bash"
+gnome-terminal --geometry 94x22 -- bash -c "docker-compose run ecu_dashboard; exec bash"
 
 echo "All ECUs are running in separate terminals!"

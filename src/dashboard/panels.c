@@ -24,7 +24,7 @@ void init_colors()
     init_pair(NORMAL_TEXT, COLOR_WHITE, COLOR_BLACK);
 }
 
-// Log panel functions
+/* Log panel functions */ 
 
 void add_to_log(ScrollPanel *panel, const char *text)
 {
@@ -33,28 +33,28 @@ void add_to_log(ScrollPanel *panel, const char *text)
         return;
     }
 
-    /* Get current time for timestamp */
+    // Get current time for timestamp
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
     char timestamp[TMSTMP_SIZE];
     strftime(timestamp, sizeof(timestamp), "%H:%M:%S", tm_info);
 
-    /* Calculate inner dimensions */
+    // Calculate inner dimensions
     int inner_height = panel->height - 2;
     int inner_width = panel->width - 2;
 
-    /* Create inner window for content - using full width */
+    // Create inner window for content - using full width
     WINDOW *content = derwin(panel->win, inner_height, inner_width, 1, 1);
     if (content == NULL)
     {
         return;
     }
 
-    /* Format text with timestamp */
+    // Format text with timestamp
     char formatted_text[MAX_MSG_WIDTH];
     snprintf(formatted_text, sizeof(formatted_text), "[%s] %s", timestamp, text);
 
-    /* Store the text in our fixed buffer */
+    // Store the text in our fixed buffer
     strncpy(line_buffer[buffer_index], formatted_text, MAX_MSG_WIDTH - 1);
     line_buffer[buffer_index][MAX_MSG_WIDTH - 1] = '\0';
     buffer_index = (buffer_index + 1) % MAX_LOG_LINES;
@@ -63,18 +63,18 @@ void add_to_log(ScrollPanel *panel, const char *text)
         panel->line_count++;
     }
 
-    /* Clear and redraw all visible content */
+    // Clear and redraw all visible content
     werase(content);
     scrollok(content, TRUE);
 
-    /* Determine start position for circular buffer */
+    // Determine start position for circular buffer
     int start = (buffer_index - inner_height) % MAX_LOG_LINES;
     if (start < 0)
     {
         start += MAX_LOG_LINES;
     }
 
-    /* Display the appropriate lines */
+    // Display the appropriate lines
     int lines_to_show = (panel->line_count < inner_height) ? panel->line_count : inner_height;
     for (int i = 0; i < lines_to_show; i++)
     {
@@ -82,7 +82,7 @@ void add_to_log(ScrollPanel *panel, const char *text)
         mvwprintw(content, i, 0, "%-*.*s", inner_width, inner_width, line_buffer[idx]);
     }
 
-    /* Auto-scroll if needed */
+    // Auto-scroll if needed
     if (panel->line_count > inner_height)
     {
         wscrl(content, panel->line_count - inner_height);
@@ -131,7 +131,8 @@ ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, c
     return panel;
 }
 
-// Value panel functions
+/* Value panel functions */
+
 ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title)
 {
     ValuePanel *panel = &value_panel_storage;
@@ -183,7 +184,6 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
     return panel;
 }
 
-// Update value panel
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair)
 {
     int value_col = VALUE_PRINT_COL;

@@ -256,7 +256,7 @@ void process_received_frame(int sock)
                 else
                 {
                     char error_log[MAX_MSG_WIDTH];
-                    snprintf(error_log, MAX_MSG_WIDTH, "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
+                    snprintf(error_log, MAX_MSG_WIDTH, "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
                     add_to_log(panel_log, error_log);
                 }
             }

@@ -46,7 +46,7 @@ typedef struct {
 #define SCROLL_PANEL_WIDTH      44
 #define BORDER_MARGIN           2
 #define MAX_LOG_LINES           17
-#define TMSTMP_SIZE             20
+#define TMSTMP_SIZE             10
 
 #define MAX_MSG_WIDTH           (SCROLL_PANEL_WIDTH - BORDER_MARGIN)
 
