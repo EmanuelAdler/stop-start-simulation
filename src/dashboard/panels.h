@@ -43,11 +43,12 @@ typedef struct {
 // Scroll panel
 
 #define SCROLL_PANEL_HEIGHT     20
-#define SCROLL_PANEL_WIDTH      46
+#define SCROLL_PANEL_WIDTH      44
 #define BORDER_MARGIN           2
+#define MAX_LOG_LINES           17
+#define TMSTMP_SIZE             20
 
-#define TMSTMP_SIZE     10
-#define MAX_MSG_WIDTH           (SCROLL_PANEL_WIDTH - TMSTMP_SIZE - 2)
+#define MAX_MSG_WIDTH           (SCROLL_PANEL_WIDTH - BORDER_MARGIN)
 
 typedef struct {
     WINDOW *win;
@@ -66,7 +67,7 @@ ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, c
 
 void add_to_log(ScrollPanel *panel, const char *text);
 
-ValuePanel* create_value_panel(int height, int width, int y_coord, int x_coord, const char *title);
+ValuePanel* create_value_panel(int height, int width, int y_cord, int x_cord, const char *title);
 
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair);
 

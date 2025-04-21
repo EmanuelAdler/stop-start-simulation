@@ -14,8 +14,6 @@
 #include "panels.h"
 
 #define MSG_LOG_PANEL_OFFSET 42
-#define ERROR_LOG_SIZE 60
-#define PRINT_FRAME_SIZE 36
 
 typedef struct
 {

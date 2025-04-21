@@ -152,7 +152,7 @@ void process_sensor_readings(char *input)
     {
         int len = snprintf(NULL, 0, "%d", actuators.gear);
         char *result = malloc(len + 1);
-        if (actuators.gear == 1)
+        if (actuators.speed > 0.0F)
         {
             snprintf(result, len + 1, "D");
         }
@@ -243,7 +243,7 @@ void process_received_frame(int sock)
                         received_bytes = 0;
 
                         /* Add received frame to log panel */
-                        char frame_msg[PRINT_FRAME_SIZE];
+                        char frame_msg[MAX_MSG_WIDTH];
                         int offset = snprintf(frame_msg, sizeof(frame_msg), "Recv:");
 
                         for (size_t i = 0; i < frame.can_dlc; i++)
@@ -255,8 +255,8 @@ void process_received_frame(int sock)
                 }
                 else
                 {
-                    char error_log[ERROR_LOG_SIZE];
-                    snprintf(error_log, ERROR_LOG_SIZE, "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
+                    char error_log[MAX_MSG_WIDTH];
+                    snprintf(error_log, MAX_MSG_WIDTH, "Warning: Unexpected frame size (%d bytes). Ignoring.\n", frame.can_dlc);
                     add_to_log(panel_log, error_log);
                 }
             }
