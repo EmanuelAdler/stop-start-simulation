@@ -155,9 +155,9 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
     mvwprintw(panel->win, IN_TEMP_ROW, 1, "Internal Temp (°C):");
     mvwprintw(panel->win, EXT_TEMP_ROW, 1, "External Temp (°C):");
     mvwprintw(panel->win, DOOR_ROW, 1, "Door Open:");
-    mvwprintw(panel->win, ENGI_TEMP_ROW, 1, "Engine Temp. (°C):");
+    mvwprintw(panel->win, ENGI_TEMP_ROW, 1, "Engine Temp (°C):");
     mvwprintw(panel->win, BATT_VOLT_ROW, 1, "Battery Voltage (V):");
-    mvwprintw(panel->win, BATT_SOC_ROW, 1, "Battery Soc (%%):");
+    mvwprintw(panel->win, BATT_SOC_ROW, 1, "Battery SoC (%%):");
     mvwprintw(panel->win, ACCEL_ROW, 1, "Accelerator:");
     mvwprintw(panel->win, BRAKE_ROW, 1, "Brake:");
     mvwprintw(panel->win, GEAR_ROW, 1, "Gear:");
