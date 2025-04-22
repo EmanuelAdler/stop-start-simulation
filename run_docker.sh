@@ -1,25 +1,25 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Run the CAN setup script
-bash "setup_vcan.sh"
+# Absolute path of the directory that contains this script
+SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Build all services first
-echo "Building Docker images..."
-docker-compose build
+# 1 – Configure virtual CAN interface (vcan0); only this step needs sudo
+echo "🔧 Configuring virtual CAN interface (vcan0)…"
+sudo bash "$SCRIPT_DIR/setup_vcan.sh"
 
-# ecu_dashboard will only run with "docker-compose run"
-echo "Starting ecu_dashboard in a new terminal..."
-gnome-terminal --geometry 92x22 -- bash -c "docker-compose run ecu_dashboard; exec bash"
+# 2 – Build all Docker images in parallel
+echo "🚢 Building Docker images…"
+docker-compose build --parallel
 
-# List of other ECUs to run
-services=("ecu_bcm" "ecu_powertrain" "ecu_instrument_cluster")
+# 3 – List of ECU services to start
+services=(ecu_dashboard ecu_bcm ecu_powertrain ecu_instrument_cluster)
 
-# Launch each ECU in a new terminal
-for service in "${services[@]}"; do
-    echo "Starting $service in a new terminal..."
-    gnome-terminal -- bash -c "cd '$SCRIPT_DIR' && docker-compose up $service; exec bash"
-    # macOS alternative:
-    # osascript -e "tell app \"Terminal\" to do script \"cd '$SCRIPT_DIR' && docker-compose up $service\""
+# 4 – Launch each ECU in its own GNOME Terminal window
+for svc in "${services[@]}"; do
+    echo "➡️  Starting $svc in a new terminal…"
+    gnome-terminal --geometry 92x22 \
+        -- bash -c "cd '$SCRIPT_DIR' && docker-compose up $svc; exec bash"
 done
 
-echo "All ECUs are running in separate terminals!"
+echo "✅ All ECUs are running in separate terminals!"
