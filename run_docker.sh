@@ -8,9 +8,9 @@ SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "🔧 Configuring virtual CAN interface (vcan0)…"
 sudo bash "$SCRIPT_DIR/setup_vcan.sh"
 
-# 2 – Build all Docker images in parallel
+# 2 – Build all Docker images
 echo "🚢 Building Docker images…"
-docker-compose build --parallel
+docker-compose build
 
 # 3 – Run dashboard alone
 echo "➡️  Starting ecu_dashboard in a new terminal…"
