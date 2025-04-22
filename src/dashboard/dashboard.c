@@ -58,8 +58,8 @@ int main(void)
     close_can_socket(sock);
     cleanup_logging_system();
 
-    delwin(panel_log->win);
-    delwin(panel_dash->win);
+    destroy_panel(panel_log->win);
+    destroy_panel(panel_dash->win);
 
     endwin();
 

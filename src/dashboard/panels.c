@@ -212,7 +212,7 @@ void update_value_panel(ValuePanel *panel, int row, const char *value, int color
 }
 
 // Panel destroy function
-void destroy_panel(ScrollPanel *panel)
+void destroy_panel(WINDOW *win)
 {
-    delwin(panel->win);
+    delwin(win);
 }

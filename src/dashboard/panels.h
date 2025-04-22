@@ -67,8 +67,8 @@ ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, c
 
 void add_to_log(ScrollPanel *panel, const char *text);
 
-ValuePanel* create_value_panel(int height, int width, int y_cord, int x_cord, const char *title);
+ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title);
 
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair);
 
-void destroy_panel(ScrollPanel *panel);
+void destroy_panel(WINDOW *win);
