@@ -12,10 +12,15 @@ sudo bash "$SCRIPT_DIR/setup_vcan.sh"
 echo "🚢 Building Docker images…"
 docker-compose build --parallel
 
-# 3 – List of ECU services to start
-services=(ecu_dashboard ecu_bcm ecu_powertrain ecu_instrument_cluster)
+# 3 – Run dashboard alone
+echo "➡️  Starting ecu_dashboard in a new terminal…"
+    gnome-terminal --geometry 92x22 \
+        -- bash -c "docker-compose run ecu_dashboard; exec bash"
 
-# 4 – Launch each ECU in its own GNOME Terminal window
+# 4 – List of ECU services to start
+services=(ecu_bcm ecu_powertrain ecu_instrument_cluster)
+
+# 5 – Launch each ECU in its own GNOME Terminal window
 for svc in "${services[@]}"; do
     echo "➡️  Starting $svc in a new terminal…"
     gnome-terminal --geometry 92x22 \
