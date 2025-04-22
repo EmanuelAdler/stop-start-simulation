@@ -7,10 +7,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define CAN_DATA_LENGTH (8)
 
 Actuators actuators = {0};
+
+#define MICRO_CONSTANT_CONV (1000000L)
+#define NANO_CONSTANT_CONV (1000)
+
+// Sleep for a given number of microseconds
+void sleep_microseconds(long int microseconds)
+{
+    struct timespec tsc;
+    tsc.tv_sec = microseconds / MICRO_CONSTANT_CONV;
+    tsc.tv_nsec = (microseconds % MICRO_CONSTANT_CONV) * NANO_CONSTANT_CONV;
+    nanosleep(&tsc, NULL);
+}
 
 bool check_is_valid_can_id(canid_t can_id)
 {
@@ -267,5 +280,6 @@ void process_received_frame(int sock)
             break;
         }
 #endif
+        sleep_microseconds(CAN_RECV_TIME);
     }
 }

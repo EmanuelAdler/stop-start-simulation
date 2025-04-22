@@ -10,6 +10,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+// CAN receiver sleep time (microseconds)
+#define CAN_RECV_TIME   100
+
+// UI start time (microseconds)
+#define UI_START_TIME  10000
+
 // ncurses UI
 #include "panels.h"
 
@@ -42,5 +48,6 @@ void process_user_commands(char *input);
 void process_engine_commands(char *input);
 void process_sensor_readings(char *input);
 void process_errors(char *input);
+void sleep_microseconds(long int microseconds);
 
 #endif

@@ -20,6 +20,17 @@ ScrollPanel *panel_log = NULL;
 
 int main(void)
 {
+    /* CAN communication */
+
+    int sock = -1;
+    sock = create_can_socket(CAN_INTERFACE);
+    if (sock < 0)
+    {
+        return ERROR_CODE;
+    }
+
+    sleep_microseconds(UI_START_TIME);
+
     /* UI */
 
     if (!initscr())
@@ -35,15 +46,6 @@ int main(void)
     // Create panels
     panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, 1, "Dashboard");
     panel_log = create_log_panel(VALUE_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, MSG_LOG_PANEL_OFFSET, "Message Log");
-
-    /* CAN communication */
-
-    int sock = -1;
-    sock = create_can_socket(CAN_INTERFACE);
-    if (sock < 0)
-    {
-        return ERROR_CODE;
-    }
 
     if (!init_logging_system())
     {
