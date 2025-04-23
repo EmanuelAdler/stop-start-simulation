@@ -31,6 +31,11 @@ bool check_is_valid_can_id(canid_t can_id)
     return is_valid;
 }
 
+/**
+ * @brief Process the output for print dashboard status.
+ * @requirement SWR5.2
+ * @requirement SWR6.3
+ */
 void print_dashboard_status() 
 {
     (void)printf("\n=== Dashboard Status ===\n");
@@ -44,6 +49,13 @@ void print_dashboard_status()
     (void)fflush(stdout);
 }
 
+/**
+ * @brief Process the variants of inputs received by the dashboard.
+ * @requirement SWR1.3
+ * @requirement SWR4.5
+ * @requirement SWR5.1
+ * @requirement SWR5.3
+ */
 void parse_input_received(char* input)
 {
     process_user_commands(input);

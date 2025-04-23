@@ -131,10 +131,23 @@ static VehicleData base_ok_data(void)
 // ----------------------------------------------------------------------
 // Unit tests
 
-// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active (SWR5.1)
+// 1) All conditions OK => should set cond1..cond6=1 => activates if not already active
 /**
  * @test test_check_disable_engine_all_ok
  * @brief Tests engine start functionality
+ * @req SWR2.2
+ * @req SWR2.3
+ * @req SWR2.4
+ * @req SWR2.5
+ * @req SWR2.6
+ * @req SWR2.7
+ * @req SWR2.8
+ * @req SWR2.9
+ * @req SWR3.1
+ * @req SWR3.4
+ * @req SWR3.5
+ * @req SWR4.3
+ * @req SWR4.4
  * @req SWR5.1
  * @file unit/test_powertrain.c
  */
