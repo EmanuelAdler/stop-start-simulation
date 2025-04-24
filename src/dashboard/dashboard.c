@@ -20,17 +20,6 @@ ScrollPanel *panel_log = NULL;
 
 int main(void)
 {
-    /* CAN communication */
-
-    int sock = -1;
-    sock = create_can_socket(CAN_INTERFACE);
-    if (sock < 0)
-    {
-        return ERROR_CODE;
-    }
-
-    sleep_microseconds(UI_START_TIME);
-
     /* UI */
 
     if (!initscr())
@@ -40,6 +29,7 @@ int main(void)
     }
     cbreak();
     noecho();
+    curs_set(0);
 
     init_colors();
 
@@ -52,6 +42,17 @@ int main(void)
         fprintf(stderr, "Failed to open log file for writing.\n");
         return ERROR_CODE;
     }
+
+    /* CAN communication */
+
+    int sock = -1;
+    sock = create_can_socket(CAN_INTERFACE);
+    if (sock < 0)
+    {
+        return ERROR_CODE;
+    }
+
+    // sleep_microseconds(UI_START_TIME);
 
     add_to_log(panel_log, "Waiting CAN frames...");
 

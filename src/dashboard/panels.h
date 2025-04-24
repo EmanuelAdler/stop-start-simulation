@@ -4,6 +4,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 
 // Color pair definitions
 #define GREEN_TEXT  1
@@ -15,7 +16,6 @@
 
 #define VALUE_PANEL_HEIGHT      20
 #define VALUE_PANEL_WIDTH       40
-#define VALUE_PANEL_NUM_ROWS    6
 
 #define VALUE_PRINT_COL 32
 
@@ -43,12 +43,12 @@ typedef struct {
 // Scroll panel
 
 #define SCROLL_PANEL_HEIGHT     20
-#define SCROLL_PANEL_WIDTH      44
+#define SCROLL_PANEL_WIDTH      46
 #define BORDER_MARGIN           2
-#define MAX_LOG_LINES           17
+#define MAX_LOG_LINES           18
 #define TMSTMP_SIZE             10
 
-#define MAX_MSG_WIDTH           (SCROLL_PANEL_WIDTH - BORDER_MARGIN)
+#define MAX_MSG_WIDTH           44
 
 typedef struct {
     WINDOW *win;
@@ -63,7 +63,7 @@ extern ScrollPanel *panel_log;
 
 void init_colors();
 
-ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, const char *title);
+ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, const char *title);
 
 void add_to_log(ScrollPanel *panel, const char *text);
 

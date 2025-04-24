@@ -13,18 +13,6 @@
 
 Actuators actuators = {0};
 
-#define MICRO_CONSTANT_CONV (1000000L)
-#define NANO_CONSTANT_CONV (1000)
-
-// Sleep for a given number of microseconds
-void sleep_microseconds(long int microseconds)
-{
-    struct timespec tsc;
-    tsc.tv_sec = microseconds / MICRO_CONSTANT_CONV;
-    tsc.tv_nsec = (microseconds % MICRO_CONSTANT_CONV) * NANO_CONSTANT_CONV;
-    nanosleep(&tsc, NULL);
-}
-
 bool check_is_valid_can_id(canid_t can_id)
 {
     bool is_valid = false;
@@ -61,14 +49,14 @@ void process_user_commands(char *input)
         if (actuators.start_stop_active)
         {
             log_toggle_event("[INFO] System Activated");
-            add_to_log(panel_log, "System Manually Activated");
             update_value_panel(panel_dash, SYSTEM_ST_ROW, "ON", GREEN_TEXT);
+            add_to_log(panel_log, "System Manually Activated");
         }
         else
         {
             log_toggle_event("[INFO] System Deactivated");
-            add_to_log(panel_log, "System Manually Deactivated");
             update_value_panel(panel_dash, SYSTEM_ST_ROW, "OFF", RED_TEXT);
+            add_to_log(panel_log, "System Manually Deactivated");
         }
     }
 }
@@ -83,126 +71,93 @@ void process_engine_commands(char *input)
     else if (strcmp(input, "ENGINE OFF") == 0)
     {
         log_toggle_event("[INFO] Engine Deactivated by Stop/Start");
-        add_to_log(panel_log, "Engine Deactivated - Stop/Start");
         update_value_panel(panel_dash, ENGINE_ST_ROW, "OFF", RED_TEXT);
+        add_to_log(panel_log, "Engine Deactivated - Stop/Start");
     }
     else if (strcmp(input, "RESTART") == 0)
     {
         log_toggle_event("[INFO] Engine Activated by Stop/Start");
-        add_to_log(panel_log, "Engine Activated - Stop/Start");
         update_value_panel(panel_dash, ENGINE_ST_ROW, "ON", GREEN_TEXT);
+        add_to_log(panel_log, "Engine Activated - Stop/Start");
     }
 }
 
 void process_sensor_readings(char *input)
 {
+    char result[MAX_VALUE_LENGTH];
+
     /* Check if CAN message is speed */
     if (sscanf(input, "speed: %lf", &actuators.speed) == 1)
     {
-        int len = snprintf(NULL, 0, "%lf", actuators.speed);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%.1lf", actuators.speed);
+        snprintf(result, sizeof(result), "%.1lf", actuators.speed);
         update_value_panel(panel_dash, SPEED_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is internal temperature */
     else if (sscanf(input, "in_temp: %d", &actuators.internal_temp) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.internal_temp);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%d", actuators.internal_temp);
+        snprintf(result, sizeof(result), "%d", actuators.internal_temp);
         update_value_panel(panel_dash, IN_TEMP_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is external temperature */
     else if (sscanf(input, "ex_temp: %d", &actuators.external_temp) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.external_temp);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%d", actuators.external_temp);
+        snprintf(result, sizeof(result), "%d", actuators.external_temp);
         update_value_panel(panel_dash, EXT_TEMP_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is door open */
     else if (sscanf(input, "door: %d", &actuators.door_status) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.door_status);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%d", actuators.door_status);
+        snprintf(result, sizeof(result), "%d", actuators.door_status);
         update_value_panel(panel_dash, DOOR_ROW, result, NORMAL_TEXT);
-        free(result);
     }
-
     /* Check if CAN message is battery SoC */
     else if (sscanf(input, "batt_soc: %lf", &actuators.batt_soc) == 1)
     {
-        int len = snprintf(NULL, 0, "%lf", actuators.batt_soc);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%.1lf", actuators.batt_soc);
+        snprintf(result, sizeof(result), "%.1lf", actuators.batt_soc);
         update_value_panel(panel_dash, BATT_SOC_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is battery voltage */
     else if (sscanf(input, "batt_volt: %lf", &actuators.batt_volt) == 1)
     {
-        int len = snprintf(NULL, 0, "%lf", actuators.batt_volt);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%.1lf", actuators.batt_volt);
+        snprintf(result, sizeof(result), "%.1lf", actuators.batt_volt);
         update_value_panel(panel_dash, BATT_VOLT_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is engine temperature */
     else if (sscanf(input, "engi_temp: %lf", &actuators.engi_temp) == 1)
     {
-        int len = snprintf(NULL, 0, "%lf", actuators.engi_temp);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%.1lf", actuators.engi_temp);
+        snprintf(result, sizeof(result), "%.1lf", actuators.engi_temp);
         update_value_panel(panel_dash, ENGI_TEMP_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is gear */
     else if (sscanf(input, "gear: %d", &actuators.gear) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.gear);
-        char *result = malloc(len + 1);
         if (actuators.speed > 0.0F)
         {
-            snprintf(result, len + 1, "D");
+            strncpy(result, "D", sizeof(result));
         }
         else
         {
-            snprintf(result, len + 1, "P");
+            strncpy(result, "P", sizeof(result));
         }
-
         update_value_panel(panel_dash, GEAR_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is acceleration sensor */
     else if (sscanf(input, "accel: %d", &actuators.accel) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.accel);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%d", actuators.accel);
+        snprintf(result, sizeof(result), "%d", actuators.accel);
         update_value_panel(panel_dash, ACCEL_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is braking sensor*/
     else if (sscanf(input, "brake: %d", &actuators.brake) == 1)
     {
-        int len = snprintf(NULL, 0, "%d", actuators.brake);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%d", actuators.brake);
+        snprintf(result, sizeof(result), "%d", actuators.brake);
         update_value_panel(panel_dash, BRAKE_ROW, result, NORMAL_TEXT);
-        free(result);
     }
     /* Check if CAN message is tilt angle */
     else if (sscanf(input, "tilt: %lf", &actuators.tilt_angle) == 1)
     {
-        int len = snprintf(NULL, 0, "%lf", actuators.tilt_angle);
-        char *result = malloc(len + 1);
-        snprintf(result, len + 1, "%.1lf", actuators.tilt_angle);
+        snprintf(result, sizeof(result), "%.1lf", actuators.tilt_angle);
         update_value_panel(panel_dash, TILT_ROW, result, NORMAL_TEXT);
-        free(result);
     }
 }
 
@@ -233,6 +188,8 @@ void process_received_frame(int sock)
     unsigned char encrypted_data[AES_BLOCK_SIZE];
     char decrypted_message[AES_BLOCK_SIZE];
     int received_bytes = 0;
+    char frame_msg[MAX_MSG_WIDTH];
+    char error_log[MAX_MSG_WIDTH];
 
 #ifdef UNIT_TEST
     while (true)
@@ -256,8 +213,7 @@ void process_received_frame(int sock)
                         received_bytes = 0;
 
                         /* Add received frame to log panel */
-                        char frame_msg[MAX_MSG_WIDTH];
-                        int offset = snprintf(frame_msg, sizeof(frame_msg), "Recv:");
+                        int offset = snprintf(frame_msg, sizeof(frame_msg), "Receive:");
 
                         for (size_t i = 0; i < frame.can_dlc; i++)
                         {
@@ -268,8 +224,7 @@ void process_received_frame(int sock)
                 }
                 else
                 {
-                    char error_log[MAX_MSG_WIDTH];
-                    snprintf(error_log, MAX_MSG_WIDTH, "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
+                    snprintf(error_log, sizeof(error_log), "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
                     add_to_log(panel_log, error_log);
                 }
             }
@@ -280,6 +235,6 @@ void process_received_frame(int sock)
             break;
         }
 #endif
-        sleep_microseconds(CAN_RECV_TIME);
+        // sleep_microseconds(CAN_RECV_TIME);
     }
 }

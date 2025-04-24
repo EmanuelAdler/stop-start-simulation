@@ -8,6 +8,19 @@ static ValuePanel value_panel_storage;
 static char line_buffer[MAX_LOG_LINES][MAX_MSG_WIDTH];
 static int buffer_index = 0;
 
+/* // Sleep parameters
+#define MICRO_CONSTANT_CONV (1000000L)
+#define NANO_CONSTANT_CONV (1000)
+
+// Sleep for a given number of microseconds
+void sleep_microseconds(long int microseconds)
+{
+    struct timespec tsc;
+    tsc.tv_sec = microseconds / MICRO_CONSTANT_CONV;
+    tsc.tv_nsec = (microseconds % MICRO_CONSTANT_CONV) * NANO_CONSTANT_CONV;
+    nanosleep(&tsc, NULL);
+} */
+
 // Color function
 void init_colors()
 {
@@ -24,7 +37,7 @@ void init_colors()
     init_pair(NORMAL_TEXT, COLOR_WHITE, COLOR_BLACK);
 }
 
-/* Log panel functions */ 
+/* Log panel functions */
 
 void add_to_log(ScrollPanel *panel, const char *text)
 {
@@ -33,7 +46,7 @@ void add_to_log(ScrollPanel *panel, const char *text)
         return;
     }
 
-    // Get current time for timestamp
+    // Get timestamp
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
     char timestamp[TMSTMP_SIZE];
@@ -43,60 +56,62 @@ void add_to_log(ScrollPanel *panel, const char *text)
     int inner_height = panel->height - 2;
     int inner_width = panel->width - 2;
 
-    // Create inner window for content - using full width
+    // Format the log entry
+    char formatted_text[MAX_MSG_WIDTH];
+    snprintf(formatted_text, sizeof(formatted_text), "[%s] %s", timestamp, text);
+
+    // Store in circular buffer
+    strncpy(line_buffer[buffer_index], formatted_text, MAX_MSG_WIDTH - 1);
+    line_buffer[buffer_index][MAX_MSG_WIDTH - 1] = '\0';
+    buffer_index = (buffer_index + 1) % MAX_LOG_LINES;
+
+    // Update line count (capped at MAX_LOG_LINES)
+    if (panel->line_count < MAX_LOG_LINES)
+    {
+        panel->line_count++;
+    }
+
+    // Create content window
     WINDOW *content = derwin(panel->win, inner_height, inner_width, 1, 1);
     if (content == NULL)
     {
         return;
     }
 
-    // Format text with timestamp
-    char formatted_text[MAX_MSG_WIDTH];
-    snprintf(formatted_text, sizeof(formatted_text), "[%s] %s", timestamp, text);
-
-    // Store the text in our fixed buffer
-    strncpy(line_buffer[buffer_index], formatted_text, MAX_MSG_WIDTH - 1);
-    line_buffer[buffer_index][MAX_MSG_WIDTH - 1] = '\0';
-    buffer_index = (buffer_index + 1) % MAX_LOG_LINES;
-    if (panel->line_count < MAX_LOG_LINES)
-    {
-        panel->line_count++;
-    }
-
-    // Clear and redraw all visible content
+    // Clear the content window
     werase(content);
-    scrollok(content, TRUE);
 
-    // Determine start position for circular buffer
-    int start = (buffer_index - inner_height) % MAX_LOG_LINES;
-    if (start < 0)
+    // Determine how many lines we can actually display
+    int lines_to_display = (panel->line_count < inner_height) ? panel->line_count : inner_height;
+
+    // Calculate the starting index in the circular buffer
+    int start_index;
+    if (panel->line_count <= inner_height)
     {
-        start += MAX_LOG_LINES;
+        start_index = 0;
+    }
+    else
+    {
+        start_index = (buffer_index - lines_to_display + MAX_LOG_LINES) % MAX_LOG_LINES;
     }
 
-    // Display the appropriate lines
-    int lines_to_show = (panel->line_count < inner_height) ? panel->line_count : inner_height;
-    for (int i = 0; i < lines_to_show; i++)
+    // Display the lines
+    for (int i = 0; i < lines_to_display; i++)
     {
-        int idx = (start + i) % MAX_LOG_LINES;
-        mvwprintw(content, i, 0, "%-*.*s", inner_width, inner_width, line_buffer[idx]);
+        int buf_index = (start_index + i) % MAX_LOG_LINES;
+        mvwprintw(content, i, 0, "%-*.*s", inner_width, inner_width, line_buffer[buf_index]);
     }
 
-    // Auto-scroll if needed
-    if (panel->line_count > inner_height)
-    {
-        wscrl(content, panel->line_count - inner_height);
-    }
-
+    // Refresh and clean up
     wrefresh(content);
     delwin(content);
 }
 
-ScrollPanel *create_log_panel(int height, int width, int y_coord, int x_coord, const char *title)
+ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, const char *title)
 {
     ScrollPanel *panel = &log_panel_storage;
 
-    panel->win = newwin(height, width, y_coord, x_coord);
+    panel->win = newwin(height, width, y_cord, x_cord);
     if (!panel->win)
     {
         return NULL;
@@ -137,17 +152,21 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
 {
     ValuePanel *panel = &value_panel_storage;
 
+    // Create main window with borders
     panel->win = newwin(height, width, y_cord, x_cord);
     panel->height = height;
     panel->width = width;
 
+    // Set background
     wbkgd(panel->win, COLOR_PAIR(NORMAL_TEXT));
 
+    // Draw border and title (only once)
     box(panel->win, 0, 0);
     wattron(panel->win, A_BOLD);
     mvwprintw(panel->win, 0, (int)(width - strlen(title) - 4) / 2, " %s ", title);
     wattroff(panel->win, A_BOLD);
 
+    // Draw all static content offset by 1 (inside borders)
     wattron(panel->win, COLOR_PAIR(NORMAL_TEXT));
 
     mvwprintw(panel->win, SPEED_ROW, 1, "Speed (Km/h):");
@@ -165,6 +184,7 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
     mvwprintw(panel->win, SYSTEM_ST_ROW, 1, "Stop/Start System:");
     mvwprintw(panel->win, ENGINE_ST_ROW, 1, "Engine Status:");
 
+    // Initialize values (using update function but with coordinates inside border)
     update_value_panel(panel, SPEED_ROW, "-", NORMAL_TEXT);
     update_value_panel(panel, TILT_ROW, "-", NORMAL_TEXT);
     update_value_panel(panel, IN_TEMP_ROW, "-", NORMAL_TEXT);
@@ -177,8 +197,8 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
     update_value_panel(panel, BRAKE_ROW, "-", NORMAL_TEXT);
     update_value_panel(panel, GEAR_ROW, "-", NORMAL_TEXT);
 
-    update_value_panel(panel, SYSTEM_ST_ROW, "Off", RED_TEXT);
-    update_value_panel(panel, ENGINE_ST_ROW, "Off", RED_TEXT);
+    update_value_panel(panel, SYSTEM_ST_ROW, "OFF", RED_TEXT);
+    update_value_panel(panel, ENGINE_ST_ROW, "OFF", RED_TEXT);
 
     wrefresh(panel->win);
     return panel;
@@ -187,10 +207,24 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair)
 {
     int value_col = VALUE_PRINT_COL;
-    int max_width = panel->width - value_col - 2;
+    int max_width = panel->width - value_col - 2; // -2 for borders
 
-    wmove(panel->win, row, value_col);
-    wclrtoeol(panel->win);
+    // Ensure we're writing inside the border (y: row, x: 1 to width-2)
+    int write_col = MAX(1, value_col);            // At least 1 to stay inside left border
+    write_col = MIN(write_col, panel->width - 2); // At most width-2 to stay inside right border
+
+    // Move to position inside border
+    wmove(panel->win, row, write_col);
+
+    // Clear to end of line but stay inside right border
+    int clear_width = panel->width - write_col - 1;
+    for (int i = 0; i < clear_width; i++)
+    {
+        waddch(panel->win, ' ');
+    }
+
+    // Move back to write position
+    wmove(panel->win, row, write_col);
 
     wattron(panel->win, COLOR_PAIR(color_pair));
 
@@ -207,7 +241,8 @@ void update_value_panel(ValuePanel *panel, int row, const char *value, int color
     }
 
     wattroff(panel->win, COLOR_PAIR(color_pair));
-    mvwaddch(panel->win, row, panel->width - 1, ACS_VLINE);
+
+    // No need to redraw the right border since we stayed inside
     wrefresh(panel->win);
 }
 
