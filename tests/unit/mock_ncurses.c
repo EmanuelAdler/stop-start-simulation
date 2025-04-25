@@ -3,13 +3,15 @@
 #include <time.h>
 #include "../../src/dashboard/panels.h"
 
+#include "mock_ncurses.h"
+
+#define MAX_MSG_SIZE 44
+#define TMSTMP_SIZE 10
+#define MAX_LOG_LINES 18
+
 // Define the panel objects
 ValuePanel *panel_dash = NULL;
 ScrollPanel *panel_log = NULL;
-
-#define MAX_MSG_SIZE 256
-#define TMSTMP_SIZE 10
-#define MAX_LOG_LINES 18
 
 // Mock state
 static struct
@@ -27,6 +29,14 @@ static struct
     int windows_created;
     int windows_destroyed;
 } mock_state;
+
+char *read_value_panel(void){
+    return mock_state.last_value_update;
+}
+
+char *read_log_panel(void){
+    return mock_state.last_log_message;
+}
 
 // Mock implementations of panel functions
 void add_to_log(ScrollPanel *panel, const char *text)
