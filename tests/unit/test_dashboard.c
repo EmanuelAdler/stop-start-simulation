@@ -223,6 +223,10 @@ void test_parse_input_variants(void)
 
     // 10) Finalize and clean up
     cleanup_logging_system();
+    fflush(stdout);
+    dup2(saved_stdout_fd, STDOUT_FILENO);
+    close(saved_stdout_fd);
+    fclose(fp_stdout);
 }
 
 #define TEST_VALUE_PANEL_HEIGHT 20
