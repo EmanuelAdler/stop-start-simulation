@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../../src/common_includes/can_id_list.h"
+#include "../../src/common_includes/can_socket.h"
 #include "../../src/dashboard/dashboard_func.h"
 #include "../../src/common_includes/logging.h"
 
@@ -103,16 +105,7 @@ void test_parse_input_variants(void)
     set_log_file_path("/tmp/test_dashboard_variants.log");
     CU_ASSERT_TRUE_FATAL(init_logging_system());
 
-    // 2) Redirect stdout to a temporary file
-    const char *stdout_file = "/tmp/test_dashboard_variants_stdout.txt";
-    FILE *fp_stdout = fopen(stdout_file, "w");
-    CU_ASSERT_PTR_NOT_NULL_FATAL(fp_stdout);
-
-    int saved_stdout_fd = dup(STDOUT_FILENO);
-    int temp_fd = fileno(fp_stdout);
-    dup2(temp_fd, STDOUT_FILENO);
-
-    // 3) Test case 1: "press_start_stop" => activates the system
+    // 2) Test case 1: "press_start_stop" => activates the system
     parse_input_received("press_start_stop");
     // Assert that start_stop_active became true
     CU_ASSERT_TRUE(actuators.start_stop_active);
@@ -121,22 +114,16 @@ void test_parse_input_variants(void)
         "/tmp/test_dashboard_variants.log",
         "[INFO] System Activated"};
     CU_ASSERT_TRUE(file_contains_substring(param_activated));
-    // Assert that the message is in the stdout file
-    // f_susbtring_data activated_status_title = { stdout_file, "[INFO] System Activated" };
-    // CU_ASSERT_TRUE(file_contains_substring(activated_status_title));
 
-    // 4) Test case 2: "press_start_stop" => deactivates the system
+    // 3) Test case 2: "press_start_stop" => deactivates the system
     parse_input_received("press_start_stop");
     CU_ASSERT_FALSE(actuators.start_stop_active);
     f_susbtring_data param_deactivated = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] System Deactivated"};
     CU_ASSERT_TRUE(file_contains_substring(param_deactivated));
-    // Assert that the message is in the stdout file
-    // f_susbtring_data deactivated_status_title = { stdout_file, "[INFO] System Deactivated" };
-    // CU_ASSERT_TRUE(file_contains_substring(deactivated_status_title));
 
-    // 5) Test case 3: engine command with error => should give an error
+    // 4) Test case 3: engine command with error => should give an error
     actuators.error_system = 1;
     // Could be any command, "ENGINE OFF" was chosen
     parse_input_received("ENGINE OFF");
@@ -146,21 +133,21 @@ void test_parse_input_variants(void)
     CU_ASSERT_TRUE(file_contains_substring(error_str));
     actuators.error_system = 0;
 
-    // 6) Test case 4: "ENGINE OFF" => logs "[INFO] Engine Deactivated by Stop/Start"
+    // 5) Test case 4: "ENGINE OFF" => logs "[INFO] Engine Deactivated by Stop/Start"
     parse_input_received("ENGINE OFF");
     f_susbtring_data engine_off_str = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] Engine Deactivated by Stop/Start"};
     CU_ASSERT_TRUE(file_contains_substring(engine_off_str));
 
-    // 7) Test case 5: "RESTART" => logs "[INFO] Engine Activated by Stop/Start"
+    // 6) Test case 5: "RESTART" => logs "[INFO] Engine Activated by Stop/Start"
     parse_input_received("RESTART");
     f_susbtring_data engine_restart_str = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] Engine Activated by Stop/Start"};
     CU_ASSERT_TRUE(file_contains_substring(engine_restart_str));
 
-    // 8) Test case 6: Sensor readings (batt_soc, batt_volt, door)
+    // 7) Test case 6: Sensor readings (batt_soc, batt_volt, door)
     parse_input_received("speed: 48.0");
     CU_ASSERT_DOUBLE_EQUAL(actuators.speed, kSpeedReceived, kDelta);
 
@@ -200,7 +187,7 @@ void test_parse_input_variants(void)
     parse_input_received("tilt: 7.0");
     CU_ASSERT_DOUBLE_EQUAL(actuators.tilt_angle, ktiltReceived, kDelta);
 
-    // 9) Test case 7: Error messages
+    // 8) Test case 7: Error messages
     parse_input_received("error_battery_drop");
     f_susbtring_data err_drop = {
         "/tmp/test_dashboard_variants.log",
@@ -220,13 +207,6 @@ void test_parse_input_variants(void)
     CU_ASSERT_TRUE(file_contains_substring(err_disab));
     CU_ASSERT_FALSE(actuators.start_stop_active);
     CU_ASSERT_TRUE(actuators.error_system);
-
-    // 10) Finalize and clean up
-    cleanup_logging_system();
-    fflush(stdout);
-    dup2(saved_stdout_fd, STDOUT_FILENO);
-    close(saved_stdout_fd);
-    fclose(fp_stdout);
 }
 
 #define TEST_VALUE_PANEL_HEIGHT 20
@@ -284,7 +264,11 @@ void test_panels(void)
 //-------------------------------------
 void test_invalid_can_id_dashboard(void)
 {
-    CU_ASSERT_FALSE(check_is_valid_can_id(CAN_ID_MOCK));
+    // Test with an invalid CAN ID (should make check_is_valid_can_id return false)
+    #define INVALID_CAN_ID      0x6A3
+
+    // Verify the ID is indeed invalid
+    CU_ASSERT_FALSE(check_is_valid_can_id(INVALID_CAN_ID));
 }
 
 int main(void)
