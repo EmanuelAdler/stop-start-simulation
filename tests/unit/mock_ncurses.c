@@ -63,32 +63,30 @@ void add_to_log(ScrollPanel *panel, const char *text)
     }
 }
 
-ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, const char *title)
+ScrollPanel *create_log_panel(Size siz, Position pos, const char *title)
 {
     static ScrollPanel panel;
-    panel.height = height;
-    panel.width = width;
+    panel.height = siz.height;
+    panel.width = siz.width;
     panel.line_count = 0;
-    panel.win = (WINDOW *)0x1; // Dummy pointer
-
-    mock_state.windows_created++;
-    (void)y_cord;
-    (void)x_cord;
-    (void)title; // Silence unused parameter warnings
-    return &panel;
-}
-
-ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title)
-{
-    static ValuePanel panel;
-    panel.height = height;
-    panel.width = width;
     panel.win = (WINDOW *)0x1;
 
     mock_state.windows_created++;
-    (void)y_cord;
-    (void)x_cord;
-    (void)title; // Silence unused parameter warnings
+    (void)pos;
+    (void)title;
+    return &panel;
+}
+
+ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
+{
+    static ValuePanel panel;
+    panel.height = siz.height;
+    panel.width = siz.width;
+    panel.win = (WINDOW *)0x1;
+
+    mock_state.windows_created++;
+    (void)pos;
+    (void)title;
     return &panel;
 }
 

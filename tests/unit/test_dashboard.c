@@ -224,8 +224,11 @@ void test_panels(void)
 {
     // 1) Create a value panel
 
-    panel_dash = create_value_panel(TEST_VALUE_PANEL_HEIGHT, 
-        TEST_VALUE_PANEL_WIDTH, 1, 1, "Test_dash");
+    panel_dash = create_value_panel(
+        (Size){TEST_VALUE_PANEL_HEIGHT, TEST_VALUE_PANEL_WIDTH}, 
+        (Position){1, 1}, 
+        "Test_dash"
+    );
     CU_ASSERT_PTR_NOT_NULL(panel_dash);
 
     // 2) Update the value panel
@@ -236,8 +239,11 @@ void test_panels(void)
 
     // 3) Create a log panel
 
-    panel_log = create_log_panel(TEST_LOG_PANEL_HEIGHT, 
-        TEST_LOG_PANEL_WIDTH, 1, TEST_LOG_PANEL_OFFSET, "Test_log");
+    panel_log = create_log_panel(
+        (Size){TEST_LOG_PANEL_HEIGHT, TEST_LOG_PANEL_WIDTH}, 
+        (Position){1, TEST_LOG_PANEL_OFFSET}, 
+        "Test_log"
+    );
     CU_ASSERT_PTR_NOT_NULL(panel_log);
 
     // 4) Update log panel

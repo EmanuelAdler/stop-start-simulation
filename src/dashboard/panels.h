@@ -57,17 +57,27 @@ typedef struct {
     int line_count;
 } ScrollPanel;
 
+typedef struct { 
+    int height;
+    int width; 
+} Size;
+
+typedef struct { 
+    int y_cord;
+    int x_cord; 
+} Position;
+
 // Declare extern panels to be defined in "dashboard.c"
 extern ValuePanel *panel_dash;
 extern ScrollPanel *panel_log;
 
 void init_colors();
 
-ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, const char *title);
+ScrollPanel *create_log_panel(Size siz, Position pos, const char *title);
 
 void add_to_log(ScrollPanel *panel, const char *text);
 
-ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title);
+ValuePanel *create_value_panel(Size siz, Position pos, const char *title);
 
 void update_value_panel(ValuePanel *panel, int row, const char *value, int color_pair);
 

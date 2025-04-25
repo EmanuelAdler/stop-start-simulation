@@ -107,24 +107,24 @@ void add_to_log(ScrollPanel *panel, const char *text)
     delwin(content);
 }
 
-ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, const char *title)
+ScrollPanel *create_log_panel(Size siz, Position pos, const char *title)
 {
     ScrollPanel *panel = &log_panel_storage;
 
-    panel->win = newwin(height, width, y_cord, x_cord);
+    panel->win = newwin(siz.height, siz.width, pos.y_cord, pos.x_cord);
     if (!panel->win)
     {
         return NULL;
     }
 
-    panel->height = height;
-    panel->width = width;
+    panel->height = siz.height;
+    panel->width = siz.width;
     panel->line_count = 0;
 
     box(panel->win, 0, 0);
     if (title)
     {
-        int max_title_width = width - 4;
+        int max_title_width = siz.width - 4;
         int title_len = (int)strlen(title);
         int pos = 2;
 
@@ -135,7 +135,7 @@ ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, con
         }
         else
         {
-            pos = (width - title_len) / 2;
+            pos = (siz.width - title_len) / 2;
             mvwprintw(panel->win, 0, pos, " %s ", title);
         }
         wattroff(panel->win, A_BOLD);
@@ -148,14 +148,14 @@ ScrollPanel *create_log_panel(int height, int width, int y_cord, int x_cord, con
 
 /* Value panel functions */
 
-ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, const char *title)
+ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
 {
     ValuePanel *panel = &value_panel_storage;
 
     // Create main window with borders
-    panel->win = newwin(height, width, y_cord, x_cord);
-    panel->height = height;
-    panel->width = width;
+    panel->win = newwin(siz.height, siz.width, pos.y_cord, pos.x_cord);
+    panel->height = siz.height;
+    panel->width = siz.width;
 
     // Set background
     wbkgd(panel->win, COLOR_PAIR(NORMAL_TEXT));
@@ -163,7 +163,7 @@ ValuePanel *create_value_panel(int height, int width, int y_cord, int x_cord, co
     // Draw border and title (only once)
     box(panel->win, 0, 0);
     wattron(panel->win, A_BOLD);
-    mvwprintw(panel->win, 0, (int)(width - strlen(title) - 4) / 2, " %s ", title);
+    mvwprintw(panel->win, 0, (int)(siz.width - strlen(title) - 4) / 2, " %s ", title);
     wattroff(panel->win, A_BOLD);
 
     // Draw all static content offset by 1 (inside borders)

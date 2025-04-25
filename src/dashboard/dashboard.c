@@ -34,8 +34,16 @@ int main(void)
     init_colors();
 
     // Create panels
-    panel_dash = create_value_panel(SCROLL_PANEL_HEIGHT, VALUE_PANEL_WIDTH, 1, 1, "Dashboard");
-    panel_log = create_log_panel(VALUE_PANEL_HEIGHT, SCROLL_PANEL_WIDTH, 1, MSG_LOG_PANEL_OFFSET, "Message Log");
+    panel_dash = create_value_panel(
+        (Size){SCROLL_PANEL_HEIGHT, VALUE_PANEL_WIDTH}, 
+        (Position){1, 1}, 
+        "Dashboard"
+    );
+    panel_log = create_log_panel(
+        (Size){VALUE_PANEL_HEIGHT, SCROLL_PANEL_WIDTH}, 
+        (Position){1, MSG_LOG_PANEL_OFFSET}, 
+        "Message Log"
+    );
 
     if (!init_logging_system())
     {
