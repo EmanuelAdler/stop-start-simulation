@@ -23,6 +23,8 @@
 
 #define MSG_LOG_PANEL_OFFSET 42
 
+static int num_deactivs = 0;
+
 typedef struct
 {
     bool start_stop_active; // 0 = off, 1 = on

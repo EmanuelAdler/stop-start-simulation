@@ -186,7 +186,15 @@ void handle_engine_restart_logic(
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
 
+        // Enable the persistent need for restart
         if (brake_released || accelerator_pressed)
+        {
+            restart_trigger = true;
+            printf("apto a restart\n");
+            fflush(stdout);
+        }
+
+        if (restart_trigger)
         {
             /* Battery check */
             if (data->batt_volt >= MIN_BATTERY_VOLTAGE &&
@@ -195,6 +203,11 @@ void handle_engine_restart_logic(
                 send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
                 log_toggle_event("Stop/Start: Engine turned On");
                 engine_off = false;
+
+                // Disable the need for restart
+                restart_trigger = false;
+                printf("restart feito\n");
+                fflush(stdout);
             }
             else
             {

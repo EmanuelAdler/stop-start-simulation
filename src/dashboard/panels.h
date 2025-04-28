@@ -31,8 +31,10 @@
 #define BRAKE_ROW       11
 #define GEAR_ROW        12
 
-#define SYSTEM_ST_ROW   16
-#define ENGINE_ST_ROW   17
+#define SYSTEM_ST_ROW   14
+#define ENGINE_ST_ROW   15
+
+#define NUM_SYS_ACTIV   18
 
 typedef struct {
     WINDOW *win;

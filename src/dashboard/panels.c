@@ -184,6 +184,8 @@ ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
     mvwprintw(panel->win, SYSTEM_ST_ROW, 1, "Stop/Start System:");
     mvwprintw(panel->win, ENGINE_ST_ROW, 1, "Engine Status:");
 
+    mvwprintw(panel->win, NUM_SYS_ACTIV, 1, "Number of deactivations:");
+
     // Initialize values (using update function but with coordinates inside border)
     update_value_panel(panel, SPEED_ROW, "-", NORMAL_TEXT);
     update_value_panel(panel, TILT_ROW, "-", NORMAL_TEXT);
@@ -199,6 +201,8 @@ ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
 
     update_value_panel(panel, SYSTEM_ST_ROW, "OFF", RED_TEXT);
     update_value_panel(panel, ENGINE_ST_ROW, "OFF", RED_TEXT);
+
+    update_value_panel(panel, NUM_SYS_ACTIV, "0", NORMAL_TEXT);
 
     wrefresh(panel->win);
     return panel;
