@@ -192,7 +192,10 @@ void test_battery_overmax(void)
 {
     // e.g. set batt_soc near 99.9, call update with speed>0 multiple times
     batt_soc = TEST_SOC_HIGH;
-    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.5 => 100.4 => clamp to 100
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04 
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04 => 100.2 => clamp to 100
+    printf("batt_soc = %f\n", batt_soc);
     CU_ASSERT_DOUBLE_EQUAL(batt_soc, 100.0, SOC_TOLERANCE);
 }
 

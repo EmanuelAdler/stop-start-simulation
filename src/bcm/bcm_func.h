@@ -24,8 +24,8 @@ extern sem_t sem_comms;
 // Battery sensor parameters
 #define DEFAULT_BATTERY_VOLTAGE     12.0F
 #define DEFAULT_BATTERY_SOC         80.0F
-#define BATTERY_SOC_INCREMENT       0.5F    // Increase in battery SOC when vehicle is moving
-#define BATTERY_SOC_DECREMENT       0.2F    // Decrease in battery SOC when vehicle is stationary
+#define BATTERY_SOC_INCREMENT       0.04F    // Increase in battery SOC when vehicle is moving
+#define BATTERY_SOC_DECREMENT       0.02F    // Decrease in battery SOC when vehicle is stationary
 #define MAX_BATTERY_SOC             100.0F  // Maximum SOC limit
 
 // Simulation orders and states

@@ -200,7 +200,7 @@ ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
     update_value_panel(panel, GEAR_ROW, "-", NORMAL_TEXT);
 
     update_value_panel(panel, SYSTEM_ST_ROW, "OFF", RED_TEXT);
-    update_value_panel(panel, ENGINE_ST_ROW, "OFF", RED_TEXT);
+    update_value_panel(panel, ENGINE_ST_ROW, "ON", GREEN_TEXT);
 
     update_value_panel(panel, NUM_SYS_ACTIV, "0", NORMAL_TEXT);
 

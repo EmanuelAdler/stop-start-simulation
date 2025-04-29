@@ -1,7 +1,7 @@
 #include "powertrain_func.h"
 
-#define SLEEP_TIME_US (100000U)
-#define COMMS_TIME_US (50000U)
+#define SLEEP_TIME_US (500000U)
+#define COMMS_TIME_US (10000U)
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
 
@@ -24,7 +24,7 @@ pthread_mutex_t mutex_powertrain;
 
 /* Battery operation */
 
-#define MIN_BATTERY_VOLTAGE 12.2F
+#define MIN_BATTERY_VOLTAGE 10.0F
 #define MIN_BATTERY_SOC 70.0F
 
 /* Tilt angle operation */
@@ -245,8 +245,8 @@ void *function_start_stop(void *arg)
 
             check_disable_engine(ptr_rec_data);
 
-            printf("Start/Stop = %d\n", engine_off);
-            fflush(stdout);
+            /* printf("Start/Stop = %d\n", engine_off);
+            fflush(stdout); */
 
             handle_engine_restart_logic(
                 ptr_rec_data);

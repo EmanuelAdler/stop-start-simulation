@@ -69,13 +69,14 @@ void process_engine_commands(char *input)
         update_value_panel(panel_dash, ENGINE_ST_ROW, "ERR", RED_TEXT);
     }
     else if (strcmp(input, "ENGINE OFF") == 0)
-    {
-        char sys_deact[4];
-        snprintf(sys_deact, sizeof(sys_deact), "%d", ++num_deactivs);
-        add_to_log(panel_log, "Engine Deactivated - Stop/Start");
-        
+    {    
         log_toggle_event("[INFO] Engine Deactivated by Stop/Start");
         update_value_panel(panel_dash, ENGINE_ST_ROW, "OFF", RED_TEXT);
+        add_to_log(panel_log, "Engine Deactivated - Stop/Start");
+
+        char sys_deact[4];
+        snprintf(sys_deact, sizeof(sys_deact), "%d", ++num_deactivs);
+        update_value_panel(panel_dash, NUM_SYS_ACTIV, sys_deact, NORMAL_TEXT);
         add_to_log(panel_log, "Engine Deactivated - Stop/Start");
     }
     else if (strcmp(input, "RESTART") == 0)

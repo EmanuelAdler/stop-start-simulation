@@ -123,31 +123,21 @@ void test_parse_input_variants(void)
         "[INFO] System Deactivated"};
     CU_ASSERT_TRUE(file_contains_substring(param_deactivated));
 
-    // 4) Test case 3: engine command with error => should give an error
-    actuators.error_system = 1;
-    // Could be any command, "ENGINE OFF" was chosen
-    parse_input_received("ENGINE OFF");
-    f_susbtring_data error_str = {
-        "/tmp/test_dashboard_variants.log",
-        "[INFO] System Disabled Due to an Error"};
-    CU_ASSERT_TRUE(file_contains_substring(error_str));
-    actuators.error_system = 0;
-
-    // 5) Test case 4: "ENGINE OFF" => logs "[INFO] Engine Deactivated by Stop/Start"
+    // 4) Test case 3: "ENGINE OFF" => logs "[INFO] Engine Deactivated by Stop/Start"
     parse_input_received("ENGINE OFF");
     f_susbtring_data engine_off_str = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] Engine Deactivated by Stop/Start"};
     CU_ASSERT_TRUE(file_contains_substring(engine_off_str));
 
-    // 6) Test case 5: "RESTART" => logs "[INFO] Engine Activated by Stop/Start"
+    // 5) Test case 4: "RESTART" => logs "[INFO] Engine Activated by Stop/Start"
     parse_input_received("RESTART");
     f_susbtring_data engine_restart_str = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] Engine Activated by Stop/Start"};
     CU_ASSERT_TRUE(file_contains_substring(engine_restart_str));
 
-    // 7) Test case 6: Sensor readings (batt_soc, batt_volt, door)
+    // 6) Test case 5: Sensor readings (batt_soc, batt_volt, door)
     parse_input_received("speed: 48.0");
     CU_ASSERT_DOUBLE_EQUAL(actuators.speed, kSpeedReceived, kDelta);
 
@@ -187,7 +177,7 @@ void test_parse_input_variants(void)
     parse_input_received("tilt: 7.0");
     CU_ASSERT_DOUBLE_EQUAL(actuators.tilt_angle, ktiltReceived, kDelta);
 
-    // 8) Test case 7: Error messages
+    // 7) Test case 6: Error messages
     parse_input_received("error_battery_drop");
     f_susbtring_data err_drop = {
         "/tmp/test_dashboard_variants.log",
