@@ -138,14 +138,9 @@ static VehicleData base_ok_data(void)
  * @req SWR2.2
  * @req SWR2.3
  * @req SWR2.4
- * @req SWR2.5
  * @req SWR2.6
  * @req SWR2.7
- * @req SWR2.8
  * @req SWR2.9
- * @req SWR3.1
- * @req SWR3.4
- * @req SWR3.5
  * @req SWR4.3
  * @req SWR4.4
  * @req SWR5.1
@@ -176,6 +171,12 @@ static void test_check_disable_engine_all_ok(void)
 }
 
 // 2) Fail cond1 => e.g. brake=0
+/**
+ * @test test_check_disable_engine_fail_cond1
+ * @brief Tests brake failure condition
+ * @req SWR2.8
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond1(void)
 {
     // Set up the log file and initialize the logging system
@@ -213,7 +214,14 @@ static void test_check_disable_engine_fail_cond1(void)
     cleanup_logging_system();
 }
 
-// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5) (SWR2.6)
+// 3) Fail cond2 => e.g. internal_temp = temp_set + 6 => bigger than (temp_set + 5)
+/**
+ * @test test_check_disable_engine_fail_cond2
+ * @brief Tests internal temperature failure condition
+ * @req SWR2.6
+ * @req SWR2.8
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond2(void)
 {
     // Set up the log file and initialize the logging system
@@ -250,7 +258,14 @@ static void test_check_disable_engine_fail_cond2(void)
     cleanup_logging_system();
 }
 
-// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60 (SWR2.2)
+// 4) Fail cond3 => e.g. engine temp < MIN_ENGINE_TEMP => 60
+/**
+ * @test test_check_disable_engine_fail_cond3_inactive
+ * @brief Tests engine temperature failure condition
+ * @req SWR2.2
+ * @req SWR2.8
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond3_inactive(void)
 {
     // Set up the log file and initialize the logging system
@@ -287,7 +302,16 @@ static void test_check_disable_engine_fail_cond3_inactive(void)
     cleanup_logging_system();
 }
 
-// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2 (SWR2.3, SWR4.3 and SWR4.4)
+// 5) Fail cond4 => battery is too low => batt_soc < 70 and volt <= 12.2
+/**
+ * @test test_check_disable_engine_fail_cond4
+ * @brief Tests battery voltage failure condition
+ * @req SWR2.3
+ * @req SWR2.8
+ * @req SWR4.3
+ * @req SWR4.4
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond4(void)
 {
     // Set up the log file and initialize the logging system
@@ -325,7 +349,14 @@ static void test_check_disable_engine_fail_cond4(void)
     cleanup_logging_system();
 }
 
-// 6) Fail cond5 => door_open != 0 (SWR2.7)
+// 6) Fail cond5 => door_open != 0
+/**
+ * @test test_check_disable_engine_fail_cond5
+ * @brief Tests door open failure condition
+ * @req SWR2.7
+ * @req SWR2.8
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond5(void)
 {
     // Set up the log file and initialize the logging system
@@ -362,7 +393,14 @@ static void test_check_disable_engine_fail_cond5(void)
     cleanup_logging_system();
 }
 
-// 7) Fail cond6 => tilt_angle > 5 (SWR2.9)
+// 7) Fail cond6 => tilt_angle > 5
+/**
+ * @test test_check_disable_engine_fail_cond6
+ * @brief Tests tilt angle failure condition
+ * @req SWR2.8
+ * @req SWR2.9
+ * @file unit/test_powertrain.c
+ */
 static void test_check_disable_engine_fail_cond6(void)
 {
     // Set up the log file and initialize the logging system
@@ -419,7 +457,10 @@ static void test_check_disable_engine(void)
 /**
  * @test test_handle_engine_restart
  * @brief Tests engine restart functionality
- * @req SWR1.1
+ * @req SWR2.5
+ * @req SWR3.1
+ * @req SWR3.4
+ * @req SWR3.5
  * @file unit/test_powertrain.c
  */
 static void test_handle_engine_restart(void)
@@ -592,6 +633,12 @@ static void test_function_start_stop(void)
 }
 
 // 12) Check parse for sensor inputs
+/**
+ * @test test_parse_input_variants
+ * @brief Tests parsing of various input strings
+ * @req SWR1.2
+ * @file unit/test_powertrain.c
+ */
 static void test_parse_input_variants(void)
 {
     // Make sure we start in a known state

@@ -157,7 +157,9 @@ void test_print_dashboard_status(void)
  * @req SWR1.3
  * @req SWR4.5
  * @req SWR5.1
+ * @req SWR5.2
  * @req SWR5.3
+ * @req SWR6.3
  * @file unit/test_dashboard.c
  */
 void test_parse_input_variants(void)
