@@ -23,7 +23,7 @@ Check Disable Engine - Case All OK
 
 
 Test Check Disable Engine - Fail Cond1
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond1:
 
 .. c:function:: static void test_check_disable_engine_fail_cond1(void)
@@ -42,12 +42,12 @@ Test Check Disable Engine - Fail Cond1
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond1)
 
 Test Check Disable Engine - Fail Cond2
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond2:
 
-.. c:function:: static void test_check_disable_engine_fail_cond1(void)
+.. c:function:: static void test_check_disable_engine_fail_cond2(void)
 
-   Implements tests for :ref:`SWR2.6`and :ref:`SWR2.8`.
+   Implements tests for :ref:`SWR2.6` and :ref:`SWR2.8`.
 
    This function tests engine disable conditions based on sensor readings
    of the engine temperature below the minimum set.
@@ -61,12 +61,12 @@ Test Check Disable Engine - Fail Cond2
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond2)
 
 Test Check Disable Engine - Fail Cond3
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond3_inactive:
 
 .. c:function:: static void test_check_disable_engine_fail_cond3_inactive(void)
 
-   Implements tests for :ref:`SWR2.2`and :ref:`SWR2.8`.
+   Implements tests for :ref:`SWR2.2` and :ref:`SWR2.8`.
 
    This function tests engine disable conditions based on sensor readings
    of the brake fail and there is no acceleration.
@@ -80,7 +80,7 @@ Test Check Disable Engine - Fail Cond3
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond3_inactive)
 
 Test Check Disable Engine - Fail Cond4
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond4:
 
 .. c:function:: static void test_check_disable_engine_fail_cond4(void)
@@ -99,7 +99,7 @@ Test Check Disable Engine - Fail Cond4
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond4)
 
 Test Check Disable Engine - Fail Cond5
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond5:
 
 .. c:function:: static void test_check_disable_engine_fail_cond5(void)
@@ -118,7 +118,7 @@ Test Check Disable Engine - Fail Cond5
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond5)
 
 Test Check Disable Engine - Fail Cond6
------------------------------------
+---------------------------------------
 .. _test_check_disable_engine_fail_cond6:
 
 .. c:function:: static void test_check_disable_engine_fail_cond6(void)
@@ -175,11 +175,11 @@ Test Function Start Stop
    :caption: tests/unit/test_powertrain.c (test_function_start_stop)
 
 
-Test Parse Input Variants
--------------------------
-.. _test_parse_input_variants:
+Test Parse Input Variants Powertrain
+-------------------------------------
+.. _test_parse_input_variants_pw:
 
-.. c:function:: static void test_parse_input_variants(void)
+.. c:function:: static void test_parse_input_variants_pw(void)
 
    Implements tests for :ref:`SWR1.2`.
 
@@ -193,7 +193,7 @@ Test Parse Input Variants
 .. literalinclude:: ../../tests/unit/test_powertrain.c
    :language: c
    :lines: 642-705
-   :caption: tests/unit/test_powertrain.c (test_parse_input_variants)
+   :caption: tests/unit/test_powertrain.c (test_parse_input_variants_pw)
 
 Test Process Received Frame
 ---------------------------
@@ -244,5 +244,5 @@ Test Parse Input Variants
    File: ``unit/test_dashboard.c``
 .. literalinclude:: ../../tests/unit/test_dashboard.c
    :language: c
-   :lines: 163-271
+   :lines: 165-273
    :caption: tests/unit/test_dashboard.c (test_parse_input_variants)

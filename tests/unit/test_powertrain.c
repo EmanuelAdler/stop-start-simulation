@@ -634,12 +634,12 @@ static void test_function_start_stop(void)
 
 // 12) Check parse for sensor inputs
 /**
- * @test test_parse_input_variants
+ * @test test_parse_input_variants_pw
  * @brief Tests parsing of various input strings
  * @req SWR1.2
  * @file unit/test_powertrain.c
  */
-static void test_parse_input_variants(void)
+static void test_parse_input_variants_pw(void)
 {
     // Make sure we start in a known state
     start_stop_manual = false;
@@ -732,7 +732,7 @@ int main(void)
     CU_add_test(suite, "powertrain_comms_loop",    test_powertrain_comms_loop);
     CU_add_test(suite, "test_process_can_frame",   test_process_can_frame);
     CU_add_test(suite, "function_start_stop test", test_function_start_stop);
-    CU_add_test(suite, "test_parse_input_variants", test_parse_input_variants);
+    CU_add_test(suite, "parse_input_variants_pw", test_parse_input_variants_pw);
 
     // Run all tests in verbose mode
     CU_basic_set_mode(CU_BRM_VERBOSE);
