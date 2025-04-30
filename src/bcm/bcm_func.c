@@ -1,5 +1,8 @@
 #include "bcm_func.h"
 
+// CAN receiver
+#define CAN_DATA_LENGTH (8)
+
 #define MICRO_CONSTANT_CONV (1000000L)
 #define NANO_CONSTANT_CONV (1000)
 #define CSV_LINE_BUFFER (256)
@@ -37,7 +40,8 @@ float batt_volt = DEFAULT_BATTERY_VOLTAGE;
 float batt_soc = DEFAULT_BATTERY_SOC;
 int data_size = 0;
 VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE] = {0};
-int sock = -1;
+int sock_send = -1;
+int sock_recv = -1;
 char send_msg[AES_BLOCK_SIZE + 1] = {0};
 bool test_mode = false;
 sem_t sem_comms;
@@ -142,7 +146,7 @@ void read_csv(const char *path)
     fclose(file);
 }
 
-// Check the simulation order and update state accordingly
+// Check the simulation order and update the state accordingly
 void check_order(int order)
 {
     if (order != simu_state)
@@ -153,6 +157,8 @@ void check_order(int order)
             if (simu_state == STATE_RUNNING || simu_state == STATE_PAUSED)
             {
                 simu_state = STATE_STOPPED;
+                printf("Simulation Stopped!\n");
+                fflush(stdout);
             }
             break;
         case ORDER_RUN:
@@ -163,16 +169,22 @@ void check_order(int order)
                 data_size = 0;
                 read_csv_default();
                 simu_state = STATE_RUNNING;
+                printf("Simulation Running!\n");
+                fflush(stdout);
             }
             else if (simu_state == STATE_PAUSED)
             {
                 simu_state = STATE_RUNNING;
+                printf("Simulation Running!\n");
+                fflush(stdout);
             }
             break;
         case ORDER_PAUSE:
             if (simu_state == STATE_RUNNING)
             {
                 simu_state = STATE_PAUSED;
+                printf("Simulation Paused!\n");
+                fflush(stdout);
             }
             break;
         default:
@@ -215,25 +227,9 @@ void simu_speed_step(VehicleData *sim_data, ControlData controls)
                 }
             }
         }
-        /* printf("updated data[%d]\n", simu_curr_step);
-        fflush(stdout); */
+
         data_updated = true;
-        /*
-        printf("Time: %d, Speed: %.1f, Int Temp: %d, Ext Temp: %d, Door: %d, Tilt: %.1f, Accel: %d, Brake: %d, Set Temp: %d, Batt SOC: %.1f, Batt Volt: %.1f, Eng Temp: %.1f, Gear: %d\n",
-                sim_data[simu_curr_step].time,
-                sim_data[simu_curr_step].speed,
-                sim_data[simu_curr_step].internal_temp,
-                sim_data[simu_curr_step].external_temp,
-                sim_data[simu_curr_step].door_open,
-                sim_data[simu_curr_step].tilt_angle,
-                sim_data[simu_curr_step].accel,
-                sim_data[simu_curr_step].brake,
-                sim_data[simu_curr_step].temp_set,
-                sim_data[simu_curr_step].batt_soc,
-                sim_data[simu_curr_step].batt_volt,
-                sim_data[simu_curr_step].engi_temp,
-                sim_data[simu_curr_step].gear);
-        */
+
         if (simu_curr_step + 1 == data_size)
         {
             simu_order = ORDER_STOP;
@@ -281,48 +277,106 @@ void *simu_speed(void *arg)
 void send_data_update(void)
 {
     snprintf(send_msg, sizeof(send_msg), "speed: %.1lf", vehicle_data[simu_curr_step].speed);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "in_temp: %d", vehicle_data[simu_curr_step].internal_temp);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "ex_temp: %d", vehicle_data[simu_curr_step].external_temp);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "door: %d", vehicle_data[simu_curr_step].door_open);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "tilt: %.1lf", vehicle_data[simu_curr_step].tilt_angle);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "accel: %d", vehicle_data[simu_curr_step].accel);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "brake: %d", vehicle_data[simu_curr_step].brake);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "gear: %d", vehicle_data[simu_curr_step].gear);
-    send_encrypted_message(sock, send_msg, CAN_ID_SENSOR_READ);
+    send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
+}
+
+// Check if can_id is valid
+bool check_can_id(canid_t can_id)
+{
+    bool is_valid = false;
+
+    switch (can_id)
+    {
+    case CAN_ID_COMMAND:
+    //case CAN_ID_ERROR_DASH:
+        is_valid = true;
+        break;
+    default:
+        break;
+    }
+
+    return is_valid;
+}
+
+/* Function to check if system was disabled by another ECU,
+so that simulation will halt. */
+void check_system_disable(void)
+{
+    struct can_frame frame;
+    unsigned char encrypted_data[AES_BLOCK_SIZE];
+    char decrypted_message[AES_BLOCK_SIZE];
+    int received_bytes = 0;
+    char error_log[MAX_MSG_SIZE];
+
+    if (receive_can_frame(sock_recv, &frame) == 0)
+    {
+        if (check_can_id(frame.can_id))
+        {
+            if (frame.can_dlc == CAN_DATA_LENGTH)
+            {
+                memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
+                received_bytes += CAN_DATA_LENGTH;
+
+                if (received_bytes == AES_BLOCK_SIZE)
+                {
+                    decrypt_data(encrypted_data, decrypted_message, received_bytes);
+                    //parse_input_received(decrypted_message);
+
+                    // if system is disabled, order simulation to stop
+                    if (strcmp(decrypted_message, "system_disabled_error") == 0)
+                    {
+                        check_order(ORDER_STOP);
+                    }
+                    received_bytes = 0;
+                }
+            }
+            else
+            {
+                snprintf(error_log, sizeof(error_log), "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
+            }
+        }
+    }
 }
 
 // Function to evaluate system health
 void check_health_signals(void)
 {
-    int doorVal     = vehicle_data[simu_curr_step].door_open;
-    double engTemp  = vehicle_data[simu_curr_step].engi_temp;
-    double tilt     = vehicle_data[simu_curr_step].tilt_angle;
+    int doorVal         = vehicle_data[simu_curr_step].door_open;
+    double engTemp      = vehicle_data[simu_curr_step].engi_temp;
+    double tilt         = vehicle_data[simu_curr_step].tilt_angle;
 
     bool invalidDoor = (doorVal != DOOR_OK_STATUS_1 && doorVal != DOOR_OK_STATUS_2);
 
@@ -344,7 +398,7 @@ void check_health_signals(void)
             int elapsed = getCurrentTimeMs() - fault_start_time;
             if (elapsed >= safety_timeout_ms)
             {
-                send_encrypted_message(sock, "system_disabled_error", CAN_ID_COMMAND);
+                send_encrypted_message(sock_send, "system_disabled_error", CAN_ID_COMMAND);
                 log_toggle_event("Fault: SWR6.4 (System Disabling Error)");
                 if (invalidDoor)
                 {
@@ -394,6 +448,8 @@ void *comms(void *arg)
             data_updated = false; // ready to update data again after sending
             simu_curr_step++;
             check_health_signals();
+            // Check if it's necessary to stop simulation
+            check_system_disable();
         }
         pthread_mutex_unlock(&mutex_bcm);
         sleep_microseconds(THREAD_SLEEP_TIME);

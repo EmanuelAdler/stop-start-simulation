@@ -21,6 +21,9 @@
 
 extern sem_t sem_comms;
 
+// CAN receiver
+#define MAX_MSG_SIZE    50
+
 // Battery sensor parameters
 #define DEFAULT_BATTERY_VOLTAGE     12.0F
 #define DEFAULT_BATTERY_SOC         80.0F
@@ -82,7 +85,8 @@ extern float batt_volt;
 extern float batt_soc;
 extern int data_size;
 extern VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
-extern int sock;
+extern int sock_send;
+extern int sock_recv;
 extern char send_msg[];
 extern bool test_mode;
 extern bool fault_active;
