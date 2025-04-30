@@ -333,7 +333,7 @@ bool check_can_id(canid_t can_id)
 
 /* Function to check if system was disabled by another ECU,
 so that simulation will halt. */
-void check_system_disable(void)
+void check_system_disable(int sock)
 {
     struct can_frame frame;
     unsigned char encrypted_data[AES_BLOCK_SIZE];
@@ -341,7 +341,7 @@ void check_system_disable(void)
     int received_bytes = 0;
     char error_log[MAX_MSG_SIZE];
 
-    if (receive_can_frame(sock_recv, &frame) == 0)
+    if (receive_can_frame(sock, &frame) == 0)
     {
         if (check_can_id(frame.can_id))
         {
@@ -449,7 +449,7 @@ void *comms(void *arg)
             simu_curr_step++;
             check_health_signals();
             // Check if it's necessary to stop simulation
-            check_system_disable();
+            check_system_disable(sock_recv);
         }
         pthread_mutex_unlock(&mutex_bcm);
         sleep_microseconds(THREAD_SLEEP_TIME);

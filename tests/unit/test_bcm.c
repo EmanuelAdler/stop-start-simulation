@@ -443,7 +443,7 @@ void test_simu_speed_step(void)
 }
 
 //-------------------------------------
-// 8) Battery sensor simulator for SOC update
+// 9) Battery sensor simulator for SOC update
 //-------------------------------------
 void test_sensor_battery_updates_soc_when_running(void)
 {
@@ -480,7 +480,7 @@ void test_sensor_battery_updates_soc_when_running(void)
 }
 
 //-------------------------------------
-// 9) Speed simulator thread
+// 10) Speed simulator thread
 //-------------------------------------
 void test_simu_speed_performs_control_update(void)
 {
@@ -517,6 +517,9 @@ void test_simu_speed_performs_control_update(void)
     CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE); // assume DRIVE is a defined constant
 }
 
+//-------------------------------------
+// 11) Get time function
+//-------------------------------------
 void test_getCurrentTimeMsReal(void)
 {
     // Grab the initial time in ms.
@@ -531,6 +534,9 @@ void test_getCurrentTimeMsReal(void)
     CU_ASSERT_TRUE((after_ms - before_ms) >= 80);
 }
 
+//-------------------------------------
+// 12) Check health signals
+//-------------------------------------
 void test_check_health_signals_immediate(void)
 {
     // Reset global states
@@ -721,7 +727,7 @@ void test_check_health_signals_door_status(void)
 }
 
 //-------------------------------------
-// 10)  comms() bounded‑loop verification
+// 13)  comms() bounded‑loop verification
 //-------------------------------------
 void test_comms_thread_expected_iterations(void)
 {
@@ -752,6 +758,19 @@ void test_comms_thread_expected_iterations(void)
     sem_destroy(&sem_comms);
 }
 
+//-------------------------------------
+// 14) Function to verify the need for halting the simulation
+//-------------------------------------
+void test_check_system_disable(void)
+{
+    // 1) Setup logging so "press_start_stop" toggles system & logs
+    set_log_file_path("/tmp/test_system_disable.log");
+    CU_ASSERT_TRUE_FATAL(init_logging_system());
+
+    int sock_recv = 2;
+
+    check_system_disable(sock_recv);
+}
 
 //-------------------------------------
 // Test main
@@ -789,6 +808,7 @@ int main(void)
     CU_add_test(suite, "check_health_signals_engine_temp", test_check_health_signals_engine_temp);
     CU_add_test(suite, "check_health_signals_door_status", test_check_health_signals_door_status);
     CU_add_test(suite, "comms expected iterations", test_comms_thread_expected_iterations);
+    CU_add_test(suite, "check_system_disable", test_check_system_disable);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

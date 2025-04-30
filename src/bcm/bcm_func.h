@@ -107,5 +107,6 @@ void check_health_signals(void);
 void* comms(void *arg);
 void update_battery_soc(double vehicle_speed);
 void* sensor_battery(void *arg);
+void check_system_disable(int sock_recv);
 
 #endif // SIMU_BCM_H
