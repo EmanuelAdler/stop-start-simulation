@@ -174,6 +174,11 @@ void test_check_order_run(void)
     simu_state = STATE_STOPPED;
     check_order(ORDER_RUN);
     CU_ASSERT_EQUAL(simu_state, STATE_RUNNING);
+
+    // If we are PAUSED, run -> should set RUNNING
+    simu_state = STATE_PAUSED;
+    check_order(ORDER_RUN);
+    CU_ASSERT_EQUAL(simu_state, STATE_RUNNING);
 }
 
 void test_check_order_pause(void)
@@ -324,12 +329,24 @@ void test_simu_speed_smallloop(void)
 void test_simu_speed_step(void)
 {
     // data_size=3
-    data_size = 3;
+    #define data_size_simu_test  7
+
+    #define STEP1 0
+    #define STEP2 1
+    #define STEP3 2
+    #define STEP4 3
+    #define STEP5 4
+    #define STEP6 5
+    #define STEP7 6
 
     // Populate vehicle_data
-    vehicle_data[0].speed = 0.0;
-    vehicle_data[1].speed = SPEED_LOW;
-    vehicle_data[2].speed = SPEED_MEDIUM;
+    vehicle_data[STEP1].speed = 0.0;
+    vehicle_data[STEP2].speed = SPEED_LOW;
+    vehicle_data[STEP3].speed = SPEED_MEDIUM;
+    vehicle_data[STEP4].speed = SPEED_MEDIUM;
+    vehicle_data[STEP5].speed = SPEED_LOW;
+    vehicle_data[STEP6].speed = 0.0;
+    vehicle_data[STEP7].speed = 0.0;
 
     // Mark the simulation as RUNNING
     simu_state = STATE_RUNNING;
@@ -337,12 +354,12 @@ void test_simu_speed_step(void)
     simu_order = ORDER_RUN;
 
     // Build arrays of pointers
-    double *speed[3];
-    int *accel[3];
-    int *brake[3];
-    int *gear[3];
+    double *speed[data_size_simu_test];
+    int *accel[data_size_simu_test];
+    int *brake[data_size_simu_test];
+    int *gear[data_size_simu_test];
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < data_size_simu_test; i++)
     {
         speed[i] = &vehicle_data[i].speed;
         accel[i] = &vehicle_data[i].accel;
@@ -352,30 +369,76 @@ void test_simu_speed_step(void)
 
     ControlData control_data = {speed, accel, brake, gear};
 
-    // 1) First call: index 0 => 1 => speed difference = (5.0 - 0.0) > 0 => accel=1, brake=0, gear=DRIVE
+    // 1) First call  => index 0 => 1 => speed difference = (5.0 - 0.0) > 0
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 0);
-    CU_ASSERT_EQUAL(*(accel[0]), 1); // note the * to dereference
-    CU_ASSERT_EQUAL(*(brake[0]), 0);
-    CU_ASSERT_EQUAL(*(gear[0]), DRIVE);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP1);
+    CU_ASSERT_EQUAL(*(accel[STEP1]), 1); // note the * to dereference
+    CU_ASSERT_EQUAL(*(brake[STEP1]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP1]), DRIVE);
 
     simu_curr_step++;
 
-    // 2) Second call => index 1 => 2 => (10.0 - 5.0) > 0 => accel=1, brake=0, gear=DRIVE
+    // 2) Second call => index 1 => 2 => (10.0 - 5.0) > 0 (accelerating)
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 1);
-    CU_ASSERT_EQUAL(*(accel[1]), 1);
-    CU_ASSERT_EQUAL(*(brake[1]), 0);
-    CU_ASSERT_EQUAL(*(gear[1]), DRIVE);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP2);
+    CU_ASSERT_EQUAL(*(accel[STEP2]), 1);
+    CU_ASSERT_EQUAL(*(brake[STEP2]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP2]), DRIVE);
 
     simu_curr_step++;
 
-    // 3) Third call => index 2 => if (2+1==3) => ORDER_STOP
+    // 3) Third call  => index 2 => 2 => 3 => (10.0 - 10.0) = 0 (constant speed)
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 2);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP3);
+    CU_ASSERT_EQUAL(*(accel[STEP3]), 1);
+    CU_ASSERT_EQUAL(*(brake[STEP3]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP3]), DRIVE);
+
+    simu_curr_step++;
+
+    // 4) Fourth call  => index 3 => 3 => 4 => (5.0 - 10.0) = -5.0 (braking)
+    // => accel=0, brake=1, gear=DRIVE
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP4);
+    CU_ASSERT_EQUAL(*(accel[STEP4]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP4]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP4]), DRIVE);
+
+    simu_curr_step++;
+
+    // 5) Fifth call  => index 4 => 4 => 5 => (0.0 - 5.0) = -5.0 (stopped)
+    // => accel=0, brake=1, gear=DRIVE
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP5);
+    CU_ASSERT_EQUAL(*(accel[STEP5]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP5]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP5]), DRIVE);
+
+    simu_curr_step++;
+
+    // 6) Sixth call  => index 5 => 5 => 6 => (0.0 - 0.0) = 0 (stopped)
+    // => accel=0, brake=1, gear=PARKING
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP6);
+    CU_ASSERT_EQUAL(*(accel[STEP6]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP6]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP6]), PARKING);
+
+    simu_curr_step++;
+
+    // 7) Seventh call => index 6 => if (6+1==7) => ORDER_STOP
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP7);
     CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
 }
 

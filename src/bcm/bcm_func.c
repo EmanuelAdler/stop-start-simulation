@@ -202,10 +202,7 @@ void simu_speed_step(VehicleData *sim_data, ControlData controls)
             {
                 *(controls.brake[simu_curr_step]) = 1;
                 *(controls.accel[simu_curr_step]) = 0;
-                if (sim_data[simu_curr_step].speed == 0)
-                {
-                    *(controls.gear[simu_curr_step]) = DRIVE;
-                }
+                *(controls.gear[simu_curr_step]) = DRIVE;
             }
             // Stopped
             else
