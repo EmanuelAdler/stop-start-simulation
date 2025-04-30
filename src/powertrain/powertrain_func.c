@@ -44,6 +44,8 @@ int sock_receiver = -1;
 
 /* Start/Stop operation logic */
 
+bool restart_trigger = false;
+
 /* Condition check functions */
 static bool check_movement_conditions(double speed, int accel, int brake, int gear)
 {

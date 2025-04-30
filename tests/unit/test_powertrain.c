@@ -22,7 +22,7 @@
 #define BATT_SOC_OK            (80.0)
 #define BATT_SOC_LOW           (60.0)
 #define BATT_VOLT_OK           (12.5)
-#define BATT_VOLT_LOW          (12.0)
+#define BATT_VOLT_LOW          (9.0)
 #define TILT_OK                (2.0)
 #define TILT_FAIL              (6.0)
 #define SPEED_OK               (0.0)
@@ -449,6 +449,9 @@ static void test_handle_engine_restart(void)
     handle_engine_restart_logic(&data_test);
 
     CU_ASSERT_TRUE(engine_off);
+
+    // Disable trigger for next tests
+    restart_trigger = false;
 
     // Check if the stub was called
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
