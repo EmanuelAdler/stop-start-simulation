@@ -39,10 +39,9 @@ void init_colors()
 
 /* Log panel functions */
 
-void add_to_log(ScrollPanel *panel, const char *text)
+void add_to_log(ScrollPanel *panel, const char *text) 
 {
-    if (panel == NULL || panel->win == NULL || text == NULL)
-    {
+    if (panel == NULL || panel->win == NULL || text == NULL) {
         return;
     }
 
@@ -52,7 +51,7 @@ void add_to_log(ScrollPanel *panel, const char *text)
     char timestamp[TMSTMP_SIZE];
     strftime(timestamp, sizeof(timestamp), "%H:%M:%S", tm_info);
 
-    // Calculate inner dimensions
+    // Calculate inner window dimensions
     int inner_height = panel->height - 2;
     int inner_width = panel->width - 2;
 
@@ -66,39 +65,36 @@ void add_to_log(ScrollPanel *panel, const char *text)
     buffer_index = (buffer_index + 1) % MAX_LOG_LINES;
 
     // Update line count (capped at MAX_LOG_LINES)
-    if (panel->line_count < MAX_LOG_LINES)
-    {
+    if (panel->line_count < MAX_LOG_LINES) {
         panel->line_count++;
     }
 
-    // Create content window
+    // Create inner content window
     WINDOW *content = derwin(panel->win, inner_height, inner_width, 1, 1);
-    if (content == NULL)
-    {
+    if (content == NULL) {
         return;
     }
 
     // Clear the content window
     werase(content);
 
-    // Determine how many lines we can actually display
+    // Determine how many lines we can display
     int lines_to_display = (panel->line_count < inner_height) ? panel->line_count : inner_height;
 
-    // Calculate the starting index in the circular buffer
-    int start_index;
-    if (panel->line_count <= inner_height)
-    {
-        start_index = 0;
-    }
-    else
-    {
-        start_index = (buffer_index - lines_to_display + MAX_LOG_LINES) % MAX_LOG_LINES;
+    // Calculate the starting line (we want the newest at bottom)
+    int start_line;
+    if (panel->line_count <= inner_height) {
+        // Fewer lines than display height - start at 0
+        start_line = 0;
+    } else {
+        // More lines than display height - start at (total_lines - display_height)
+        start_line = panel->line_count - inner_height;
     }
 
-    // Display the lines
-    for (int i = 0; i < lines_to_display; i++)
-    {
-        int buf_index = (start_index + i) % MAX_LOG_LINES;
+    // Display the lines (oldest at top, newest at bottom)
+    for (int i = 0; i < lines_to_display; i++) {
+        // Calculate index in circular buffer
+        int buf_index = (buffer_index - panel->line_count + start_line + i + MAX_LOG_LINES) % MAX_LOG_LINES;
         mvwprintw(content, i, 0, "%-*.*s", inner_width, inner_width, line_buffer[buf_index]);
     }
 
