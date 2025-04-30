@@ -100,6 +100,10 @@ static int evaluate_condition_with_logging(
 }
 
 /* Main function */
+/**
+ * @brief Check each condition for disable the engine.
+ * @requirement SWR5.1
+ */
 void check_disable_engine(VehicleData *ptr_rec_data)
 {
     bool engine_off_local;
@@ -177,6 +181,10 @@ void check_disable_engine(VehicleData *ptr_rec_data)
     }
 }
 
+/**
+ * @brief Handle the engine restart logic.
+ * @requirement SWR1.1
+ */
 void handle_engine_restart_logic(
     VehicleData *data)
 {
@@ -210,6 +218,10 @@ void handle_engine_restart_logic(
     data->prev_accel = data->accel;
 }
 
+/**
+ * @brief Handle the stop start logic.
+ * @requirement SWR1.2
+ */
 void *function_start_stop(void *arg)
 {
     VehicleData *ptr_rec_data = (VehicleData *)arg;
