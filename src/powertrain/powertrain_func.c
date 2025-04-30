@@ -1,6 +1,6 @@
 #include "powertrain_func.h"
 
-#define SLEEP_TIME_US (500000U)
+#define SLEEP_TIME_US (1000000U)
 #define COMMS_TIME_US (10000U)
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
@@ -175,6 +175,8 @@ void check_disable_engine(VehicleData *ptr_rec_data)
             engine_off = true;
             send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ECU_RESTART);
             log_toggle_event("Stop/Start: Engine turned Off");
+            printf("Engine turned off\n");
+            fflush(stdout);
         }
     }
 }
@@ -192,7 +194,7 @@ void handle_engine_restart_logic(
         if (brake_released || accelerator_pressed)
         {
             restart_trigger = true;
-            printf("apto a restart\n");
+            printf("Able to restart\n");
             fflush(stdout);
         }
 
@@ -208,7 +210,7 @@ void handle_engine_restart_logic(
 
                 // Disable the need for restart
                 restart_trigger = false;
-                printf("restart feito\n");
+                printf("Engine restart done\n");
                 fflush(stdout);
             }
             else
