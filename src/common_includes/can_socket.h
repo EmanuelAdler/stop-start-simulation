@@ -13,6 +13,9 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 #include <linux/if.h>
+#include <errno.h>
+
+#define SOCKET_ERROR         (-1)
 
 #define AES_BLOCK_SIZE 16
 

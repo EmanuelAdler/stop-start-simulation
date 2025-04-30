@@ -190,8 +190,8 @@ void simu_speed_step(VehicleData *sim_data, ControlData controls)
             // Accelerating OR Constant speed, with speed > 0
             if (*(controls.speed[simu_curr_step + 1]) - *(controls.speed[simu_curr_step]) > 0.0
                 ||
-                *(controls.speed[simu_curr_step + 1]) == *(controls.speed[simu_curr_step]) &&
-                *(controls.speed[simu_curr_step]) > 0.0)
+                ((*(controls.speed[simu_curr_step + 1]) == *(controls.speed[simu_curr_step])) &&
+                *(controls.speed[simu_curr_step]) > 0.0))
             {
                 *(controls.accel[simu_curr_step]) = 1;
                 *(controls.brake[simu_curr_step]) = 0;

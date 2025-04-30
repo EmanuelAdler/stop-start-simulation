@@ -10,12 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* // CAN receiver sleep time (microseconds)
-#define CAN_RECV_TIME   100
-
-// UI start time (microseconds)
-#define UI_START_TIME  10000 */
-
 #define MAX_VALUE_LENGTH 32
 
 // ncurses UI

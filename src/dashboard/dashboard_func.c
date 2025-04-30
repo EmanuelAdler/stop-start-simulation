@@ -240,6 +240,5 @@ void process_received_frame(int sock)
             break;
         }
 #endif
-        // sleep_microseconds(CAN_RECV_TIME);
     }
 }

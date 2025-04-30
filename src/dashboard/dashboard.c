@@ -1,12 +1,4 @@
-#include "../common_includes/can_id_list.h"
-#include "../common_includes/can_socket.h"
-#include "../common_includes/logging.h"
 #include "dashboard_func.h"
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #define CAN_INTERFACE ("vcan0")
 #define SUCCESS_CODE (0)
@@ -59,8 +51,6 @@ int main(void)
     {
         return ERROR_CODE;
     }
-
-    // sleep_microseconds(UI_START_TIME);
 
     add_to_log(panel_log, "Waiting CAN frames...");
 
