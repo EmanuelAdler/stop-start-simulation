@@ -51,12 +51,18 @@ static bool file_contains_substring(f_susbtring_data struct_f_subs)
 
 //-------------------------------------
 // Test 1: Test process received frames
-//-------------------------------------
 /* 
  * This test calls process_received_frame() with our stubs:
  *  - 2 valid frames => triggers decrypt+parse_input_received
  *  - 1 invalid-size frame => triggers warning
  *  - Then returns -1 => we break out of the loop 
+ */
+/**
+ * @test test_process_received_frame
+ * @brief Test process received frames
+ * @req SWR1.2
+ * @req SWR1.4
+ * @file unit/test_dashboard.c
  */
 void test_process_received_frame(void)
 {
@@ -85,7 +91,13 @@ void test_process_received_frame(void)
 
 //-------------------------------------
 // Test 2: Test the output for print dashboard status
-//-------------------------------------
+/**
+ * @test test_print_dashboard_status
+ * @brief Test the output for print dashboard status
+ * @req SWR5.2
+ * @req SWR6.3
+ * @file unit/test_dashboard.c
+ */
 void test_print_dashboard_status(void)
 {
     // 1) Set the actuator state as we like
@@ -139,7 +151,17 @@ void test_print_dashboard_status(void)
 
 //-------------------------------------
 // Test 3: Test the variants of inputs received by the dashboard
-//-------------------------------------
+/**
+ * @test test_parse_input_variants
+ * @brief Test the variants of inputs received by the dashboard
+ * @req SWR1.3
+ * @req SWR4.5
+ * @req SWR5.1
+ * @req SWR5.2
+ * @req SWR5.3
+ * @req SWR6.3
+ * @file unit/test_dashboard.c
+ */
 void test_parse_input_variants(void)
 {
     // 1) Set up the log file and initialize the logging system
