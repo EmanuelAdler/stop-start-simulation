@@ -65,7 +65,11 @@ const float SOC_TOLERANCE = 0.001F;
 #define MOCK_TIME_1S (1000)
 #define MOCK_TIME_25S (2500)
 
-// Mocked can_socket calls (like in test_instrument_cluster)
+#define MOCK_SOCKET (999)
+
+// Mocked can_socket calls
+void mock_can_force_sys_disable(bool enable);
+void mock_can_force_invalid_id(bool enable);
 int stub_can_get_send_count(void);
 const char *stub_can_get_last_message(void);
 void stub_can_reset(void);
@@ -763,13 +767,71 @@ void test_comms_thread_expected_iterations(void)
 //-------------------------------------
 void test_check_system_disable(void)
 {
-    // 1) Setup logging so "press_start_stop" toggles system & logs
-    set_log_file_path("/tmp/test_system_disable.log");
-    CU_ASSERT_TRUE_FATAL(init_logging_system());
+    stub_can_reset();
+    
+    check_system_disable(MOCK_SOCKET);
+    
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 0);
+}
 
-    int sock_recv = 2;
+static void test_invalid_can_id_branch(void)
+{
+    /* start with clean counters ---------------------------------------- */
+    stub_can_reset();
 
-    check_system_disable(sock_recv);
+    /*  tell the stub: on 1st receive() give me an *invalid* CAN-ID  ---- */
+    mock_can_force_invalid_id(true);
+
+    /* run the code under test ----------------------------------------- */
+    check_system_disable(MOCK_SOCKET);
+
+    /* reset to normal behaviour, so other tests keep original paths  */
+    mock_can_force_invalid_id(false);
+
+    /* we only wanted to exercise the branch – nothing should have been
+       sent on the bus, so send counter must still be zero              */
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 0);
+}
+
+static void test_system_disabled_path(void)
+{
+    stub_can_reset();
+    simu_state = STATE_RUNNING;
+    test_mode = false;
+
+    mock_can_force_sys_disable(true);
+
+    check_system_disable(MOCK_SOCKET);
+    
+    CU_ASSERT_EQUAL(simu_state, STATE_STOPPED);
+
+    mock_can_force_sys_disable(false);
+}
+
+void test_comms_reception_thread_expected_iterations(void)
+{
+    /* -------- Arrange ------------------------------------------------- */
+    sem_init(&sem_comms, 0, TEST_EXPECTED_IT_INT);   /* pre‑post semaphore    */
+    pthread_mutex_init(&mutex_bcm, NULL);
+
+    stub_can_reset();
+
+    simu_state     = STATE_RUNNING;
+    mock_can_force_sys_disable(true);
+
+    /* -------- Act ----------------------------------------------------- */
+    pthread_t tid;
+    pthread_create(&tid, NULL, comms_reception, NULL);
+    pthread_join(tid, NULL);
+
+    /* -------- Assert -------------------------------------------------- */
+
+    CU_ASSERT_EQUAL(simu_state, STATE_STOPPED);
+
+    /* -------- Cleanup ------------------------------------------------- */
+    mock_can_force_sys_disable(false);
+    pthread_mutex_destroy(&mutex_bcm);
+    sem_destroy(&sem_comms);
 }
 
 //-------------------------------------
@@ -809,6 +871,9 @@ int main(void)
     CU_add_test(suite, "check_health_signals_door_status", test_check_health_signals_door_status);
     CU_add_test(suite, "comms expected iterations", test_comms_thread_expected_iterations);
     CU_add_test(suite, "check_system_disable", test_check_system_disable);
+    CU_add_test(suite, "invalid_can_id_branch", test_invalid_can_id_branch);
+    CU_add_test(suite, "system_disabled_path", test_system_disabled_path);
+    CU_add_test(suite, "comms_reception_expected_iterations", test_comms_reception_thread_expected_iterations);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

@@ -283,7 +283,7 @@ int main(void)
     }
 
     // Add tests
-    CU_add_test(suite, "process_received_frame coverage", test_process_received_frame);
+    CU_add_test(suite, "process_received_frame_coverage", test_process_received_frame);
     CU_add_test(suite, "parse_input_variants", test_parse_input_variants);
     CU_add_test(suite, "panels", test_panels);
     CU_add_test(suite, "invalid_can_id_dashboard", test_invalid_can_id_dashboard);
