@@ -331,6 +331,15 @@ bool check_can_id(canid_t can_id)
     return is_valid;
 }
 
+void parse_input_received_bcm(char *input)
+{
+    // if system is disabled, order simulation to stop
+    if (strcmp(input, "system_disabled_error") == 0)
+    {
+        check_order(ORDER_STOP);
+    }
+}
+
 /* Function to check if system was disabled by another ECU,
 so that simulation will halt. */
 void check_system_disable(int sock)
@@ -340,35 +349,30 @@ void check_system_disable(int sock)
     char decrypted_message[AES_BLOCK_SIZE];
     int received_bytes = 0;
     char error_log[MAX_MSG_SIZE];
-
-    if (receive_can_frame(sock, &frame) == 0)
+    while(received_bytes < AES_BLOCK_SIZE)
     {
-        if (check_can_id(frame.can_id))
+        if (receive_can_frame(sock, &frame) == 0)
         {
-            if (frame.can_dlc == CAN_DATA_LENGTH)
+            if (check_can_id(frame.can_id))
             {
-                memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
-                received_bytes += CAN_DATA_LENGTH;
-
-                if (received_bytes == AES_BLOCK_SIZE)
+                if (frame.can_dlc == CAN_DATA_LENGTH)
                 {
-                    decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                    //parse_input_received(decrypted_message);
-
-                    // if system is disabled, order simulation to stop
-                    if (strcmp(decrypted_message, "system_disabled_error") == 0)
+                    memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
+                    received_bytes += CAN_DATA_LENGTH;
+                    if (received_bytes == AES_BLOCK_SIZE)
                     {
-                        check_order(ORDER_STOP);
+                        decrypt_data(encrypted_data, decrypted_message, received_bytes);
+                        parse_input_received_bcm(decrypted_message);                        
                     }
-                    received_bytes = 0;
                 }
-            }
-            else
-            {
-                snprintf(error_log, sizeof(error_log), "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
+                else
+                {
+                    snprintf(error_log, sizeof(error_log), "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
+                }
             }
         }
     }
+    received_bytes = 0;
 }
 
 // Function to evaluate system health
@@ -448,7 +452,33 @@ void *comms(void *arg)
             data_updated = false; // ready to update data again after sending
             simu_curr_step++;
             check_health_signals();
-            // Check if it's necessary to stop simulation
+        }
+        pthread_mutex_unlock(&mutex_bcm);
+        sleep_microseconds(THREAD_SLEEP_TIME);
+    }
+    return NULL;
+}
+
+void *comms_reception(void *arg)
+{
+    (void)arg;
+    #ifdef UNIT_TEST
+        int max_iterations = 2;
+        int iter;
+        for (iter = 1; iter < max_iterations; ++iter)
+    #else
+        while (!test_mode)
+    #endif
+    {
+        sem_wait(&sem_comms);
+        
+        int lock_result = pthread_mutex_lock(&mutex_bcm);
+        if (lock_result != 0)
+        {
+            return NULL;
+        }
+        if (simu_state == STATE_RUNNING)
+        {
             check_system_disable(sock_recv);
         }
         pthread_mutex_unlock(&mutex_bcm);
