@@ -768,8 +768,12 @@ void test_comms_thread_expected_iterations(void)
 void test_check_system_disable(void)
 {
     stub_can_reset();
+
+    mock_can_force_sys_disable(true);
     
     check_system_disable(MOCK_SOCKET);
+
+    mock_can_force_sys_disable(false);
     
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 0);
 }
@@ -803,7 +807,7 @@ static void test_system_disabled_path(void)
 
     check_system_disable(MOCK_SOCKET);
     
-    CU_ASSERT_EQUAL(simu_state, STATE_STOPPED);
+    CU_ASSERT_EQUAL(simu_order, STATE_STOPPED);
 
     mock_can_force_sys_disable(false);
 }
@@ -826,7 +830,7 @@ void test_comms_reception_thread_expected_iterations(void)
 
     /* -------- Assert -------------------------------------------------- */
 
-    CU_ASSERT_EQUAL(simu_state, STATE_STOPPED);
+    CU_ASSERT_EQUAL(simu_order, STATE_STOPPED);
 
     /* -------- Cleanup ------------------------------------------------- */
     mock_can_force_sys_disable(false);

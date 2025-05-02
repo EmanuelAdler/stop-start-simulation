@@ -16,6 +16,8 @@
 #define CSV_NUM_FIELD_5 (5)
 #define CSV_NUM_FIELD_6 (6)
 #define THREAD_SLEEP_TIME (1000000U)
+#define THREAD_RECV_SLEEP_TIME (100000U)
+#define NUM_DISABLE_RETRIES (3)
 #define BATTERY_VOLT_MUL (0.01125f)
 #define BATTERY_VOLT_SUM (11.675f)
 #define BATTERY_SOC_MUL (5.0f)
@@ -49,6 +51,7 @@ bool fault_active = false;
 int fault_start_time = 0;
 const int safety_timeout_ms = SAFETY_TIMEOUT;
 bool data_updated = false;
+bool end_recv_thread = false;
 
 // Sleep for a given number of microseconds
 void sleep_microseconds(long int microseconds)
@@ -336,7 +339,14 @@ void parse_input_received_bcm(char *input)
     // if system is disabled, order simulation to stop
     if (strcmp(input, "system_disabled_error") == 0)
     {
-        check_order(ORDER_STOP);
+        /* Set simu_order to stop simulation multiple times,
+           to overwrite any other orders received */
+        for (size_t i = 0; i < NUM_DISABLE_RETRIES; i++){
+            simu_order = ORDER_STOP;
+            sleep_microseconds(THREAD_SLEEP_TIME);
+        }
+        // End the communication receive thread
+        end_recv_thread = true;
     }
 }
 
@@ -349,7 +359,8 @@ void check_system_disable(int sock)
     char decrypted_message[AES_BLOCK_SIZE];
     int received_bytes = 0;
     char error_log[MAX_MSG_SIZE];
-    while(received_bytes < AES_BLOCK_SIZE)
+
+    while(end_recv_thread == false)
     {
         if (receive_can_frame(sock, &frame) == 0)
         {
@@ -362,7 +373,8 @@ void check_system_disable(int sock)
                     if (received_bytes == AES_BLOCK_SIZE)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                        parse_input_received_bcm(decrypted_message);                        
+                        parse_input_received_bcm(decrypted_message);
+                        received_bytes = 0;           
                     }
                 }
                 else
@@ -372,7 +384,6 @@ void check_system_disable(int sock)
             }
         }
     }
-    received_bytes = 0;
 }
 
 // Function to evaluate system health
@@ -470,19 +481,11 @@ void *comms_reception(void *arg)
         while (!test_mode)
     #endif
     {
-        sem_wait(&sem_comms);
-        
-        int lock_result = pthread_mutex_lock(&mutex_bcm);
-        if (lock_result != 0)
-        {
-            return NULL;
-        }
         if (simu_state == STATE_RUNNING)
         {
             check_system_disable(sock_recv);
         }
-        pthread_mutex_unlock(&mutex_bcm);
-        sleep_microseconds(THREAD_SLEEP_TIME);
+        sleep_microseconds(THREAD_RECV_SLEEP_TIME);
     }
     return NULL;
 }
