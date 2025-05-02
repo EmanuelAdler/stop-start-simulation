@@ -176,7 +176,7 @@ void process_errors(char *input)
     else if (strcmp(input, "error_battery") == 0)
     {
         log_toggle_event("[INFO] Engine Restart Failed Due to Low Battery SoC or Tension Under the Threshold");
-        add_to_log(panel_log, "Engine Restart Failed - Battery Low");
+        add_to_log(panel_log, "Engine Restart Failed - Battery");
     }
     else if (strcmp(input, "error_disabled") == 0)
     {

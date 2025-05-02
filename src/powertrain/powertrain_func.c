@@ -1,7 +1,7 @@
 #include "powertrain_func.h"
 
 #define SLEEP_TIME_US (1000000U)
-#define COMMS_TIME_US (10000U)
+#define COMMS_TIME_US (50000U)
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
 

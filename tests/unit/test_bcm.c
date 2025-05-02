@@ -463,7 +463,7 @@ void test_sensor_battery_updates_soc_when_running(void)
 
     // Calculate expected SoC after one update
     float expected_iterations = TEST_EXPECTED_IT; // if THREAD_SLEEP_TIME * 2 allows 2 iterations
-    float expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
+    double expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
     if (expected_soc > MAX_BATTERY_SOC)
     {
         expected_soc = MAX_BATTERY_SOC;
