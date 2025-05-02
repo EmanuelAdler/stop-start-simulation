@@ -477,7 +477,7 @@ void test_sensor_battery_updates_soc_when_running(void)
     pthread_join(thread_id, NULL);
 
     // Get actual updated SoC
-    float actual_soc = (float)vehicle_data[0].batt_soc;
+    double actual_soc = vehicle_data[0].batt_soc;
 
     // Assert the SoC was updated as expected
     CU_ASSERT_DOUBLE_EQUAL(expected_soc, actual_soc, SOC_TOLERANCE);

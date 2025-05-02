@@ -367,7 +367,7 @@ void check_system_disable(int sock)
     int received_bytes = 0;
     char error_log[MAX_MSG_SIZE];
 
-    while(true)
+    while(received_bytes < AES_BLOCK_SIZE)
     {
         if (receive_can_frame(sock, &frame) == 0)
         {
@@ -381,7 +381,7 @@ void check_system_disable(int sock)
                     {
                         decrypt_data(encrypted_data, decrypted_message, received_bytes);
                         parse_input_received_bcm(decrypted_message);
-                        received_bytes = 0;           
+                        //received_bytes = 0;           
                     }
                 }
                 else
@@ -390,7 +390,7 @@ void check_system_disable(int sock)
                 }
             }
         }
-        sleep_microseconds(THREAD_RECV_SLEEP_TIME);
+        
     }
 }
 
@@ -490,6 +490,7 @@ void *comms_reception(void *arg)
     #endif
     {
         check_system_disable(sock_recv);
+        sleep_microseconds(THREAD_RECV_SLEEP_TIME);
     }
     return NULL;
 }
