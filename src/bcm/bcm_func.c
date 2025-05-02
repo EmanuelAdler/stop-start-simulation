@@ -38,8 +38,8 @@ volatile int simu_curr_step = 0;
 volatile int simu_state = STATE_STOPPED;
 volatile int simu_order = ORDER_STOP;
 bool curr_gear = PARKING;
-float batt_volt = DEFAULT_BATTERY_VOLTAGE;
-float batt_soc = DEFAULT_BATTERY_SOC;
+double batt_volt = DEFAULT_BATTERY_VOLTAGE;
+double batt_soc = DEFAULT_BATTERY_SOC;
 int data_size = 0;
 VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE] = {0};
 int sock_send = -1;
@@ -303,10 +303,10 @@ void send_data_update(void)
     snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
-    snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
+    snprintf(send_msg, sizeof(send_msg), "batt_soc: %lf", vehicle_data[simu_curr_step].batt_soc);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
-    snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
+    snprintf(send_msg, sizeof(send_msg), "batt_volt: %lf", vehicle_data[simu_curr_step].batt_volt);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
@@ -343,7 +343,7 @@ void parse_input_received_bcm(char *input)
            to overwrite any other orders received */
         for (size_t i = 0; i < NUM_DISABLE_RETRIES; i++){
             simu_order = ORDER_STOP;
-            sleep_microseconds(THREAD_SLEEP_TIME);
+            sleep_microseconds(THREAD_RECV_SLEEP_TIME);
         }
         // End the communication receive thread
         end_recv_thread = true;
@@ -507,7 +507,7 @@ void update_battery_soc(double vehicle_speed)
         batt_soc -= (BATTERY_SOC_DECREMENT * BATTERY_SOC_MUL);
         if (batt_soc < 0)
         {
-            batt_soc = 0;
+            batt_soc = 0.0;
         }
 
         batt_volt = (BATTERY_VOLT_MUL * batt_soc) + BATTERY_VOLT_SUM + VOLTAGE_OFFSET_VALUE;
