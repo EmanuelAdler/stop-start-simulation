@@ -184,13 +184,13 @@ void test_parse_input_variants(void)
         "[INFO] Engine Restart Failed Due to Battery Tension Drop"};
     CU_ASSERT_TRUE(file_contains_substring(err_drop));
 
-    parse_input_received("error_battery_low");
+    parse_input_received("error_battery");
     f_susbtring_data err_low = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] Engine Restart Failed Due to Low Battery SoC or Tension Under the Threshold"};
     CU_ASSERT_TRUE(file_contains_substring(err_low));
 
-    parse_input_received("system_disabled_error");
+    parse_input_received("error_disabled");
     f_susbtring_data err_disab = {
         "/tmp/test_dashboard_variants.log",
         "[INFO] System Disabled Due to an Error"};

@@ -173,12 +173,12 @@ void process_errors(char *input)
         log_toggle_event("[INFO] Engine Restart Failed Due to Battery Tension Drop");
         add_to_log(panel_log, "Engine Restart Failed - Battery Drop");
     }
-    else if (strcmp(input, "error_battery_low") == 0)
+    else if (strcmp(input, "error_battery") == 0)
     {
         log_toggle_event("[INFO] Engine Restart Failed Due to Low Battery SoC or Tension Under the Threshold");
         add_to_log(panel_log, "Engine Restart Failed - Battery Low");
     }
-    else if (strcmp(input, "system_disabled_error") == 0)
+    else if (strcmp(input, "error_disabled") == 0)
     {
         actuators.start_stop_active = false;
         actuators.error_system = 1;

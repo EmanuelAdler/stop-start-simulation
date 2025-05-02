@@ -457,7 +457,7 @@ static void test_handle_engine_restart(void)
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
 
     // Check if last message is about error
-    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "system_disabled_error");
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_disabled");
 
     // Check received log message
     f_susbtring_data sys_disable = {
@@ -577,7 +577,7 @@ static void test_parse_input_variants(void)
     parse_input_received_powertrain("press_start_stop");
     CU_ASSERT_FALSE(start_stop_manual); // toggled back to false
 
-    parse_input_received_powertrain("system_disabled_error");
+    parse_input_received_powertrain("error_disabled");
     CU_ASSERT_FALSE(start_stop_manual); // toggled to false
 
     // 2) Speed

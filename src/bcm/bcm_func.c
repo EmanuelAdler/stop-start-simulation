@@ -16,7 +16,7 @@
 #define CSV_NUM_FIELD_5 (5)
 #define CSV_NUM_FIELD_6 (6)
 #define THREAD_SLEEP_TIME (1000000U)
-#define THREAD_RECV_SLEEP_TIME (100000U)
+#define THREAD_RECV_SLEEP_TIME (10000U)
 #define NUM_DISABLE_RETRIES (3)
 #define BATTERY_VOLT_MUL (0.01125f)
 #define BATTERY_VOLT_SUM (11.675f)
@@ -51,7 +51,6 @@ bool fault_active = false;
 int fault_start_time = 0;
 const int safety_timeout_ms = SAFETY_TIMEOUT;
 bool data_updated = false;
-bool end_recv_thread = false;
 
 // Sleep for a given number of microseconds
 void sleep_microseconds(long int microseconds)
@@ -303,10 +302,10 @@ void send_data_update(void)
     snprintf(send_msg, sizeof(send_msg), "temp_set: %d", vehicle_data[simu_curr_step].temp_set);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
-    snprintf(send_msg, sizeof(send_msg), "batt_soc: %lf", vehicle_data[simu_curr_step].batt_soc);
+    snprintf(send_msg, sizeof(send_msg), "batt_soc: %.1lf", vehicle_data[simu_curr_step].batt_soc);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
-    snprintf(send_msg, sizeof(send_msg), "batt_volt: %lf", vehicle_data[simu_curr_step].batt_volt);
+    snprintf(send_msg, sizeof(send_msg), "batt_volt: %.1lf", vehicle_data[simu_curr_step].batt_volt);
     send_encrypted_message(sock_send, send_msg, CAN_ID_SENSOR_READ);
 
     snprintf(send_msg, sizeof(send_msg), "engi_temp: %.1lf", vehicle_data[simu_curr_step].engi_temp);
@@ -324,7 +323,7 @@ bool check_can_id(canid_t can_id)
     switch (can_id)
     {
     case CAN_ID_COMMAND:
-    //case CAN_ID_ERROR_DASH:
+    case CAN_ID_ERROR_DASH:
         is_valid = true;
         break;
     default:
@@ -337,16 +336,24 @@ bool check_can_id(canid_t can_id)
 void parse_input_received_bcm(char *input)
 {
     // if system is disabled, order simulation to stop
-    if (strcmp(input, "system_disabled_error") == 0)
+    if (strcmp(input, "error_disabled") == 0)
     {
+        printf("error received\n");
+        fflush(stdout);
         /* Set simu_order to stop simulation multiple times,
-           to overwrite any other orders received */
+           to overwrite any other orders received for a while*/
         for (size_t i = 0; i < NUM_DISABLE_RETRIES; i++){
             simu_order = ORDER_STOP;
-            sleep_microseconds(THREAD_RECV_SLEEP_TIME);
+            sleep_microseconds(THREAD_SLEEP_TIME);
         }
-        // End the communication receive thread
-        end_recv_thread = true;
+    }
+    // if simulation is stopped and we want to restart
+    if (simu_state == STATE_STOPPED && 
+        strcmp(input, "order_restart") == 0)
+    {
+        printf("ordered to restart!\n");
+        fflush(stdout);
+        simu_order = ORDER_RUN;
     }
 }
 
@@ -360,7 +367,7 @@ void check_system_disable(int sock)
     int received_bytes = 0;
     char error_log[MAX_MSG_SIZE];
 
-    while(end_recv_thread == false)
+    while(true)
     {
         if (receive_can_frame(sock, &frame) == 0)
         {
@@ -383,6 +390,7 @@ void check_system_disable(int sock)
                 }
             }
         }
+        sleep_microseconds(THREAD_RECV_SLEEP_TIME);
     }
 }
 
@@ -413,7 +421,7 @@ void check_health_signals(void)
             int elapsed = getCurrentTimeMs() - fault_start_time;
             if (elapsed >= safety_timeout_ms)
             {
-                send_encrypted_message(sock_send, "system_disabled_error", CAN_ID_COMMAND);
+                send_encrypted_message(sock_send, "error_disabled", CAN_ID_COMMAND);
                 log_toggle_event("Fault: SWR6.4 (System Disabling Error)");
                 if (invalidDoor)
                 {
@@ -481,11 +489,7 @@ void *comms_reception(void *arg)
         while (!test_mode)
     #endif
     {
-        if (simu_state == STATE_RUNNING)
-        {
-            check_system_disable(sock_recv);
-        }
-        sleep_microseconds(THREAD_RECV_SLEEP_TIME);
+        check_system_disable(sock_recv);
     }
     return NULL;
 }

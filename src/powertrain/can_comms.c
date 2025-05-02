@@ -34,7 +34,7 @@ void parse_input_received_powertrain(char *input)
             log_toggle_event("Stop/Start: System Deactivated");
         }
     }
-    if (strcmp(input, "system_disabled_error") == 0)
+    if (strcmp(input, "error_disabled") == 0)
     {
         start_stop_manual = false;
 

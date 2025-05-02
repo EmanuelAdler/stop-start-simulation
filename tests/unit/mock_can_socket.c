@@ -103,7 +103,7 @@ void decrypt_data(const unsigned char *input, char *output, int input_len)
 
     if (g_force_sys_disable_string)
     {
-        strcpy(output, "system_disabled_error");
+        strcpy(output, "error_disabled");
     }
     else
     {
