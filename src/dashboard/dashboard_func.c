@@ -112,7 +112,7 @@ void process_sensor_readings(char *input)
     /* Check if CAN message is door open */
     else if (sscanf(input, "door: %d", &actuators.door_status) == 1)
     {
-        snprintf(result, sizeof(result), "%d", actuators.door_status);
+        snprintf(result, sizeof(result), "%s", actuators.door_status ? "Yes" : "No");
         update_value_panel(panel_dash, DOOR_ROW, result, NORMAL_TEXT);
     }
     /* Check if CAN message is battery SoC */

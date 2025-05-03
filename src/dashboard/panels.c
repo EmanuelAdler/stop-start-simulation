@@ -166,7 +166,7 @@ ValuePanel *create_value_panel(Size siz, Position pos, const char *title)
     wattron(panel->win, COLOR_PAIR(NORMAL_TEXT));
 
     mvwprintw(panel->win, SPEED_ROW, 1, "Speed (Km/h):");
-    mvwprintw(panel->win, TILT_ROW, 1, "Tilt Angle (°):");
+    mvwprintw(panel->win, TILT_ROW, 1, "Tilt Angle (|°|):");
     mvwprintw(panel->win, IN_TEMP_ROW, 1, "Internal Temp (°C):");
     mvwprintw(panel->win, EXT_TEMP_ROW, 1, "External Temp (°C):");
     mvwprintw(panel->win, DOOR_ROW, 1, "Door Open:");

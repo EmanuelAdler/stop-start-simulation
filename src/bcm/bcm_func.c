@@ -17,6 +17,7 @@
 #define CSV_NUM_FIELD_6 (6)
 #define THREAD_SLEEP_TIME (1000000U)
 #define THREAD_RECV_SLEEP_TIME (50000U)
+#define THREAD_BATTERY_SLEEP_TIME (500000U)
 #define NUM_DISABLE_RETRIES (3)
 #define BATTERY_VOLT_MUL (0.01125f)
 #define BATTERY_VOLT_SUM (11.675f)
@@ -341,20 +342,20 @@ void parse_input_received_bcm(char *input)
         printf("error received\n");
         fflush(stdout);
         /* Set simu_order to stop simulation multiple times,
-           to overwrite any other orders received for a while*/
+           to overwrite if any other orders are received for a while*/
         for (size_t i = 0; i < NUM_DISABLE_RETRIES; i++){
             simu_order = ORDER_STOP;
             sleep_microseconds(THREAD_SLEEP_TIME);
         }
     }
-    // if simulation is stopped and we want to restart
+    /* // if simulation is stopped and we want to restart
     if (simu_state == STATE_STOPPED && 
         strcmp(input, "order_restart") == 0)
     {
         printf("ordered to restart!\n");
         fflush(stdout);
         simu_order = ORDER_RUN;
-    }
+    } */
 }
 
 /* Function to check if system was disabled by another ECU,
@@ -550,7 +551,7 @@ void *sensor_battery(void *arg)
             update_battery_soc(vehicle_data[simu_curr_step].speed);
         }
         pthread_mutex_unlock(&mutex_bcm);
-        sleep_microseconds(THREAD_SLEEP_TIME);
+        sleep_microseconds(THREAD_BATTERY_SLEEP_TIME);
     }
     return NULL;
 }
