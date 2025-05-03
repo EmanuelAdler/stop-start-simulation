@@ -11,37 +11,37 @@ This project consists of an application that simulates the behaviour of an autom
 The rules regarding this project management like commiting, creating issues and naming branches are contained in the [report](report.md) file.
 
 ## Requirements  
-- Ubuntu or another Linux system compatible with SocketCAN and GCC 14
+- Ubuntu (24.04) or another Linux system compatible with SocketCAN and GCC 14
 - Docker  
 
 ## CAN Interface Setup  
-Give execution permission to the script:  
+Give execution permission to the script that creates the CAN interface:  
 ```sh
 chmod +x setup_vcan.sh
 ```
-Run the script to configure the interface:
-```sh
-sudo ./setup_vcan.sh
-```
 
 ## Building and Running the Containers
-Build and start the containers:
+In the root directory, run:
 ```sh
-docker-compose up --build
+./run_docker.sh
 ```
 
-Check the running containers:
+This command will create a terminal for each ECU (BCM, Powertrain, Instrument cluster and Dashboard) and start the simulation.
+
+It's possible to check the running containers in another terminal with:
 ```sh
 docker ps
 ```
 
-## Communication Test
-Send a message via CAN:
+## System activation
+Send the system activation message via CAN ("press_start_stop"):
 ```sh
-echo -n "message" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
+echo -n "press_start_stop" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
 ```
 
-To stop the containers:
+This message is necessary to activate the Stop/Start system through the *Instrument cluster* ECU right after initializing, as every run starts with the system disabled.
+
+To stop the containers, close every ECU terminal and execute this in another terminal:
 ```sh
 docker-compose down
 ```
@@ -167,5 +167,5 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 |--------------|------------|------------------------|-------------------|------------------|---------------------------------------|-------|
 | **0x110** | 8 | **CAN_ID_SENSOR_READ** | BCM | Dashboard, Powertrain | 0–7 → encrypted block (16 B is split into two 8‑byte frames) | Carries *any* sensor string: `speed`, `in_temp`, `ex_temp`, `door`, `tilt`, `accel`, `brake`, `temp_set`, `batt_soc`, `batt_volt`, `engi_temp`, `gear`. |
 | **0x111** | 8 | **CAN_ID_COMMAND** | Dashboard / BCM | Powertrain, ECU | Encrypted string – typical values: `press_start_stop`, `error_disabled` | Used for high‑level driver requests or safety shutdowns. |
-| **0x101** | 8 | **CAN_ID_ERROR_DASH** | Powertrain / BCM | Dashboard | Encrypted error keyword – e.g. `error_battery`, `error_battery_drop` | Shown as warnings on the instrument cluster. |
+| **0x101** | 8 | **CAN_ID_ERROR_DASH** | Powertrain / BCM | Dashboard / BCM | Encrypted error keyword – e.g. `error_battery`, `error_battery_drop` | Shown as warnings on the instrument cluster. |
 | **0x7E0** | 8 | **CAN_ID_ECU_RESTART** | Powertrain | Dashboard | Encrypted keywords: `ENGINE OFF`, `RESTART`, `ABORT` | Implements stop‑start restart sequence. |
