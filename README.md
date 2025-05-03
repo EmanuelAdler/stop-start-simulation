@@ -39,7 +39,7 @@ Send the system activation message via CAN ("press_start_stop"):
 echo -n "press_start_stop" | docker exec -i instrument_cluster sh -c 'cat > /tmp/command_pipe'
 ```
 
-This message is necessary to activate the Stop/Start system through the *Instrument cluster* ECU right after initializing, as every run starts with the system disabled.
+This message is necessary to activate/deactivate the Stop/Start system through the *Instrument cluster* ECU right after initializing, as every run starts with the system disabled.
 
 To stop the containers, close every ECU terminal and execute this in another terminal:
 ```sh
