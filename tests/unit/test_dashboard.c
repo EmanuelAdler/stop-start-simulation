@@ -75,6 +75,13 @@ static bool file_contains_substring(f_susbtring_data struct_f_subs)
  * @req SWR1.4
  * @file unit/test_dashboard.c
  */
+/**
+ * @test test_process_received_frame
+ * @brief Test process received frames
+ * @req SWR1.2
+ * @req SWR1.4
+ * @file unit/test_dashboard.c
+ */
 void test_process_received_frame(void)
 {
     // 1) Setup logging so "press_start_stop" toggles system & logs
