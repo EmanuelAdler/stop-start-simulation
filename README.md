@@ -20,13 +20,22 @@ Give execution permission to the script that creates the CAN interface:
 chmod +x setup_vcan.sh
 ```
 
+## Simulation data
+
+The project already have a csv file (*full_simu.csv*) with randomly generated data similar to a real vehicle operation located in the *BCM* source folder. The generation of this data is based on the Federal Test Procedure 75 for emission certification and fuel economy testing of light-duty vehicles in the United States (*ftp75.csv*). This data is used by the BCM ECU as sensor data, which is communicated to other ECUs.
+
+Also, it's possible to generate new random data that will overwrite the *full_simu.csv* file by running the python script *gen_simu.py*. To do that, is necessary to have python installed and the packages **Pandas** and **Numpy**. You can execute the script from the directory where it is located (*./src/bcm*) with:
+```sh
+python3 gen_simu.py
+```
+
 ## Building and Running the Containers
 In the root directory, run:
 ```sh
 ./run_docker.sh
 ```
 
-This command will create a terminal for each ECU (BCM, Powertrain, Instrument cluster and Dashboard) and start the simulation.
+This command will execute *setup_vcan.sh* and create a terminal for each ECU (BCM, Powertrain, Instrument cluster and Dashboard) and start the simulation.
 
 It's possible to check the running containers in another terminal with:
 ```sh
