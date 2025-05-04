@@ -167,5 +167,5 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 |--------------|------------|------------------------|-------------------|------------------|---------------------------------------|-------|
 | **0x110** | 8 | **CAN_ID_SENSOR_READ** | BCM | Dashboard, Powertrain | 0–7 → encrypted block (16 B is split into two 8‑byte frames) | Carries *any* sensor string: `speed`, `in_temp`, `ex_temp`, `door`, `tilt`, `accel`, `brake`, `temp_set`, `batt_soc`, `batt_volt`, `engi_temp`, `gear`. |
 | **0x111** | 8 | **CAN_ID_COMMAND** | Dashboard / BCM | Powertrain, ECU | Encrypted string – typical values: `press_start_stop`, `error_disabled` | Used for high‑level driver requests or safety shutdowns. |
-| **0x101** | 8 | **CAN_ID_ERROR_DASH** | Powertrain / BCM | Dashboard / BCM | Encrypted error keyword – e.g. `error_battery`, `error_battery_drop` | Shown as warnings on the instrument cluster. |
+| **0x101** | 8 | **CAN_ID_ERROR_DASH** | Powertrain / BCM | Dashboard / BCM | Encrypted error keyword – e.g. `error_battery`, `error_battery_drop` | Shown as warnings on the dashboard. |
 | **0x7E0** | 8 | **CAN_ID_ECU_RESTART** | Powertrain | Dashboard | Encrypted keywords: `ENGINE OFF`, `RESTART`, `ABORT` | Implements stop‑start restart sequence. |
