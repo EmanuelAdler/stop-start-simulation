@@ -3,7 +3,7 @@
 #===============================================================================
 CC       = gcc
 CFLAGS   = -Wall -Wextra -D_POSIX_C_SOURCE=199309L -D_GNU_SOURCE
-LDLFLAGS = -lssl -lcrypto -lpthread  # libraries used during linking
+LDLFLAGS = -lssl -lcrypto -lpthread -lncurses -lpanel  # libraries used during linking
 
 #===============================================================================
 # Directories
@@ -80,20 +80,31 @@ $(BIN_DIR)/instrument_cluster: $(INSTR_CLUST_OBJS) $(COMMON_OBJ)
 #===============================================================================
 DASH_OBJS = \
   $(BIN_DIR)/dashboard.o \
-  $(BIN_DIR)/dashboard_func.o
+  $(BIN_DIR)/dashboard_func.o \
+  $(BIN_DIR)/panels.o
 
 # (a) dashboard.o (has main)
 $(BIN_DIR)/dashboard.o: $(DASH_DIR)/dashboard.c \
                         $(DASH_DIR)/dashboard_func.h \
+                        $(DASH_DIR)/panels.c \
+                        $(DASH_DIR)/panels.h \
                         $(COMMON_DIR)/can_socket.h \
                         $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
 
 # (b) dashboard_func.o (auxiliary logic)
 $(BIN_DIR)/dashboard_func.o: $(DASH_DIR)/dashboard_func.c \
+                             $(DASH_DIR)/panels.c \
+                             $(DASH_DIR)/panels.h \
                              $(DASH_DIR)/dashboard_func.h \
                              $(COMMON_DIR)/can_socket.h \
                              $(COMMON_DIR)/logging.h
+	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
+
+# (b) dashboard_func.o (auxiliary logic)
+$(BIN_DIR)/panels.o: $(DASH_DIR)/panels.c \
+                     $(DASH_DIR)/panels.h \
+                     $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
 
 # (c) link final dashboard

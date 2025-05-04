@@ -18,7 +18,7 @@ $(info LCOV_OK is $(LCOV_OK))
 CC       = gcc
 COND_COVERAGE_FLAG := $(if $(and $(findstring 1,$(GCC_OK)),$(findstring 1,$(LCOV_OK))),-fcondition-coverage,)
 CFLAGS   = -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage $(COND_COVERAGE_FLAG) -DUNIT_TEST
-LDFLAGS  = -fprofile-arcs -ftest-coverage $(COND_COVERAGE_FLAG) -lcunit -lssl -lcrypto -lpthread
+LDFLAGS  = -fprofile-arcs -ftest-coverage $(COND_COVERAGE_FLAG) -lcunit -lssl -lcrypto -lpthread -lncurses -lpanel
 
 #===============================================================================
 # Directories
@@ -40,7 +40,7 @@ BIN_DIR = bin
 #===============================================================================
 # Source Files
 #===============================================================================
-# 1) Library code, excluding can_socket.c so we can link it selectively
+# 1) Library code, excluding can_socket.c and panels.c so we can link it selectively
 REAL_LIB_SOURCES = \
   $(COMMON_INCLUDES)/logging.c \
   $(DASHBOARD_DIR)/dashboard_func.c \
@@ -57,7 +57,11 @@ REAL_CAN_SOURCE = \
 MOCK_CAN_SOURCE = \
   $(UNIT_DIR)/mock_can_socket.c
 
-# 4) Unit test files (each with its own main)
+# 4) A mock for dashboard functions
+MOCK_NCURSES = \
+  $(UNIT_DIR)/mock_ncurses.c
+
+# 5) Unit test files (each with its own main)
 UNIT_SOURCES = \
   $(UNIT_DIR)/test_logging.c \
   $(UNIT_DIR)/test_dashboard.c \
@@ -76,6 +80,7 @@ FEATURE_SOURCES = \
 REAL_LIB_OBJECTS  = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(REAL_LIB_SOURCES)))
 REAL_CAN          = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(REAL_CAN_SOURCE)))
 MOCK_CAN          = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(MOCK_CAN_SOURCE)))
+MOCK_UI	          = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(MOCK_NCURSES)))
 
 UNIT_OBJECTS      = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(UNIT_SOURCES)))
 FEATURE_OBJECTS   = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(FEATURE_SOURCES)))
@@ -144,27 +149,27 @@ $(OBJ_DIR)/%.o: %.c
 # Linking
 #===============================================================================
 # test_logging: uses real can_socket
-$(UNIT_TEST_LOGGING): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(OBJ_DIR)/test_logging.o
+$(UNIT_TEST_LOGGING): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(MOCK_UI) $(OBJ_DIR)/test_logging.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-# test_dashboard: uses the mock can_socket
-$(UNIT_TEST_DASHBOARD): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(OBJ_DIR)/test_dashboard.o
+# test_dashboard: uses the mock can_socket and mock_ui
+$(UNIT_TEST_DASHBOARD): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(MOCK_UI) $(OBJ_DIR)/test_dashboard.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # test_instrument_cluster: uses the mock can_socket
-$(UNIT_TEST_INSTRUMENT): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(OBJ_DIR)/test_instrument_cluster.o
+$(UNIT_TEST_INSTRUMENT): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(MOCK_UI) $(OBJ_DIR)/test_instrument_cluster.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # test_bcm: uses the mock can_socket
-$(UNIT_TEST_BCM): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(OBJ_DIR)/test_bcm.o
+$(UNIT_TEST_BCM): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(MOCK_UI) $(OBJ_DIR)/test_bcm.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # test_powertrain: uses the mock can_socket
-$(UNIT_TEST_POWERTRAIN): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(OBJ_DIR)/test_powertrain.o
+$(UNIT_TEST_POWERTRAIN): $(REAL_LIB_OBJECTS) $(MOCK_CAN) $(MOCK_UI) $(OBJ_DIR)/test_powertrain.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # test_can_socket: specifically tests real can_socket
-$(UNIT_TEST_CAN_SOCKET): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(OBJ_DIR)/test_can_socket.o
+$(UNIT_TEST_CAN_SOCKET): $(REAL_LIB_OBJECTS) $(REAL_CAN) $(MOCK_UI) $(OBJ_DIR)/test_can_socket.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # If you have a feature test

@@ -22,7 +22,7 @@
 #define BATT_SOC_OK            (80.0)
 #define BATT_SOC_LOW           (60.0)
 #define BATT_VOLT_OK           (12.5)
-#define BATT_VOLT_LOW          (12.0)
+#define BATT_VOLT_LOW          (9.0)
 #define TILT_OK                (2.0)
 #define TILT_FAIL              (6.0)
 #define SPEED_OK               (0.0)
@@ -516,11 +516,14 @@ static void test_handle_engine_restart(void)
 
     CU_ASSERT_TRUE(engine_off);
 
+    // Disable trigger for next tests
+    restart_trigger = false;
+
     // Check if the stub was called
     CU_ASSERT_EQUAL(stub_can_get_send_count(), 2);
 
     // Check if last message is about error
-    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "system_disabled_error");
+    CU_ASSERT_STRING_EQUAL(stub_can_get_last_message(), "error_disabled");
 
     // Check received log message
     f_susbtring_data sys_disable = {
@@ -652,7 +655,7 @@ static void test_parse_input_variants_pw(void)
     parse_input_received_powertrain("press_start_stop");
     CU_ASSERT_FALSE(start_stop_manual); // toggled back to false
 
-    parse_input_received_powertrain("system_disabled_error");
+    parse_input_received_powertrain("error_disabled");
     CU_ASSERT_FALSE(start_stop_manual); // toggled to false
 
     // 2) Speed

@@ -1,6 +1,6 @@
 #include "powertrain_func.h"
 
-#define SLEEP_TIME_US (100000U)
+#define SLEEP_TIME_US (1000000U)
 #define COMMS_TIME_US (50000U)
 #define MICROSECS_IN_ONESEC (1000000L)
 #define NANO_TO_MICRO (1000)
@@ -24,7 +24,7 @@ pthread_mutex_t mutex_powertrain;
 
 /* Battery operation */
 
-#define MIN_BATTERY_VOLTAGE 12.2F
+#define MIN_BATTERY_VOLTAGE 10.0F
 #define MIN_BATTERY_SOC 70.0F
 
 /* Tilt angle operation */
@@ -43,6 +43,8 @@ int sock_sender = -1;
 int sock_receiver = -1;
 
 /* Start/Stop operation logic */
+
+bool restart_trigger = false;
 
 /* Condition check functions */
 static bool check_movement_conditions(double speed, int accel, int brake, int gear)
@@ -177,6 +179,8 @@ void check_disable_engine(VehicleData *ptr_rec_data)
             engine_off = true;
             send_encrypted_message(sock_sender, "ENGINE OFF", CAN_ID_ECU_RESTART);
             log_toggle_event("Stop/Start: Engine turned Off");
+            printf("Engine turned off\n");
+            fflush(stdout);
         }
     }
 }
@@ -194,7 +198,15 @@ void handle_engine_restart_logic(
         const bool brake_released = (data->prev_brake && !data->brake);
         const bool accelerator_pressed = (!data->prev_accel && data->accel);
 
+        // Enable the persistent need for restart
         if (brake_released || accelerator_pressed)
+        {
+            restart_trigger = true;
+            printf("Able to restart\n");
+            fflush(stdout);
+        }
+
+        if (restart_trigger)
         {
             /* Battery check */
             if (data->batt_volt >= MIN_BATTERY_VOLTAGE &&
@@ -203,11 +215,19 @@ void handle_engine_restart_logic(
                 send_encrypted_message(sock_sender, "RESTART", CAN_ID_ECU_RESTART);
                 log_toggle_event("Stop/Start: Engine turned On");
                 engine_off = false;
+
+                // Disable the need for restart
+                restart_trigger = false;
+                printf("Engine restart done\n");
+                fflush(stdout);
             }
             else
             {
-                send_encrypted_message(sock_sender, "error_battery_low", CAN_ID_ERROR_DASH);
-                send_encrypted_message(sock_sender, "system_disabled_error", CAN_ID_COMMAND);
+                printf("Battery error\n");
+                fflush(stdout);
+                send_encrypted_message(sock_sender, "error_battery", CAN_ID_ERROR_DASH);
+                sleep_microseconds_pw(COMMS_TIME_US);
+                send_encrypted_message(sock_sender, "error_disabled", CAN_ID_COMMAND);
                 log_toggle_event("Fault: SWR3.5 (Low Battery)");
             }
         }
@@ -244,8 +264,8 @@ void *function_start_stop(void *arg)
 
             check_disable_engine(ptr_rec_data);
 
-            printf("Start/Stop = %d\n", engine_off);
-            fflush(stdout);
+            /* printf("Start/Stop = %d\n", engine_off);
+            fflush(stdout); */
 
             handle_engine_restart_logic(
                 ptr_rec_data);
