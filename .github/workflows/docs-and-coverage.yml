@@ -27,7 +27,7 @@ jobs:
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
         sudo apt update
         sudo apt install -y \
-          gcc-14 g++-14 gcov-14 \
+          gcc-14 g++-14 \
           make build-essential \
           doxygen graphviz plantuml \
           can-utils linux-modules-extra-$(uname -r) \
