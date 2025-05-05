@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2025-05-05 11:21:04</td>
+            <td class="headerValue">2025-05-05 11:40:48</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -206,14 +206,14 @@
 <span id="L126"><span class="lineNum">     126</span>                 :              :<span class="tlaGNC">           2 :     int received_bytes = 0;</span></span>
 <span id="L127"><span class="lineNum">     127</span>                 :              :             :     char message_log[LOG_MESSAGE_SIZE];</span>
 <span id="L128"><span class="lineNum">     128</span>                 :              :             : </span>
-<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 9371781 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9371784 :     while(received_bytes &lt; AES_BLOCK_SIZE)</span></span>
+<span id="L129"><span class="lineNum">     129</span>         [<span class="tlaGBC" title="Branch 0 was taken 9369770 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 1 time"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9369773 :     while(received_bytes &lt; AES_BLOCK_SIZE)</span></span>
 <span id="L130"><span class="lineNum">     130</span>                 :              :             :     {</span>
-<span id="L131"><span class="lineNum">     131</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 9371780 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9371781 :         if (test_mode_powertrain) </span></span>
+<span id="L131"><span class="lineNum">     131</span>         [<span class="tlaGBC" title="Branch 0 was taken 1 time"> + </span><span class="tlaGBC" title="Branch 1 was taken 9369769 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9369770 :         if (test_mode_powertrain) </span></span>
 <span id="L132"><span class="lineNum">     132</span>                 :              :             :         {</span>
 <span id="L133"><span class="lineNum">     133</span>                 :              :<span class="tlaGNC">           1 :             break;</span></span>
 <span id="L134"><span class="lineNum">     134</span>                 :              :             :         }</span>
 <span id="L135"><span class="lineNum">     135</span>                 :              :             : </span>
-<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaGBC" title="Branch 0 was taken 9371776 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9371780 :         if (receive_can_frame(sock, &amp;frame) == 0)</span></span>
+<span id="L136"><span class="lineNum">     136</span>         [<span class="tlaGBC" title="Branch 0 was taken 9369765 times"> + </span><span class="tlaGBC" title="Branch 1 was taken 4 times"> + </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaGBC" title="False sense of expression &quot;0&quot; was sensitized"> F </span>]:<span class="tlaGNC">     9369769 :         if (receive_can_frame(sock, &amp;frame) == 0)</span></span>
 <span id="L137"><span class="lineNum">     137</span>                 :              :             :         {</span>
 <span id="L138"><span class="lineNum">     138</span>         [<span class="tlaGBC" title="Branch 0 was taken 4 times"> + </span><span class="tlaUNC" title="Branch 1 was not taken"> - </span>]:      [<span class="tlaGBC" title="True sense of expression &quot;0&quot; was sensitized"> T </span><span class="tlaUNC" title="False sense of expression &quot;0&quot; was not sensitized"> f </span>]:<span class="tlaGNC">           4 :             if (check_is_valid_can_id_powertrain(frame.can_id))</span></span>
 <span id="L139"><span class="lineNum">     139</span>                 :              :             :             {</span>
