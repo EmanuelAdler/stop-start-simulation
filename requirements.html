@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Software Requirements &mdash; Stop-Start Simulation  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Traceability Matrix" href="traceability.html" />
+    <link rel="prev" title="Welcome to Stop-Start Simulation’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Stop-Start Simulation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Software Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="traceability.html">Traceability Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_functions.html">Code Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Project Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Stop-Start Simulation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Software Requirements</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/requirements.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="software-requirements">
+<h1>Software Requirements<a class="headerlink" href="#software-requirements" title="Link to this heading"></a></h1>
+<span id="swr1-1"></span><table class="docutils align-left" id="id1">
+<caption><span class="caption-text">SWR1.1</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR1.1</p></td>
+<td><p>The stop/start activation button will cause an event trigger when pressed.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr1-2"></span><table class="docutils align-left" id="id2">
+<caption><span class="caption-text">SWR1.2</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR1.2</p></td>
+<td><p>The software shall update an internal state variable (e.g., start_stop_active) upon detecting a
+valid button press to represent the current activation state.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr1-3"></span><table class="docutils align-left" id="id3">
+<caption><span class="caption-text">SWR1.3</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR1.3</p></td>
+<td><p>The software shall generate an immediate visual and/or audio alert when the driver manually toggles
+the system on or off, reflecting the new state of the start_stop_active variable.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr1-4"></span><table class="docutils align-left" id="id4">
+<caption><span class="caption-text">SWR1.4</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR1.4</p></td>
+<td><p>The software shall transmit a command via the vehicle network (CAN) to illuminate or extinguish an
+indicator light on the dashboard when the activation state changes.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr1-5"></span><table class="docutils align-left" id="id5">
+<caption><span class="caption-text">SWR1.5</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR1.5</p></td>
+<td><p>The software shall log each activation/deactivation event in non-volatile memory with a timestamp
+for diagnostic purposes (diagnostic buffer).</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-1"></span><table class="docutils align-left" id="id6">
+<caption><span class="caption-text">SWR2.1</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.1</p></td>
+<td><p>The software shall read and buffer vehicle speed, brake status, inclinometer and gear position
+signals from the corresponding sensors/ECUs.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-2"></span><table class="docutils align-left" id="id7">
+<caption><span class="caption-text">SWR2.2</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.2</p></td>
+<td><p>The software shall evaluate engine coolant temperature and/or oil temperature signals to verify they
+are within the acceptable range before allowing the engine turn-off sequence.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-3"></span><table class="docutils align-left" id="id8">
+<caption><span class="caption-text">SWR2.3</span><a class="headerlink" href="#id8" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.3</p></td>
+<td><p>The software shall compare the current dedicated battery state of charge (SoC) to a predefined
+threshold before initiating engine turn-off.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-4"></span><table class="docutils align-left" id="id9">
+<caption><span class="caption-text">SWR2.4</span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.4</p></td>
+<td><p>The software shall issue an “Engine Off” command to the ECU only when all monitored conditions are
+satisfied (vehicle stationary, adequate temperature, sufficient battery, etc.).</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-5"></span><table class="docutils align-left" id="id10">
+<caption><span class="caption-text">SWR2.5</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.5</p></td>
+<td><p>The software shall suspend the engine turn-off sequence if a critical condition is detected, such as
+driver override (e.g., accelerator pressed).</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-6"></span><table class="docutils align-left" id="id11">
+<caption><span class="caption-text">SWR2.6</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.6</p></td>
+<td><p>The software shall read the cabin temperature (T_in), external temperature (T_ext), and the HVAC
+setpoint (T_set) from the HVAC control unit. If T_in exceeds T_set by at least 5°C and T_ext is also
+above T_set, the software shall classify the A/C as being in high demand and shall inhibit engine
+turn-off.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-7"></span><table class="docutils align-left" id="id12">
+<caption><span class="caption-text">SWR2.7</span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.7</p></td>
+<td><p>The software shall read door status signals (e.g., driver door open) and shall not execute the
+engine turn-off command if a monitored door is open.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-8"></span><table class="docutils align-left" id="id13">
+<caption><span class="caption-text">SWR2.8</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.8</p></td>
+<td><p>The software shall store any reason for turn-off inhibition (e.g., low battery, high A/C use, door
+open) in a diagnostic buffer for real-time viewing and future troubleshooting.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr2-9"></span><table class="docutils align-left" id="id14">
+<caption><span class="caption-text">SWR2.9</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR2.9</p></td>
+<td><p>The software shall read the inclinometer value and confirm that the vehicle’s inclination is within
+±5° of horizontal (0°) before allowing the engine turn-off sequence. If the inclination exceeds this
+range, the engine shall remain running.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr3-1"></span><table class="docutils align-left" id="id15">
+<caption><span class="caption-text">SWR3.1</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR3.1</p></td>
+<td><p>The software shall detect brake pedal release or accelerator pedal press from the brake/accelerator
+sensor signals as a restart trigger.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr3-4"></span><table class="docutils align-left" id="id16">
+<caption><span class="caption-text">SWR3.4</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR3.4</p></td>
+<td><p>The software shall continuously verify battery voltage and SoC status prior to and during restart,
+aborting if critical parameters fall below safe thresholds.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr3-5"></span><table class="docutils align-left" id="id17">
+<caption><span class="caption-text">SWR3.5</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR3.5</p></td>
+<td><p>The software shall log any failure to restart the engine in the diagnostic buffer with an associated
+fault code and relevant sensor data (battery voltage, temperature, etc.).</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr4-2"></span><table class="docutils align-left" id="id18">
+<caption><span class="caption-text">SWR4.2</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR4.2</p></td>
+<td><p>The software shall maintain a real-time model or filtered variable representing available battery
+capacity and refresh it periodically.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr4-3"></span><table class="docutils align-left" id="id19">
+<caption><span class="caption-text">SWR4.3</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR4.3</p></td>
+<td><p>The software shall cross-check the battery SoC against the configured thresholds before allowing the
+engine turn-off sequence, setting an internal flag if the thresholds are not met.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr4-4"></span><table class="docutils align-left" id="id20">
+<caption><span class="caption-text">SWR4.4</span><a class="headerlink" href="#id20" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR4.4</p></td>
+<td><p>The software shall evaluate the battery output (voltage/current) and flag a fault (e.g., DTC code)
+if the reading is below normal operating range for a period exceeding a calibrated timeout.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr4-5"></span><table class="docutils align-left" id="id21">
+<caption><span class="caption-text">SWR4.5</span><a class="headerlink" href="#id21" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR4.5</p></td>
+<td><p>The software shall transmit battery voltage, and SoC status data to the dashboard via the CAN bus.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr5-1"></span><table class="docutils align-left" id="id22">
+<caption><span class="caption-text">SWR5.1</span><a class="headerlink" href="#id22" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR5.1</p></td>
+<td><p>The software shall send a message (text or icon) to the instrument cluster or infotainment display
+when the engine is turned off by the Stop/Start routine.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr5-2"></span><table class="docutils align-left" id="id23">
+<caption><span class="caption-text">SWR5.2</span><a class="headerlink" href="#id23" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR5.2</p></td>
+<td><p>The software shall provide a fault indication (lamp/message) on the dashboard if an internal error,
+low battery, or other malfunction is detected that disables Stop/Start functionality.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr5-3"></span><table class="docutils align-left" id="id24">
+<caption><span class="caption-text">SWR5.3</span><a class="headerlink" href="#id24" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR5.3</p></td>
+<td><p>The software shall update dashboard indicators (e.g., “Engine Off,” “Engine On,” “System Fault”)
+upon receiving any state change in the Stop/Start system.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr6-1"></span><table class="docutils align-left" id="id25">
+<caption><span class="caption-text">SWR6.1</span><a class="headerlink" href="#id25" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR6.1</p></td>
+<td><p>The software shall periodically evaluate system health signals (sensor status, battery condition,
+temperature) to detect adverse conditions.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr6-2"></span><table class="docutils align-left" id="id26">
+<caption><span class="caption-text">SWR6.2</span><a class="headerlink" href="#id26" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR6.2</p></td>
+<td><p>The software shall set a “System Disabled” state if any adverse condition remains true for more than
+a predefined duration (configurable safety timeout).</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr6-3"></span><table class="docutils align-left" id="id27">
+<caption><span class="caption-text">SWR6.3</span><a class="headerlink" href="#id27" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR6.3</p></td>
+<td><p>The software shall send a “System Disabled” warning via the dashboard interface.</p></td>
+</tr>
+</tbody>
+</table>
+<span id="swr6-4"></span><table class="docutils align-left" id="id28">
+<caption><span class="caption-text">SWR6.4</span><a class="headerlink" href="#id28" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>ID</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWR6.4</p></td>
+<td><p>The software shall record each disabling event with a unique fault code, timestamp, and relevant
+sensor data (battery voltage, door status, temperature) in non-volatile memory for diagnostics
+(diagnostic buffer).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Stop-Start Simulation’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="traceability.html" class="btn btn-neutral float-right" title="Traceability Matrix" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, EmanuelAdler, Igni-cin, joaovicnog, and p-r-m-n.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

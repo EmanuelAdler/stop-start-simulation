@@ -1,0 +1,1292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Cases &mdash; Stop-Start Simulation  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Project Reference" href="api/index.html" />
+    <link rel="prev" title="Code Functions" href="code_functions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Stop-Start Simulation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Software Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="traceability.html">Traceability Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_functions.html">Code Functions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Test Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#check-button-press-start-stop-command">Check Button press_start_stop Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-logging-under-concurrency">Test Logging Under Concurrency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-read-csv-case-success">Test Read CSV - Case Success</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-disable-engine-case-all-ok">Check Disable Engine - Case All OK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond1">Test Check Disable Engine - Fail Cond1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond2">Test Check Disable Engine - Fail Cond2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond3">Test Check Disable Engine - Fail Cond3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond4">Test Check Disable Engine - Fail Cond4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond5">Test Check Disable Engine - Fail Cond5</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-disable-engine-fail-cond6">Test Check Disable Engine - Fail Cond6</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-handle-engine-restart">Test Handle Engine Restart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-function-start-stop">Test Function Start Stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-parse-input-variants-powertrain">Test Parse Input Variants Powertrain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-process-received-frame">Test Process Received Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-parse-input-variants">Test Parse Input Variants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-send-encrypted-message">Test Send Encrypted Message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-health-signals-immediate">Test Check Health Signals - Immediate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-health-signals-persisted">Test Check Health Signals - Persisted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-health-signals-engine-temperature">Test Check Health Signals - Engine Temperature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-check-health-signals-door-status">Test Check Health Signals - Door Status</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Project Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Stop-Start Simulation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Test Cases</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="test-cases">
+<h1>Test Cases<a class="headerlink" href="#test-cases" title="Link to this heading"></a></h1>
+<section id="check-button-press-start-stop-command">
+<h2>Check Button press_start_stop Command<a class="headerlink" href="#check-button-press-start-stop-command" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-press-start-stop">
+<dt class="sig sig-object c" id="c.test_press_start_stop">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_press_start_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_press_start_stop" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-1"><span class="std std-ref">SWR1.1</span></a> and <a class="reference internal" href="requirements.html#swr1-5"><span class="std std-ref">SWR1.5</span></a>.</p>
+<p>This function tests if internal state updates when ‘press_start_stop’ is received.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_instrument_cluster.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_instrument_cluster.c (test_press_start_stop)</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_press_start_stop</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialize logging just so we don&#39;t get an error</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_ic_stub.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_log_ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">init_logging_system</span><span class="p">();</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">is_log_ok</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Call the function</span>
+<span class="w">    </span><span class="n">check_input_command</span><span class="p">(</span><span class="s">&quot;press_start_stop&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MOCK_SOCKET</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Check if the final message matches the expected one</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;press_start_stop&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Cleanup</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-logging-under-concurrency">
+<h2>Test Logging Under Concurrency<a class="headerlink" href="#test-logging-under-concurrency" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-logging-concurrency">
+<dt class="sig sig-object c" id="c.test_logging_concurrency">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_logging_concurrency</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_logging_concurrency" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-5"><span class="std std-ref">SWR1.5</span></a>.</p>
+<p>This function tests if logging works under under concurrent access.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_logging.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_logging.c (test_logging_concurrency)</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_logging_concurrency</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">log_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/tmp/test_log_threads.log&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="n">log_path</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">init_logging_system</span><span class="p">();</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Spawn multiple threads, each logs a unique message</span>
+<span class="w">    </span><span class="n">pthread_t</span><span class="w"> </span><span class="n">threads</span><span class="p">[</span><span class="n">NUM_THREADS</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">thread_ids</span><span class="p">[</span><span class="n">NUM_THREADS</span><span class="p">];</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NUM_THREADS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">thread_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">thread_logging_fn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">thread_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Join all threads</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NUM_THREADS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">pthread_join</span><span class="p">(</span><span class="n">threads</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Cleanup (forces all data to be flushed/closed)</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Verify each thread’s message is in the file</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NUM_THREADS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">expected</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">];</span>
+<span class="w">        </span><span class="n">snprintf</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">expected</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Thread %ld logging message&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">params_str</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">params_str</span><span class="p">.</span><span class="n">filepath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">log_path</span><span class="p">;</span>
+<span class="w">        </span><span class="n">params_str</span><span class="p">.</span><span class="n">substring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">params_str</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-read-csv-case-success">
+<h2>Test Read CSV - Case Success<a class="headerlink" href="#test-read-csv-case-success" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-read-csv-success">
+<dt class="sig sig-object c" id="c.test_read_csv_success">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_read_csv_success</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_read_csv_success" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-1"><span class="std std-ref">SWR2.1</span></a> and <a class="reference internal" href="requirements.html#swr4-2"><span class="std std-ref">SWR4.2</span></a>.</p>
+<p>This function tests if the csv file
+with the sensors readings is correctly loaded by the system.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_bcm.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_bcm.c (test_read_csv_success)</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_read_csv_success</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// This test expects you to have a small CSV file at &quot;../src/bcm/full_simu.csv&quot;</span>
+<span class="w">    </span><span class="c1">// with at least 2 lines of real data so we can parse something.</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">data_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">read_csv</span><span class="p">(</span><span class="n">CSV_FILE_PATH</span><span class="p">);</span><span class="w"> </span><span class="c1">// tries to open the real file</span>
+<span class="w">    </span><span class="c1">// If it succeeds, data_size should be &gt; 1</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">data_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="check-disable-engine-case-all-ok">
+<h2>Check Disable Engine - Case All OK<a class="headerlink" href="#check-disable-engine-case-all-ok" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-check-disable-engine-all-ok">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_all_ok">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_all_ok</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_all_ok" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-2"><span class="std std-ref">SWR2.2</span></a>, <a class="reference internal" href="requirements.html#swr2-3"><span class="std std-ref">SWR2.3</span></a>, <a class="reference internal" href="requirements.html#swr2-4"><span class="std std-ref">SWR2.4</span></a>, <a class="reference internal" href="requirements.html#swr2-6"><span class="std std-ref">SWR2.6</span></a>, <a class="reference internal" href="requirements.html#swr2-7"><span class="std std-ref">SWR2.7</span></a>, <a class="reference internal" href="requirements.html#swr2-9"><span class="std std-ref">SWR2.9</span></a>, <a class="reference internal" href="requirements.html#swr4-3"><span class="std std-ref">SWR4.3</span></a>, <a class="reference internal" href="requirements.html#swr4-4"><span class="std std-ref">SWR4.4</span></a>, and <a class="reference internal" href="requirements.html#swr5-1"><span class="std std-ref">SWR5.1</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+such as speed, acceleration, brake status, and temperature.</p>
+<p>It logs system messages and CAN errors according to defined failure modes.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_all_ok)</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_all_ok</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Test example of &quot;check_disable_engine()&quot;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// simulates manual trigger</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Call the function</span>
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the engine was turned off</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about turning the engine off</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;ENGINE OFF&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond1">
+<h2>Test Check Disable Engine - Fail Cond1<a class="headerlink" href="#test-check-disable-engine-fail-cond1" title="Link to this heading"></a></h2>
+<dl class="c function" id="id1">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond1">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond1</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond1" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the brake fail and there is no acceleration.</p>
+<p>It logs system messages and CAN errors triggered by brake failure conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond1)</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond1</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond1.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// so the error branch triggers</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">brake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BRAKE_FAIL</span><span class="p">;</span><span class="w"> </span><span class="c1">// failing condition speed==0 &amp;&amp; !accel &amp;&amp; brake =&gt; now brake=0 =&gt; else branch</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// cond1 = 0 =&gt; engine_off should remain false</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about brake not being pressed</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_brake_not_pressed&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond1.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (Brake not pressed or car is moving!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond2">
+<h2>Test Check Disable Engine - Fail Cond2<a class="headerlink" href="#test-check-disable-engine-fail-cond2" title="Link to this heading"></a></h2>
+<dl class="c function" id="id2">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond2">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond2" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-6"><span class="std std-ref">SWR2.6</span></a> and <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the engine temperature below the minimum set.</p>
+<p>It logs system messages and CAN errors triggered by low engine temperature failure conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond2)</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond2</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond2.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">internal_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TEMP_FAIL</span><span class="p">;</span><span class="w"> </span><span class="c1">// triggers the else for cond2</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about external or internal temperature out of range</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_temperature_out_range&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond2.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond3">
+<h2>Test Check Disable Engine - Fail Cond3<a class="headerlink" href="#test-check-disable-engine-fail-cond3" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-check-disable-engine-fail-cond3-inactive">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond3_inactive">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond3_inactive</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond3_inactive" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-2"><span class="std std-ref">SWR2.2</span></a> and <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the brake fail and there is no acceleration.</p>
+<p>It logs system messages and CAN errors triggered by brake failure conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond3_inactive)</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond3_inactive</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond3.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENG_TEMP_FAIL</span><span class="p">;</span><span class="w"> </span><span class="c1">// below MIN_ENGINE_TEMP(20)</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about engine temperature out of range</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_engine_temperature_out_range&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond3.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (Engine temperature out of range!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond4">
+<h2>Test Check Disable Engine - Fail Cond4<a class="headerlink" href="#test-check-disable-engine-fail-cond4" title="Link to this heading"></a></h2>
+<dl class="c function" id="id3">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond4">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond4</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond4" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-3"><span class="std std-ref">SWR2.3</span></a>, <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>, <a class="reference internal" href="requirements.html#swr4-3"><span class="std std-ref">SWR4.3</span></a> and <a class="reference internal" href="requirements.html#swr4-4"><span class="std std-ref">SWR4.4</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the battery voltage and SoC below the minimum set.</p>
+<p>It logs system messages and CAN errors triggered by low battery conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond4)</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond4</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond4.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">batt_soc</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">BATT_SOC_LOW</span><span class="p">;</span><span class="w"> </span><span class="c1">// below 70</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">batt_volt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BATT_VOLT_LOW</span><span class="p">;</span><span class="w"> </span><span class="c1">// not &gt; 12.2 =&gt; triggers else</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about battery operating out of range</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_battery_out_range&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond4.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (Battery is not in operating range!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond5">
+<h2>Test Check Disable Engine - Fail Cond5<a class="headerlink" href="#test-check-disable-engine-fail-cond5" title="Link to this heading"></a></h2>
+<dl class="c function" id="id4">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond5">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond5</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond5" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-7"><span class="std std-ref">SWR2.7</span></a> and <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the doors.</p>
+<p>It logs system messages and CAN errors triggered by open door conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond5)</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond5</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond5.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DOOR_FAIL</span><span class="p">;</span><span class="w"> </span><span class="c1">// triggers the else for cond5</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about any door opened</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_door_open&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond5.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (One or more doors are opened!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-disable-engine-fail-cond6">
+<h2>Test Check Disable Engine - Fail Cond6<a class="headerlink" href="#test-check-disable-engine-fail-cond6" title="Link to this heading"></a></h2>
+<dl class="c function" id="id5">
+<dt class="sig sig-object c" id="c.test_check_disable_engine_fail_cond6">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_disable_engine_fail_cond6</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_disable_engine_fail_cond6" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a> and <a class="reference internal" href="requirements.html#swr2-9"><span class="std std-ref">SWR2.9</span></a>.</p>
+<p>This function tests engine disable conditions based on sensor readings
+of the tilt angle above the threshold.</p>
+<p>It logs system messages and CAN errors triggered by tilt angle conditions.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond6)</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_disable_engine_fail_cond6</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond6.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TILT_FAIL</span><span class="p">;</span><span class="w"> </span><span class="c1">// triggers the else for cond6</span>
+
+<span class="w">    </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about tilt angle greater than maximum limit</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_tilt_angle&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">check_cond</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_disable_engine_fail_cond6.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">check_cond</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-handle-engine-restart">
+<h2>Test Handle Engine Restart<a class="headerlink" href="#test-handle-engine-restart" title="Link to this heading"></a></h2>
+<dl class="c function" id="id6">
+<dt class="sig sig-object c" id="c.test_handle_engine_restart">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_handle_engine_restart</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_handle_engine_restart" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr2-5"><span class="std std-ref">SWR2.5</span></a>, <a class="reference internal" href="requirements.html#swr3-1"><span class="std std-ref">SWR3.1</span></a>, <a class="reference internal" href="requirements.html#swr3-4"><span class="std std-ref">SWR3.4</span></a> and <a class="reference internal" href="requirements.html#swr3-5"><span class="std std-ref">SWR3.5</span></a>.</p>
+<p>This function test if engine will restart successfully if sensors
+read are inside the threshold.</p>
+<p>It logs system messages and handle engine restart properly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_handle_engine_restart)</span><a class="headerlink" href="#id23" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_handle_engine_restart</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Testing if engine will restart successfully if conditions are met</span>
+
+<span class="w">    </span><span class="c1">// Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_handle_engine_restart.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// Ensure manual=on, start_stop active</span>
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">.</span><span class="n">prev_brake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BRAKE_OK</span><span class="p">,</span><span class="w"> </span>
+<span class="w">        </span><span class="p">.</span><span class="n">brake</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">BRAKE_FAIL</span><span class="p">,</span><span class="w"> </span><span class="c1">// brake_released</span>
+<span class="w">        </span><span class="p">.</span><span class="n">batt_volt</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">BATT_VOLT_OK</span><span class="p">,</span><span class="w"> </span>
+<span class="w">        </span><span class="p">.</span><span class="n">batt_soc</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">BATT_SOC_OK</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">handle_engine_restart_logic</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about restarting</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;RESTART&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">restart_ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_handle_engine_restart.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Stop/Start: Engine turned On&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">restart_ok</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Now we&#39;ll test if when the battery SoC drops the engine won&#39;t restart</span>
+
+<span class="w">    </span><span class="c1">// Reset the stub counter</span>
+<span class="w">    </span><span class="n">stub_can_reset</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">    </span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">batt_soc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BATT_SOC_LOW</span><span class="p">;</span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">prev_brake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BRAKE_OK</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">data_test</span><span class="p">.</span><span class="n">brake</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">BRAKE_FAIL</span><span class="p">,</span><span class="w"> </span><span class="c1">// brake_released</span>
+
+<span class="w">    </span><span class="n">handle_engine_restart_logic</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Disable trigger for next tests</span>
+<span class="w">    </span><span class="n">restart_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Check if the stub was called</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_send_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check if last message is about error</span>
+<span class="w">    </span><span class="n">CU_ASSERT_STRING_EQUAL</span><span class="p">(</span><span class="n">stub_can_get_last_message</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;error_disabled&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Check received log message</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">sys_disable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_handle_engine_restart.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR3.5 (Low Battery)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">sys_disable</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Finalize and clean up</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-function-start-stop">
+<h2>Test Function Start Stop<a class="headerlink" href="#test-function-start-stop" title="Link to this heading"></a></h2>
+<dl class="c function" id="id7">
+<dt class="sig sig-object c" id="c.test_function_start_stop">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_function_start_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_function_start_stop" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a>.</p>
+<p>This function tests if when the driver activates stop/start
+the engine turn off successfully.</p>
+<p>It logs system messages and handle engine restart properly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_function_start_stop)</span><a class="headerlink" href="#id24" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_function_start_stop</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. Initialize relevant globals</span>
+<span class="w">    </span><span class="c1">//    Make sure the mutex is initialized somewhere in your setup code:</span>
+<span class="w">    </span><span class="c1">//    pthread_mutex_init(&amp;mutex_powertrain, NULL);</span>
+<span class="w">    </span><span class="n">test_mode_powertrain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">   </span><span class="c1">// so the function won&#39;t exit immediately</span>
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">    </span><span class="c1">// &quot;driver&quot; turned on stop/start</span>
+<span class="w">    </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">   </span><span class="c1">// begins inactive</span>
+
+<span class="w">    </span><span class="c1">// 2. Set up a VehicleData with conditions that pass check_disable_engine()</span>
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="n">data_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base_ok_data</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 3. Start the function_start_stop in a separate thread</span>
+<span class="w">    </span><span class="n">pthread_t</span><span class="w"> </span><span class="n">thd</span><span class="p">;</span>
+<span class="w">    </span><span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">thd</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">function_start_stop</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">data_test</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4. Let the thread run for a moment</span>
+<span class="w">    </span><span class="n">sleep_microseconds_pw</span><span class="p">(</span><span class="n">USLEEP_DELAY_THREAD</span><span class="p">);</span><span class="w"> </span><span class="c1">// 200ms - enough time for the loop to run a couple times</span>
+
+<span class="w">    </span><span class="c1">// 5. Check if engine_off got set to &#39;true&#39;</span>
+<span class="w">    </span><span class="c1">//    Because our conditions above should pass in check_disable_engine().</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">engine_off</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 6. Now signal the loop to exit</span>
+<span class="w">    </span><span class="n">test_mode_powertrain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 7. Join the thread to ensure clean exit</span>
+<span class="w">    </span><span class="n">pthread_join</span><span class="p">(</span><span class="n">thd</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// If we reached here, we can do final checks or just pass</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-parse-input-variants-powertrain">
+<h2>Test Parse Input Variants Powertrain<a class="headerlink" href="#test-parse-input-variants-powertrain" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-parse-input-variants-pw">
+<dt class="sig sig-object c" id="c.test_parse_input_variants_pw">
+<span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_parse_input_variants_pw</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_parse_input_variants_pw" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a>.</p>
+<p>This function tests the parsing of various input strings to ensure
+the system correctly interprets and updates internal states
+based on received sensor data.</p>
+<p>It logs system messages and handles input parsing properly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_powertrain.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_powertrain.c (test_parse_input_variants_pw)</span><a class="headerlink" href="#id25" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_parse_input_variants_pw</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Make sure we start in a known state</span>
+<span class="w">    </span><span class="n">start_stop_manual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">rec_data</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 1) Toggling Start/Stop</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;press_start_stop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">start_stop_manual</span><span class="p">);</span><span class="w">  </span><span class="c1">// toggled from false-&gt;true</span>
+
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;press_start_stop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">start_stop_manual</span><span class="p">);</span><span class="w"> </span><span class="c1">// toggled back to false</span>
+
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;error_disabled&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">start_stop_manual</span><span class="p">);</span><span class="w"> </span><span class="c1">// toggled to false</span>
+
+<span class="w">    </span><span class="c1">// 2) Speed</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;speed: 45.7&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">kSpeedReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3) internal temp</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;in_temp: 23&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">internal_temp</span><span class="p">,</span><span class="w"> </span><span class="n">INTERNAL_TEMP_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4) external temp</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;ex_temp: 10&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">external_temp</span><span class="p">,</span><span class="w"> </span><span class="n">EXTERNAL_TEMP_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 5) door</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;door: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">door_open</span><span class="p">,</span><span class="w"> </span><span class="n">DOOR_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 6) tilt</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;tilt: 4.2&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">tilt_angle</span><span class="p">,</span><span class="w"> </span><span class="n">kTiltReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 7) accel</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;accel: 3&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">accel</span><span class="p">,</span><span class="w"> </span><span class="n">ACCEL_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 8) brake</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;brake: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">brake</span><span class="p">,</span><span class="w"> </span><span class="n">BRAKE_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 9) temp_set</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;temp_set: 22&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">temp_set</span><span class="p">,</span><span class="w"> </span><span class="n">TEMP_SET_RECEIVED</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 10) batt_soc</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;batt_soc: 81.5&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">batt_soc</span><span class="p">,</span><span class="w"> </span><span class="n">kBattSocReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 11) batt_volt</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;batt_volt: 13.2&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">batt_volt</span><span class="p">,</span><span class="w"> </span><span class="n">kBattVoltReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 12) engi_temp</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;engi_temp: 95.4&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">engi_temp</span><span class="p">,</span><span class="w"> </span><span class="n">kEngTempReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 13) gear</span>
+<span class="w">    </span><span class="n">parse_input_received_powertrain</span><span class="p">(</span><span class="s">&quot;gear: 2&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">rec_data</span><span class="p">.</span><span class="n">gear</span><span class="p">,</span><span class="w"> </span><span class="n">GEAR_RECEIVED</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-process-received-frame">
+<h2>Test Process Received Frame<a class="headerlink" href="#test-process-received-frame" title="Link to this heading"></a></h2>
+<dl class="c function" id="id8">
+<dt class="sig sig-object c" id="c.test_process_received_frame">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_process_received_frame</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_process_received_frame" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a> and <a class="reference internal" href="requirements.html#swr1-4"><span class="std std-ref">SWR1.4</span></a>.</p>
+<p>This function tests the behavior of process received frame when handling
+valid and invalid frames, ensuring proper logging and system state changes.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_dashboard.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_dashboard.c (test_process_received_frame)</span><a class="headerlink" href="#id26" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_process_received_frame</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1) Setup logging so &quot;press_start_stop&quot; toggles system &amp; logs</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_dashboard_frame.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// 2) We can ensure the actuators are initially off</span>
+<span class="w">    </span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 3) Call the function once. It will loop until stub returns -1.</span>
+<span class="w">    </span><span class="n">process_received_frame</span><span class="p">(</span><span class="n">MOCK_SOCKET</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4) Cleanup</span>
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 5) Check the log for &quot;[INFO] System Activated&quot;</span>
+<span class="w">    </span><span class="c1">//    if parse_input_received toggled the system on.</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">params_str</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">params_str</span><span class="p">.</span><span class="n">filepath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/tmp/test_dashboard_frame.log&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">params_str</span><span class="p">.</span><span class="n">substring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[INFO] System Activated&quot;</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">params_str</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-parse-input-variants">
+<h2>Test Parse Input Variants<a class="headerlink" href="#test-parse-input-variants" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-parse-input-variants-dashboard">
+<dt class="sig sig-object c" id="c.test_parse_input_variants">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_parse_input_variants</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_parse_input_variants" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-3"><span class="std std-ref">SWR1.3</span></a>, <a class="reference internal" href="requirements.html#swr4-5"><span class="std std-ref">SWR4.5</span></a>, <a class="reference internal" href="requirements.html#swr5-1"><span class="std std-ref">SWR5.1</span></a>, <a class="reference internal" href="requirements.html#swr5-2"><span class="std std-ref">SWR5.2</span></a>, <a class="reference internal" href="requirements.html#swr5-3"><span class="std std-ref">SWR5.3</span></a> and <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a>.</p>
+<p>This function tests the parsing of various input strings to ensure
+the dashboard correctly interprets and updates internal states
+based on received commands and sensor data.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_dashboard.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id27">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_dashboard.c (test_parse_input_variants)</span><a class="headerlink" href="#id27" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_parse_input_variants</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1) Set up the log file and initialize the logging system</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// 2) Test case 1: &quot;press_start_stop&quot; =&gt; activates the system</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;press_start_stop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Assert that start_stop_active became true</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Assert log message &quot;[INFO] System Activated&quot; exists</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">param_activated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] System Activated&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">param_activated</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 3) Test case 2: &quot;press_start_stop&quot; =&gt; deactivates the system</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;press_start_stop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">param_deactivated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] System Deactivated&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">param_deactivated</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 4) Test case 3: &quot;ENGINE OFF&quot; =&gt; logs &quot;[INFO] Engine Deactivated by Stop/Start&quot;</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;ENGINE OFF&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">engine_off_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] Engine Deactivated by Stop/Start&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">engine_off_str</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 5) Test case 4: &quot;RESTART&quot; =&gt; logs &quot;[INFO] Engine Activated by Stop/Start&quot;</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;RESTART&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">engine_restart_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] Engine Activated by Stop/Start&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">engine_restart_str</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// 6) Test case 5: Sensor readings (batt_soc, batt_volt, door)</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;speed: 48.0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">kSpeedReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;in_temp: 22&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">internal_temp</span><span class="p">,</span><span class="w"> </span><span class="n">kintempReceived</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;ex_temp: 27&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">external_temp</span><span class="p">,</span><span class="w"> </span><span class="n">kextempReceived</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;batt_soc: 55.0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">batt_soc</span><span class="p">,</span><span class="w"> </span><span class="n">kBattSocReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;batt_volt: 12.7&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">batt_volt</span><span class="p">,</span><span class="w"> </span><span class="n">kBattVoltReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;door: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">door_status</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;engi_temp: 85.0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">engi_temp</span><span class="p">,</span><span class="w"> </span><span class="n">kengiReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// gear and (speed = 0) or (speed &gt; 0)</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;gear: 0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">gear</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;speed: 0.0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;gear: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">gear</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;accel: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">accel</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;brake: 1&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">brake</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;tilt: 7.0&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_DOUBLE_EQUAL</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">tilt_angle</span><span class="p">,</span><span class="w"> </span><span class="n">ktiltReceived</span><span class="p">,</span><span class="w"> </span><span class="n">kDelta</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 7) Test case 6: Error messages</span>
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;error_battery_drop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_drop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] Engine Restart Failed Due to Battery Tension Drop&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_drop</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;error_battery&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_low</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] Engine Restart Failed Due to Low Battery SoC or Tension Under the Threshold&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_low</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;error_disabled&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_disab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;[INFO] System Disabled Due to an Error&quot;</span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_disab</span><span class="p">));</span>
+<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">error_system</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-send-encrypted-message">
+<h2>Test Send Encrypted Message<a class="headerlink" href="#test-send-encrypted-message" title="Link to this heading"></a></h2>
+<dl class="c function" id="id9">
+<dt class="sig sig-object c" id="c.test_send_encrypted_message">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_send_encrypted_message</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_send_encrypted_message" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr1-4"><span class="std std-ref">SWR1.4</span></a>.</p>
+<p>This function tests if a frame was received
+by the dashboard and triggers the activation
+of the start_stop_active variable.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_can_socket.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_can_socket.c (test_send_encrypted_message)</span><a class="headerlink" href="#id28" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">test_send_encrypted_message</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">is_vcan_available</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">CU_FAIL</span><span class="p">(</span><span class="s">&quot;vcan0 not available. Skipping real socket test.&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sock</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_can_socket</span><span class="p">(</span><span class="n">TEST_INTERFACE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">sock</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sock</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* &quot;HelloWorld&quot; is less than 16 chars. The code pads it (strncpy). */</span>
+<span class="w">    </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;HelloWorld&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_FAKE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">close_can_socket</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-health-signals-immediate">
+<h2>Test Check Health Signals - Immediate<a class="headerlink" href="#test-check-health-signals-immediate" title="Link to this heading"></a></h2>
+<dl class="c function" id="id10">
+<dt class="sig sig-object c" id="c.test_check_health_signals_immediate">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_health_signals_immediate</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_health_signals_immediate" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr6-1"><span class="std std-ref">SWR6.1</span></a>.</p>
+<p>This function tests a fault simulation and check health signals to identify the fault immedeatly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_bcm.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_bcm.c (test_check_health_signals_immediate)</span><a class="headerlink" href="#id29" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_health_signals_immediate</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Reset global states</span>
+<span class="w">    </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fault_start_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_curr_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RUNNING</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// We&#39;ll assume time starts at zero</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1) Create a “doorVal” that is invalid =&gt; triggers `invalidDoor`</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DOOR_INVALID</span><span class="p">;</span><span class="w">  </span><span class="c1">// invalid</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENGI_TEMP_2</span><span class="p">;</span><span class="w"> </span><span class="c1">// normal</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TILT_1</span><span class="p">;</span><span class="w"> </span><span class="c1">// normal</span>
+
+<span class="w">    </span><span class="c1">// 2) Call check_health_signals()</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 3) Since the fault is new, we expect:</span>
+<span class="w">    </span><span class="c1">//    fault_active == true, fault_start_time = 0, but system is NOT yet stopped</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">fault_start_time</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">);</span><span class="w"> </span><span class="c1">// not stopped yet</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-health-signals-persisted">
+<h2>Test Check Health Signals - Persisted<a class="headerlink" href="#test-check-health-signals-persisted" title="Link to this heading"></a></h2>
+<dl class="c function" id="id11">
+<dt class="sig sig-object c" id="c.test_check_health_signals_persisted">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_health_signals_persisted</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_health_signals_persisted" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr6-1"><span class="std std-ref">SWR6.1</span></a>, <a class="reference internal" href="requirements.html#swr6-2"><span class="std std-ref">SWR6.2</span></a>, <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a>, and <a class="reference internal" href="requirements.html#swr6-4"><span class="std std-ref">SWR6.4</span></a>.</p>
+<p>This function tests a fault simulation in the tilt angle
+and check health signals, and after elapsing the safety time
+send the system disabled warning.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_bcm.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id30">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_bcm.c (test_check_health_signals_persisted)</span><a class="headerlink" href="#id30" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_health_signals_persisted</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_health_signals_persisted.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// Reset global states</span>
+<span class="w">    </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fault_start_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_curr_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RUNNING</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1) Create a “tilt_angle” that is above 60 =&gt; triggers `excessiveTilt`</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DOOR_VALID</span><span class="p">;</span><span class="w">   </span><span class="c1">// normal</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENGI_TEMP_1</span><span class="p">;</span><span class="w">  </span><span class="c1">// normal</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TILT_3</span><span class="p">;</span><span class="w"> </span><span class="c1">// triggers fault</span>
+
+<span class="w">    </span><span class="c1">// 2) First call sets fault_active = true, fault_start_time=0</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">fault_start_time</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3) Simulate time passing &lt; safety_timeout_ms</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_1S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 1 second</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Still under 2 seconds =&gt; not stopped</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4) Simulate time passing &gt;= safety_timeout_ms (2 seconds)</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_25S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 2.5 seconds</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Now we expect the code to set simu_order = ORDER_STOP</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_STOP</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_disab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_persisted.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (System Disabling Error)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_disab</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_tilt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_persisted.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (Excessive tilt value)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_tilt</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-health-signals-engine-temperature">
+<h2>Test Check Health Signals - Engine Temperature<a class="headerlink" href="#test-check-health-signals-engine-temperature" title="Link to this heading"></a></h2>
+<dl class="c function" id="test-check-health-signals-engine-temp">
+<dt class="sig sig-object c" id="c.test_check_health_signals_engine_temp">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_health_signals_engine_temp</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_health_signals_engine_temp" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a> and <a class="reference internal" href="requirements.html#swr6-4"><span class="std std-ref">SWR6.4</span></a>.</p>
+<p>This function tests a fault simulation in the engine temperature
+and check health signals, and after elapsing
+the safety time send the system disabled warning.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_bcm.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_bcm.c (test_check_health_signals_engine_temp)</span><a class="headerlink" href="#id31" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_health_signals_engine_temp</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_health_signals_engine_temp.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// Reset global states</span>
+<span class="w">    </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fault_start_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_curr_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RUNNING</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1) Create a engi_temp that is above 120 =&gt; triggers `engineOvertemp`</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DOOR_VALID</span><span class="p">;</span><span class="w">   </span><span class="c1">// normal</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENGI_TEMP_3</span><span class="p">;</span><span class="w">  </span><span class="c1">// triggers fault</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TILT_1</span><span class="p">;</span><span class="w"> </span><span class="c1">// normal</span>
+
+<span class="w">    </span><span class="c1">// 2) First call sets fault_active = true, fault_start_time=0</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">fault_start_time</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3) Simulate time passing &lt; safety_timeout_ms</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_1S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 1 second</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Still under 2 seconds =&gt; not stopped</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4) Simulate time passing &gt;= safety_timeout_ms (2 seconds)</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_25S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 2.5 seconds</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Now we expect the code to set simu_order = ORDER_STOP</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_STOP</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_disab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_engine_temp.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (System Disabling Error)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_disab</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_overtemp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_engine_temp.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (Engine overtemperature)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_overtemp</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-check-health-signals-door-status">
+<h2>Test Check Health Signals - Door Status<a class="headerlink" href="#test-check-health-signals-door-status" title="Link to this heading"></a></h2>
+<dl class="c function" id="id12">
+<dt class="sig sig-object c" id="c.test_check_health_signals_door_status">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">test_check_health_signals_door_status</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.test_check_health_signals_door_status" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements tests for <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a> and <a class="reference internal" href="requirements.html#swr6-4"><span class="std std-ref">SWR6.4</span></a>.</p>
+<p>This function tests a fault simulation in the door status
+and check health signals, and after elapsing the safety time
+send the system disabled warning.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">unit/test_bcm.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">tests/unit/test_bcm.c (test_check_health_signals_door_status)</span><a class="headerlink" href="#id32" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_check_health_signals_door_status</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_check_health_signals_door_status.log&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE_FATAL</span><span class="p">(</span><span class="n">init_logging_system</span><span class="p">());</span>
+
+<span class="w">    </span><span class="c1">// Reset global states</span>
+<span class="w">    </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fault_start_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_curr_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RUNNING</span><span class="p">;</span>
+<span class="w">    </span><span class="n">simu_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 1) Create an invalid door_open status =&gt; triggers `invalidDoor`</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DOOR_INVALID</span><span class="p">;</span><span class="w">   </span><span class="c1">// triggers fault</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ENGI_TEMP_1</span><span class="p">;</span><span class="w">  </span><span class="c1">// normal</span>
+<span class="w">    </span><span class="n">vehicle_data</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TILT_1</span><span class="p">;</span><span class="w"> </span><span class="c1">// normal</span>
+
+<span class="w">    </span><span class="c1">// 2) First call sets fault_active = true, fault_start_time=0</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">fault_start_time</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 3) Simulate time passing &lt; safety_timeout_ms</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_1S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 1 second</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Still under 2 seconds =&gt; not stopped</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">fault_active</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_RUN</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 4) Simulate time passing &gt;= safety_timeout_ms (2 seconds)</span>
+<span class="w">    </span><span class="n">mock_time_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_TIME_25S</span><span class="p">;</span><span class="w"> </span><span class="c1">// 2.5 seconds</span>
+<span class="w">    </span><span class="n">check_health_signals</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Now we expect the code to set simu_order = ORDER_STOP</span>
+<span class="w">    </span><span class="n">CU_ASSERT_EQUAL</span><span class="p">(</span><span class="n">simu_order</span><span class="p">,</span><span class="w"> </span><span class="n">ORDER_STOP</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_disab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_door_status.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (System Disabling Error)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_disab</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_door</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s">&quot;/tmp/test_check_health_signals_door_status.log&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s">&quot;Fault: SWR6.4 (Invalid door status)&quot;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_door</span><span class="p">));</span>
+
+<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="code_functions.html" class="btn btn-neutral float-left" title="Code Functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/index.html" class="btn btn-neutral float-right" title="Project Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, EmanuelAdler, Igni-cin, joaovicnog, and p-r-m-n.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

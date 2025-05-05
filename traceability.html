@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traceability Matrix &mdash; Stop-Start Simulation  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Functions" href="code_functions.html" />
+    <link rel="prev" title="Software Requirements" href="requirements.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Stop-Start Simulation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Software Requirements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Traceability Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code_functions.html">Code Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Project Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Stop-Start Simulation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Traceability Matrix</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/traceability.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="traceability-matrix">
+<h1>Traceability Matrix<a class="headerlink" href="#traceability-matrix" title="Link to this heading"></a></h1>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 40.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Requirement</p></th>
+<th class="head"><p>Code Functions</p></th>
+<th class="head"><p>Test Cases</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr1-1"><span class="std std-ref">SWR1.1</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.handle_engine_restart_logic" title="handle_engine_restart_logic"><code class="xref c c-func docutils literal notranslate"><span class="pre">handle_engine_restart_logic()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_press_start_stop" title="test_press_start_stop"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_press_start_stop()</span></code></a> (test_instrument_cluster.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received_powertrain" title="parse_input_received_powertrain"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received_powertrain()</span></code></a> (powertrain/can_comms.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.function_start_stop" title="function_start_stop"><code class="xref c c-func docutils literal notranslate"><span class="pre">function_start_stop()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_process_received_frame" title="test_process_received_frame"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_process_received_frame()</span></code></a> (test_dashboard.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_function_start_stop" title="test_function_start_stop"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_function_start_stop()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants_pw" title="test_parse_input_variants_pw"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants_pw()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr1-3"><span class="std std-ref">SWR1.3</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr1-4"><span class="std std-ref">SWR1.4</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.send_encrypted_message" title="send_encrypted_message"><code class="xref c c-func docutils literal notranslate"><span class="pre">send_encrypted_message()</span></code></a> (common_includes/can_socket.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_process_received_frame" title="test_process_received_frame"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_process_received_frame()</span></code></a> (test_dashboard.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_send_encrypted_message" title="test_send_encrypted_message"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_send_encrypted_message()</span></code></a> (test_can_socket.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr1-5"><span class="std std-ref">SWR1.5</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_input_command" title="check_input_command"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_input_command()</span></code></a> (instrument_cluster/instrument_cluster_func.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.log_toggle_event" title="log_toggle_event"><code class="xref c c-func docutils literal notranslate"><span class="pre">log_toggle_event()</span></code></a> (common_includes/logging.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_logging_concurrency" title="test_logging_concurrency"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_logging_concurrency()</span></code></a> (test_logging.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_press_start_stop" title="test_press_start_stop"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_press_start_stop()</span></code></a> (test_instrument_cluster.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr2-1"><span class="std std-ref">SWR2.1</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.read_csv" title="read_csv"><code class="xref c c-func docutils literal notranslate"><span class="pre">read_csv()</span></code></a> (bcm/bcm_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_read_csv_success" title="test_read_csv_success"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_read_csv_success()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr2-2"><span class="std std-ref">SWR2.2</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond3_inactive" title="test_check_disable_engine_fail_cond3_inactive"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond3_inactive()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr2-3"><span class="std std-ref">SWR2.3</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond4" title="test_check_disable_engine_fail_cond4"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond4()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr2-4"><span class="std std-ref">SWR2.4</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr2-5"><span class="std std-ref">SWR2.5</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.handle_engine_restart_logic" title="handle_engine_restart_logic"><code class="xref c c-func docutils literal notranslate"><span class="pre">handle_engine_restart_logic()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_handle_engine_restart" title="test_handle_engine_restart"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_handle_engine_restart()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr2-6"><span class="std std-ref">SWR2.6</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond2" title="test_check_disable_engine_fail_cond2"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond2()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr2-7"><span class="std std-ref">SWR2.7</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond5" title="test_check_disable_engine_fail_cond5"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond5()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond1" title="test_check_disable_engine_fail_cond1"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond1()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond2" title="test_check_disable_engine_fail_cond2"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond2()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond3_inactive" title="test_check_disable_engine_fail_cond3_inactive"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond3_inactive()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond4" title="test_check_disable_engine_fail_cond4"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond4()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond5" title="test_check_disable_engine_fail_cond5"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond5()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond6" title="test_check_disable_engine_fail_cond6"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond6()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr2-9"><span class="std std-ref">SWR2.9</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond6" title="test_check_disable_engine_fail_cond6"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond6()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr3-1"><span class="std std-ref">SWR3.1</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.handle_engine_restart_logic" title="handle_engine_restart_logic"><code class="xref c c-func docutils literal notranslate"><span class="pre">handle_engine_restart_logic()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_handle_engine_restart" title="test_handle_engine_restart"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_handle_engine_restart()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr3-4"><span class="std std-ref">SWR3.4</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.handle_engine_restart_logic" title="handle_engine_restart_logic"><code class="xref c c-func docutils literal notranslate"><span class="pre">handle_engine_restart_logic()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_handle_engine_restart" title="test_handle_engine_restart"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_handle_engine_restart()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr3-5"><span class="std std-ref">SWR3.5</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.handle_engine_restart_logic" title="handle_engine_restart_logic"><code class="xref c c-func docutils literal notranslate"><span class="pre">handle_engine_restart_logic()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_handle_engine_restart" title="test_handle_engine_restart"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_handle_engine_restart()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr4-2"><span class="std std-ref">SWR4.2</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.read_csv" title="read_csv"><code class="xref c c-func docutils literal notranslate"><span class="pre">read_csv()</span></code></a> (bcm/bcm_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_read_csv_success" title="test_read_csv_success"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_read_csv_success()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr4-3"><span class="std std-ref">SWR4.3</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond4" title="test_check_disable_engine_fail_cond4"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond4()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr4-4"><span class="std std-ref">SWR4.4</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_fail_cond4" title="test_check_disable_engine_fail_cond4"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_fail_cond4()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr4-5"><span class="std std-ref">SWR4.5</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr5-1"><span class="std std-ref">SWR5.1</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_disable_engine" title="check_disable_engine"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_disable_engine()</span></code></a> (powertrain/powertrain_func.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_disable_engine_all_ok" title="test_check_disable_engine_all_ok"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_disable_engine_all_ok()</span></code></a> (test_powertrain.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr5-2"><span class="std std-ref">SWR5.2</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr5-3"><span class="std std-ref">SWR5.3</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr6-1"><span class="std std-ref">SWR6.1</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_health_signals" title="check_health_signals"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_health_signals()</span></code></a> (bcm/bcm_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_immediate" title="test_check_health_signals_immediate"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_immediate()</span></code></a> (test_bcm.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_persisted" title="test_check_health_signals_persisted"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_persisted()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr6-2"><span class="std std-ref">SWR6.2</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_health_signals" title="check_health_signals"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_health_signals()</span></code></a> (bcm/bcm_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_persisted" title="test_check_health_signals_persisted"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_persisted()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_health_signals" title="check_health_signals"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_health_signals()</span></code></a> (bcm/bcm_func.c)</p></li>
+<li><p><a class="reference internal" href="code_functions.html#c.parse_input_received" title="parse_input_received"><code class="xref c c-func docutils literal notranslate"><span class="pre">parse_input_received()</span></code></a> (dashboard/dashboard_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_parse_input_variants" title="test_parse_input_variants"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_parse_input_variants()</span></code></a> (test_dashboard.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_persisted" title="test_check_health_signals_persisted"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_persisted()</span></code></a> (test_bcm.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_engine_temp" title="test_check_health_signals_engine_temp"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_engine_temp()</span></code></a> (test_bcm.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_door_status" title="test_check_health_signals_door_status"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_door_status()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="requirements.html#swr6-4"><span class="std std-ref">SWR6.4</span></a></p></td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="code_functions.html#c.check_health_signals" title="check_health_signals"><code class="xref c c-func docutils literal notranslate"><span class="pre">check_health_signals()</span></code></a> (bcm/bcm_func.c)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_persisted" title="test_check_health_signals_persisted"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_persisted()</span></code></a> (test_bcm.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_engine_temp" title="test_check_health_signals_engine_temp"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_engine_temp()</span></code></a> (test_bcm.c)</p></li>
+<li><p><a class="reference internal" href="tests.html#c.test_check_health_signals_door_status" title="test_check_health_signals_door_status"><code class="xref c c-func docutils literal notranslate"><span class="pre">test_check_health_signals_door_status()</span></code></a> (test_bcm.c)</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="requirements.html" class="btn btn-neutral float-left" title="Software Requirements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="code_functions.html" class="btn btn-neutral float-right" title="Code Functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, EmanuelAdler, Igni-cin, joaovicnog, and p-r-m-n.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

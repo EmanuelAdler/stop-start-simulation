@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Functions &mdash; Stop-Start Simulation  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Test Cases" href="tests.html" />
+    <link rel="prev" title="Traceability Matrix" href="traceability.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Stop-Start Simulation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Software Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="traceability.html">Traceability Matrix</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#check-disable-engine">Check Disable Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handle-engine-restart-logic">Handle Engine Restart Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#function-start-stop">Function Start Stop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-input-received">Parse Input Received</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parse-input-received-powertrain">Parse Input Received Powertrain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#send-encrypted-message">Send Encrypted Message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#log-toggle-event">Log Toggle Event</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-user-input-command">Check User Input Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#read-csv">Read CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-health-signals">Check Health Signals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">Test Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Project Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Stop-Start Simulation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Code Functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code_functions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-functions">
+<h1>Code Functions<a class="headerlink" href="#code-functions" title="Link to this heading"></a></h1>
+<section id="check-disable-engine">
+<h2>Check Disable Engine<a class="headerlink" href="#check-disable-engine" title="Link to this heading"></a></h2>
+<dl class="c function" id="id1">
+<dt class="sig sig-object c" id="c.check_disable_engine">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">check_disable_engine</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">VehicleData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ptr_rec_data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.check_disable_engine" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr2-2"><span class="std std-ref">SWR2.2</span></a>, <a class="reference internal" href="requirements.html#swr2-3"><span class="std std-ref">SWR2.3</span></a>, <a class="reference internal" href="requirements.html#swr2-4"><span class="std std-ref">SWR2.4</span></a>,
+<a class="reference internal" href="requirements.html#swr2-6"><span class="std std-ref">SWR2.6</span></a>, <a class="reference internal" href="requirements.html#swr2-7"><span class="std std-ref">SWR2.7</span></a>, <a class="reference internal" href="requirements.html#swr2-8"><span class="std std-ref">SWR2.8</span></a>, <a class="reference internal" href="requirements.html#swr2-9"><span class="std std-ref">SWR2.9</span></a>,
+<a class="reference internal" href="requirements.html#swr4-3"><span class="std std-ref">SWR4.3</span></a>, <a class="reference internal" href="requirements.html#swr4-4"><span class="std std-ref">SWR4.4</span></a>, and <a class="reference internal" href="requirements.html#swr5-1"><span class="std std-ref">SWR5.1</span></a>.</p>
+<p>This function evaluates engine disable conditions based on sensor readings
+such as speed, acceleration, brake status, and temperature.</p>
+<p>It logs system messages and CAN errors according to defined failure modes.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">powertrain/powertrain_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">check_disable_engine function implementation</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">check_disable_engine</span><span class="p">(</span><span class="n">VehicleData</span><span class="w"> </span><span class="o">*</span><span class="n">ptr_rec_data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">engine_off_local</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond2</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond3</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond4</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond5</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cond6</span><span class="p">;</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">engine_off_local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">engine_off</span><span class="p">;</span>
+
+<span class="w">    </span><span class="cm">/* Check each condition */</span>
+<span class="w">    </span><span class="n">cond1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_movement_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">speed</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">accel</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                 </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">brake</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">gear</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_brake_not_pressed&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (Brake not pressed or car is moving!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">cond2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_temperature_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">internal_temp</span><span class="p">,</span>
+<span class="w">                                   </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">external_temp</span><span class="p">,</span>
+<span class="w">                                   </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">temp_set</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_temperature_out_range&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (Difference between internal and external temps out of range!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">cond3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_engine_temp_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">engi_temp</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_engine_temperature_out_range&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (Engine temperature out of range!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">cond4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_battery_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">batt_soc</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">batt_volt</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_battery_out_range&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (Battery is not in operating range!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">cond5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_door_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">door_open</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_door_open&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (One or more doors are opened!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">cond6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evaluate_condition_with_logging</span><span class="p">(</span>
+<span class="w">        </span><span class="n">check_tilt_conditions</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="o">-&gt;</span><span class="n">tilt_angle</span><span class="p">),</span>
+<span class="w">        </span><span class="n">engine_off_local</span><span class="p">,</span>
+<span class="w">        </span><span class="p">(</span><span class="n">EngineConditionMessages</span><span class="p">){</span>
+<span class="w">            </span><span class="p">.</span><span class="n">can_error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;error_tilt_angle&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">system_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Stop/Start: SWR2.8 (Tilt angle greater than 5 degrees!)&quot;</span>
+<span class="w">        </span><span class="p">});</span>
+
+<span class="w">    </span><span class="cm">/* Final decision */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">cond1</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cond2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cond3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>
+<span class="w">        </span><span class="p">(</span><span class="n">cond4</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cond5</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">cond6</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">engine_off_local</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock_sender</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ENGINE OFF&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_ECU_RESTART</span><span class="p">);</span>
+<span class="w">            </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Stop/Start: Engine turned Off&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Engine turned off</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="handle-engine-restart-logic">
+<h2>Handle Engine Restart Logic<a class="headerlink" href="#handle-engine-restart-logic" title="Link to this heading"></a></h2>
+<dl class="c function" id="id2">
+<dt class="sig sig-object c" id="c.handle_engine_restart_logic">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">handle_engine_restart_logic</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">VehicleData</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.handle_engine_restart_logic" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-1"><span class="std std-ref">SWR1.1</span></a>, <a class="reference internal" href="requirements.html#swr2-5"><span class="std std-ref">SWR2.5</span></a>, <a class="reference internal" href="requirements.html#swr3-1"><span class="std std-ref">SWR3.1</span></a>, <a class="reference internal" href="requirements.html#swr3-4"><span class="std std-ref">SWR3.4</span></a>, and <a class="reference internal" href="requirements.html#swr3-5"><span class="std std-ref">SWR3.5</span></a>.</p>
+<p>This function handles the logic for restarting the engine based on
+current vehicle conditions.</p>
+<p>It ensures that the engine is restarted only when it is safe to do so.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">powertrain/powertrain_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">handle_engine_restart_logic function implementation</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_engine_restart_logic</span><span class="p">(</span>
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* Restart trigger detection */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">engine_off</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">brake_released</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">prev_brake</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">brake</span><span class="p">);</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">accelerator_pressed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">prev_accel</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">accel</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Enable the persistent need for restart</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">brake_released</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">accelerator_pressed</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">restart_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Able to restart</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">restart_trigger</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="cm">/* Battery check */</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">batt_volt</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MIN_BATTERY_VOLTAGE</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">                </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">batt_soc</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MIN_BATTERY_SOC</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock_sender</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RESTART&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_ECU_RESTART</span><span class="p">);</span>
+<span class="w">                </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Stop/Start: Engine turned On&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">engine_off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">                </span><span class="c1">// Disable the need for restart</span>
+<span class="w">                </span><span class="n">restart_trigger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">                </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Engine restart done</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Battery error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">                </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock_sender</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error_battery&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_ERROR_DASH</span><span class="p">);</span>
+<span class="w">                </span><span class="n">sleep_microseconds_pw</span><span class="p">(</span><span class="n">COMMS_TIME_US</span><span class="p">);</span>
+<span class="w">                </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock_sender</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error_disabled&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_COMMAND</span><span class="p">);</span>
+<span class="w">                </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Fault: SWR3.5 (Low Battery)&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* Update previous states */</span>
+<span class="w">    </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">prev_brake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">brake</span><span class="p">;</span>
+<span class="w">    </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">prev_accel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">accel</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="function-start-stop">
+<h2>Function Start Stop<a class="headerlink" href="#function-start-stop" title="Link to this heading"></a></h2>
+<dl class="c function" id="id3">
+<dt class="sig sig-object c" id="c.function_start_stop">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">function_start_stop</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.function_start_stop" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a></p>
+<p>This function is responsible for check if start/stop was
+activated by the driver.</p>
+<p>It manages the start/stop state and ensures that it operates properly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">powertrain/powertrain_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">function_start_stop function implementation</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="nf">function_start_stop</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">VehicleData</span><span class="w"> </span><span class="o">*</span><span class="n">ptr_rec_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">VehicleData</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">arg</span><span class="p">;</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">prev_brake</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">prev_accel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">test_mode_powertrain</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">lock_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_powertrain</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lock_result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="cm">/* Only check Stop/Start if the driver have enabled it */</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">start_stop_manual</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="cm">/* Check the conditions to activate Stop/Start */</span>
+
+<span class="w">            </span><span class="n">check_disable_engine</span><span class="p">(</span><span class="n">ptr_rec_data</span><span class="p">);</span>
+
+<span class="w">            </span><span class="cm">/* printf(&quot;Start/Stop = %d\n&quot;, engine_off);</span>
+<span class="cm">            fflush(stdout); */</span>
+
+<span class="w">            </span><span class="n">handle_engine_restart_logic</span><span class="p">(</span>
+<span class="w">                </span><span class="n">ptr_rec_data</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">unlock_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mutex_powertrain</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unlock_result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">sleep_microseconds_pw</span><span class="p">(</span><span class="n">SLEEP_TIME_US</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="parse-input-received">
+<h2>Parse Input Received<a class="headerlink" href="#parse-input-received" title="Link to this heading"></a></h2>
+<dl class="c function" id="id4">
+<dt class="sig sig-object c" id="c.parse_input_received">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parse_input_received</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">input</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.parse_input_received" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a>, <a class="reference internal" href="requirements.html#swr1-3"><span class="std std-ref">SWR1.3</span></a>, <a class="reference internal" href="requirements.html#swr1-4"><span class="std std-ref">SWR1.4</span></a>,
+<a class="reference internal" href="requirements.html#swr4-5"><span class="std std-ref">SWR4.5</span></a>, <a class="reference internal" href="requirements.html#swr5-1"><span class="std std-ref">SWR5.1</span></a>, <a class="reference internal" href="requirements.html#swr5-2"><span class="std std-ref">SWR5.2</span></a>, <a class="reference internal" href="requirements.html#swr5-3"><span class="std std-ref">SWR5.3</span></a>, and <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a></p>
+<p>This function parses the data received from the CAN and updates the
+system state accordingly.</p>
+<p>It processes user commands, engine commands, sensor readings and errors
+to ensure the system responds correctly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">dashboard/dashboard_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">parse_input_received function implementation</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">parse_input_received</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">process_user_commands</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="n">process_engine_commands</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="n">process_sensor_readings</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="n">process_errors</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="parse-input-received-powertrain">
+<h2>Parse Input Received Powertrain<a class="headerlink" href="#parse-input-received-powertrain" title="Link to this heading"></a></h2>
+<dl class="c function" id="id5">
+<dt class="sig sig-object c" id="c.parse_input_received_powertrain">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">parse_input_received_powertrain</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">input</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.parse_input_received_powertrain" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-2"><span class="std std-ref">SWR1.2</span></a>.</p>
+<p>This function parses the data received from the CAN and updates the
+system state accordingly on the Powertrain module.</p>
+<p>It processes user commands, engine commands, sensor readings and errors
+to ensure the system responds correctly.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">powertrain/can_comms.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">parse_input_received_powertrain function implementation</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">parse_input_received_powertrain</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;press_start_stop&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">start_stop_manual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">start_stop_manual</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">start_stop_manual</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Stop/Start: System Activated&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Stop/Start: System Deactivated&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error_disabled&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">start_stop_manual</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Stop/Start: System Deactivated Due to an Error&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is speed */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;speed: %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">speed</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received speed = %lf\n&quot;, rec_data.speed);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is internal temperature */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;in_temp: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">internal_temp</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received in_temp = %d\n&quot;, rec_data.internal_temp);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is external temperature */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ex_temp: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">external_temp</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received ex_temp = %d\n&quot;, rec_data.external_temp);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is door open */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;door: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">door_open</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received door = %d\n&quot;, rec_data.door_open);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is tilt angle */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;tilt: %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">tilt_angle</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received tilt = %.1lf\n&quot;, rec_data.tilt_angle);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is acceleration sensor */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;accel: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">accel</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received accel = %d\n&quot;, rec_data.accel);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is braking sensor*/</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;brake: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">brake</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received brake = %d\n&quot;, rec_data.brake);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is temperature setpoint */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;temp_set: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">temp_set</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received temp_set = %d\n&quot;, rec_data.temp_set);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is battery SoC */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;batt_soc: %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">batt_soc</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received batt_soc = %.1lf\n&quot;, rec_data.batt_soc);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is battery voltage */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;batt_volt: %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">batt_volt</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received batt_volt = %lf\n&quot;, rec_data.batt_volt);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is engine temperature */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;engi_temp: %lf&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">engi_temp</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received engi_temp = %.1lf\n&quot;, rec_data.engi_temp);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="cm">/* Check if CAN message is gear */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;gear: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rec_data</span><span class="p">.</span><span class="n">gear</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* (void)printf(&quot;received gear = %d\n&quot;, rec_data.gear);</span>
+<span class="cm">        (void)fflush(stdout); */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="send-encrypted-message">
+<h2>Send Encrypted Message<a class="headerlink" href="#send-encrypted-message" title="Link to this heading"></a></h2>
+<dl class="c function" id="id6">
+<dt class="sig sig-object c" id="c.send_encrypted_message">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">send_encrypted_message</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">sock</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">message</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">can_id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.send_encrypted_message" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-4"><span class="std std-ref">SWR1.4</span></a>.</p>
+<p>This function sends an encrypted message via CAN socket.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">common_includes/can_socket.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">send_encrypted_message function implementation</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">send_encrypted_message</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">sock</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">can_id</span><span class="p">)</span><span class="w"> </span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">can_frame</span><span class="w"> </span><span class="n">frame</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">encrypted_data</span><span class="p">[</span><span class="n">AES_BLOCK_SIZE</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">padded_message</span><span class="p">[</span><span class="n">AES_BLOCK_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">CAN_MAX_PAD</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">encrypted_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">strncpy</span><span class="p">(</span><span class="n">padded_message</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">AES_BLOCK_SIZE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">encrypt_data</span><span class="p">((</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">padded_message</span><span class="p">,</span><span class="w"> </span><span class="n">encrypted_data</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">encrypted_len</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">encrypted_len</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">AES_BLOCK_SIZE</span><span class="p">)</span><span class="w"> </span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Unexpected encrypted data length: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">encrypted_len</span><span class="p">);</span>
+<span class="w">        </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">frame</span><span class="p">.</span><span class="n">can_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">can_id</span><span class="p">;</span>
+<span class="w">    </span><span class="n">frame</span><span class="p">.</span><span class="n">can_dlc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CAN_DLC</span><span class="p">;</span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">encrypted_data</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_DLC</span><span class="p">);</span>
+<span class="w">    </span><span class="n">send_can_frame</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">frame</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">frame</span><span class="p">.</span><span class="n">can_dlc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CAN_DLC</span><span class="p">;</span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">encrypted_data</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">CAN_DLC</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_DLC</span><span class="p">);</span>
+<span class="w">    </span><span class="n">send_can_frame</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">frame</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="log-toggle-event">
+<h2>Log Toggle Event<a class="headerlink" href="#log-toggle-event" title="Link to this heading"></a></h2>
+<dl class="c function" id="id7">
+<dt class="sig sig-object c" id="c.log_toggle_event">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">log_toggle_event</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">message</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.log_toggle_event" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-5"><span class="std std-ref">SWR1.5</span></a>.</p>
+<p>This function logs events in a file.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">common_includes/logging.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">log_toggle_event function implementation</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">log_toggle_event</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">message</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">logFile</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">pthread_mutex_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">logMutex</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Get current time</span>
+<span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">rawtime</span><span class="p">;</span>
+<span class="w">    </span><span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rawtime</span><span class="p">);</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">tm</span><span class="w"> </span><span class="o">*</span><span class="n">timeinfo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">rawtime</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">timeStr</span><span class="p">[</span><span class="n">TIME_STR_SIZE</span><span class="p">];</span>
+<span class="w">    </span><span class="n">strftime</span><span class="p">(</span><span class="n">timeStr</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">timeStr</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;%Y-%m-%d %H:%M:%S&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">timeinfo</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Write the event</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">logFile</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;[%s] %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">timeStr</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">);</span>
+<span class="w">    </span><span class="n">fflush</span><span class="p">(</span><span class="n">logFile</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">pthread_mutex_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">logMutex</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="check-user-input-command">
+<h2>Check User Input Command<a class="headerlink" href="#check-user-input-command" title="Link to this heading"></a></h2>
+<dl class="c function" id="check-input-command">
+<dt class="sig sig-object c" id="c.check_input_command">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">check_input_command</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">option</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">socket</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.check_input_command" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr1-5"><span class="std std-ref">SWR1.5</span></a>.</p>
+<p>This function checks inputs received by the instrument cluster.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">instrument_cluster/instrument_cluster_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">check_input_command function implementation</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">check_input_command</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">socket</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">option</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;press_start_stop&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_COMMAND</span><span class="p">);</span>
+<span class="w">        </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;[INFO] System button toggled&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Invalid input. Try again.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="read-csv">
+<h2>Read CSV<a class="headerlink" href="#read-csv" title="Link to this heading"></a></h2>
+<dl class="c function" id="id8">
+<dt class="sig sig-object c" id="c.read_csv">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">read_csv</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.read_csv" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr2-1"><span class="std std-ref">SWR2.1</span></a> and <a class="reference internal" href="requirements.html#swr4-2"><span class="std std-ref">SWR4.2</span></a>.</p>
+<p>This function reads the simulation data from the CSV file.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">bcm/bcm_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">read_csv function implementation</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">path</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">FILE</span><span class="w"> </span><span class="o">*</span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fopen</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;Error opening file&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">line</span><span class="p">[</span><span class="n">CSV_LINE_BUFFER</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">temp_line</span><span class="p">[</span><span class="n">CSV_LINE_BUFFER</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">token</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Skip CSV header</span>
+<span class="w">    </span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span><span class="w"> </span><span class="n">file</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span><span class="w"> </span><span class="n">file</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">strncpy</span><span class="p">(</span><span class="n">temp_line</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">temp_line</span><span class="p">));</span>
+<span class="w">        </span><span class="n">temp_line</span><span class="p">[</span><span class="n">strcspn</span><span class="p">(</span><span class="n">temp_line</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">saveptr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtok_r</span><span class="p">(</span><span class="n">temp_line</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">saveptr</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">token</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">field</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">CSV_MAX_FIELDS</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">char</span><span class="w"> </span><span class="n">clean_token</span><span class="p">[</span><span class="n">CSV_MAX_TOKEN_SIZE</span><span class="p">];</span>
+<span class="w">            </span><span class="n">strncpy</span><span class="p">(</span><span class="n">clean_token</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">clean_token</span><span class="p">));</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_0</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_1</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">speed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_2</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">tilt_angle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_3</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">internal_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_4</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">external_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_5</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">door_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">CSV_NUM_FIELD_6</span><span class="p">:</span>
+<span class="w">                </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">data_size</span><span class="p">].</span><span class="n">engi_temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">clean_token</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">default</span><span class="o">:</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtok_r</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">saveptr</span><span class="p">);</span>
+<span class="w">            </span><span class="n">field</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">data_size</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">data_size</span><span class="o">--</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fclose</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="check-health-signals">
+<h2>Check Health Signals<a class="headerlink" href="#check-health-signals" title="Link to this heading"></a></h2>
+<dl class="c function" id="id9">
+<dt class="sig sig-object c" id="c.check_health_signals">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">check_health_signals</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.check_health_signals" title="Link to this definition"></a><br /></dt>
+<dd><p>Implements requirement <a class="reference internal" href="requirements.html#swr6-1"><span class="std std-ref">SWR6.1</span></a>, <a class="reference internal" href="requirements.html#swr6-2"><span class="std std-ref">SWR6.2</span></a>, <a class="reference internal" href="requirements.html#swr6-3"><span class="std std-ref">SWR6.3</span></a>, and <a class="reference internal" href="requirements.html#swr6-4"><span class="std std-ref">SWR6.4</span></a>.</p>
+<p>This function evaluates system health.</p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">bcm/bcm_func.c</span></code></p>
+</dd></dl>
+
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">check_health_signals function implementation</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">check_health_signals</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">doorVal</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">simu_curr_step</span><span class="p">].</span><span class="n">door_open</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">engTemp</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">simu_curr_step</span><span class="p">].</span><span class="n">engi_temp</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">tilt</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">vehicle_data</span><span class="p">[</span><span class="n">simu_curr_step</span><span class="p">].</span><span class="n">tilt_angle</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">invalidDoor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">doorVal</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DOOR_OK_STATUS_1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">doorVal</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DOOR_OK_STATUS_2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">engineOvertemp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">engTemp</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ENGINE_TEMP_OK_STATUS</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">excessiveTilt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">tilt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TILT_OK_STATUS</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">anyAdverseCondition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">invalidDoor</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">engineOvertemp</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">excessiveTilt</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">anyAdverseCondition</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">fault_active</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">fault_start_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCurrentTimeMs</span><span class="p">();</span><span class="w"> </span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">elapsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getCurrentTimeMs</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">fault_start_time</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">elapsed</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">safety_timeout_ms</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">send_encrypted_message</span><span class="p">(</span><span class="n">sock_send</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error_disabled&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">CAN_ID_COMMAND</span><span class="p">);</span>
+<span class="w">                </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Fault: SWR6.4 (System Disabling Error)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">invalidDoor</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Fault: SWR6.4 (Invalid door status)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">engineOvertemp</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Fault: SWR6.4 (Engine overtemperature)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">excessiveTilt</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">log_toggle_event</span><span class="p">(</span><span class="s">&quot;Fault: SWR6.4 (Excessive tilt value)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="n">simu_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ORDER_STOP</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">fault_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="traceability.html" class="btn btn-neutral float-left" title="Traceability Matrix" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests.html" class="btn btn-neutral float-right" title="Test Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, EmanuelAdler, Igni-cin, joaovicnog, and p-r-m-n.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
