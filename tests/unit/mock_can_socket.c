@@ -1,5 +1,6 @@
 #include "../../src/common_includes/can_id_list.h"
 #include "../../src/common_includes/can_socket.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <linux/can.h>
@@ -10,11 +11,24 @@
 #define FIRST_CALL_BYTES       (0x11)
 #define SECOND_CALL_BYTES      (0x22)
 #define THIRD_CALL_BYTES       (0x33)
+#define CAN_ID_INVALID_COMMAND (0x123)
 
 static int s_send_count = 0;
 static int s_received_count = 0;
 static int g_call_count = 0;
 static char s_last_message_sent[LAST_MESSAGE_SIZE] = {0};
+static bool force_invalid_id = false;
+static bool g_force_sys_disable_string = false;
+
+void  mock_can_force_sys_disable(bool enable)
+{
+    g_force_sys_disable_string = enable;
+}
+
+void mock_can_force_invalid_id(bool enable)
+{
+    force_invalid_id = enable;
+}
 
 /* 
  * Fake version of send_encrypted_message.
@@ -42,8 +56,16 @@ int receive_can_frame(int sock, struct can_frame *frame)
     switch (g_call_count)
     {
         case 0:
+            if (force_invalid_id)
+            {
+                frame->can_id = CAN_ID_INVALID_COMMAND;
+                force_invalid_id = false;
+            }
+            else
+            {
+                frame->can_id = CAN_ID_COMMAND;
+            }
             // 1st call: valid CAN_ID_COMMAND, dlc=8
-            frame->can_id  = CAN_ID_COMMAND;
             frame->can_dlc = CAN_DLC_CORRECT;
             memset(frame->data, FIRST_CALL_BYTES, CAN_DLC_CORRECT);
             break;
@@ -59,6 +81,12 @@ int receive_can_frame(int sock, struct can_frame *frame)
             frame->can_dlc = CAN_DLC_INCORRECT;
             memset(frame->data, THIRD_CALL_BYTES, CAN_DLC_INCORRECT);
             break;
+        case 3:
+            // 4th call
+            frame->can_id  = CAN_ID_COMMAND;
+            frame->can_dlc = CAN_DLC_CORRECT;
+            memset(frame->data, SECOND_CALL_BYTES, CAN_DLC_CORRECT);
+            break;
         default:
             // Return -1 on subsequent calls -> signals test to stop
             return -1;
@@ -73,7 +101,14 @@ void decrypt_data(const unsigned char *input, char *output, int input_len)
     (void)input;
     (void)input_len;
 
-    strcpy(output, "press_start_stop");
+    if (g_force_sys_disable_string)
+    {
+        strcpy(output, "error_disabled");
+    }
+    else
+    {
+        strcpy(output, "press_start_stop");
+    }
 }
 
 int stub_can_get_send_count(void)
@@ -94,6 +129,9 @@ const char* stub_can_get_last_message(void)
 void stub_can_reset(void)
 {
     s_send_count = 0;
+    g_call_count = 0;
     s_received_count = 0;
+    force_invalid_id = false;
+    g_force_sys_disable_string = false;
     s_last_message_sent[0] = '\0';
 }

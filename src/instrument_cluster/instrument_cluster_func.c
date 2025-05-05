@@ -10,16 +10,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+/**
+ * @brief Check inputs received by the instrument cluster.
+ * @requirement SWR1.5
+ */
 void check_input_command(char* option, int socket)
 {
     if (strcmp(option, "press_start_stop") == 0)
     {
         send_encrypted_message(socket, option, CAN_ID_COMMAND);
         log_toggle_event("[INFO] System button toggled");
-    }
-    else if (strcmp(option, "show_dashboard") == 0)
-    {
-        send_encrypted_message(socket, option, CAN_ID_COMMAND);
     }
     else
     {

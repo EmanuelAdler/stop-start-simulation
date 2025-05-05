@@ -21,12 +21,15 @@
 
 extern sem_t sem_comms;
 
+// CAN receiver
+#define MAX_MSG_SIZE    50
+
 // Battery sensor parameters
 #define DEFAULT_BATTERY_VOLTAGE     12.0F
 #define DEFAULT_BATTERY_SOC         80.0F
-#define BATTERY_SOC_INCREMENT       0.5F    // Increase in battery SOC when vehicle is moving
-#define BATTERY_SOC_DECREMENT       0.2F    // Decrease in battery SOC when vehicle is stationary
-#define MAX_BATTERY_SOC             100.0F  // Maximum SOC limit
+#define BATTERY_SOC_INCREMENT       0.04F    // Increase in battery SOC when vehicle is moving
+#define BATTERY_SOC_DECREMENT       0.02F    // Decrease in battery SOC when vehicle is stationary
+#define MAX_BATTERY_SOC             100.0F   // Maximum SOC limit
 
 // Simulation orders and states
 #define ORDER_STOP  0
@@ -78,11 +81,12 @@ extern volatile int simu_curr_step;
 extern volatile int simu_state;
 extern volatile int simu_order;
 extern bool curr_gear;
-extern float batt_volt;
-extern float batt_soc;
+extern double batt_volt;
+extern double batt_soc;
 extern int data_size;
 extern VehicleData vehicle_data[SPEED_ARRAY_MAX_SIZE];
-extern int sock;
+extern int sock_send;
+extern int sock_recv;
 extern char send_msg[];
 extern bool test_mode;
 extern bool fault_active;
@@ -101,7 +105,9 @@ void* simu_speed(void *arg);
 void send_data_update(void);
 void check_health_signals(void);
 void* comms(void *arg);
+void *comms_reception(void *arg);
 void update_battery_soc(double vehicle_speed);
 void* sensor_battery(void *arg);
+void check_system_disable(int sock_recv);
 
 #endif // SIMU_BCM_H

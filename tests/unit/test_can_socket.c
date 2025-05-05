@@ -155,12 +155,11 @@ static void test_close_can_socket(void)
     CU_ASSERT_TRUE(sock >= 0);
 
     close_can_socket(sock);
-    // Not much else to assert here; just verifying no crash.
 }
 
 /* -----------------------------------------------------------------------------
  * Test: encrypt_data() + decrypt_data()
- *        Ensures we cover those code paths (lines ~106..156).
+ *        Ensures we cover those code paths.
  * ---------------------------------------------------------------------------*/
 static void test_encrypt_decrypt(void)
 {
@@ -184,9 +183,15 @@ static void test_encrypt_decrypt(void)
 
 /* -----------------------------------------------------------------------------
  * Test: send_encrypted_message()
- *        This covers lines ~158..184. We just see if it attempts to send 2 frames
+ *        Check if it attempts to send 2 frames
  *        (the second half of the 16 bytes).
  * ---------------------------------------------------------------------------*/
+/**
+ * @test test_send_encrypted_message
+ * @brief Test if an encrypted message is sent via CAN socket
+ * @req SWR1.4
+ * @file unit/test_can_socket.c
+ */
 static void test_send_encrypted_message(void)
 {
     if (!is_vcan_available()) {

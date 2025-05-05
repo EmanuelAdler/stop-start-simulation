@@ -65,7 +65,11 @@ const float SOC_TOLERANCE = 0.001F;
 #define MOCK_TIME_1S (1000)
 #define MOCK_TIME_25S (2500)
 
-// Mocked can_socket calls (like in test_instrument_cluster)
+#define MOCK_SOCKET (999)
+
+// Mocked can_socket calls
+void mock_can_force_sys_disable(bool enable);
+void mock_can_force_invalid_id(bool enable);
 int stub_can_get_send_count(void);
 const char *stub_can_get_last_message(void);
 void stub_can_reset(void);
@@ -146,6 +150,13 @@ void test_read_csv_fail(void)
 //-------------------------------------
 // 2) test_read_csv_success
 //-------------------------------------
+/**
+ * @test test_read_csv_success
+ * @brief Verifies if the csv file with the sensors readings is correctly loaded by the system.
+ * @req SWR2.1
+ * @req SWR4.2
+ * @file unit/test_bcm.c
+ */
 void test_read_csv_success(void)
 {
     // This test expects you to have a small CSV file at "../src/bcm/full_simu.csv"
@@ -174,6 +185,11 @@ void test_check_order_run(void)
     simu_state = STATE_STOPPED;
     check_order(ORDER_RUN);
     CU_ASSERT_EQUAL(simu_state, STATE_RUNNING);
+
+    // If we are PAUSED, run -> should set RUNNING
+    simu_state = STATE_PAUSED;
+    check_order(ORDER_RUN);
+    CU_ASSERT_EQUAL(simu_state, STATE_RUNNING);
 }
 
 void test_check_order_pause(void)
@@ -192,7 +208,10 @@ void test_battery_overmax(void)
 {
     // e.g. set batt_soc near 99.9, call update with speed>0 multiple times
     batt_soc = TEST_SOC_HIGH;
-    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.5 => 100.4 => clamp to 100
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04 
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04
+    update_battery_soc(TEST_SOC_UPDATE_POSITIVE); // adds +0.04 => 100.2 => clamp to 100
+    printf("batt_soc = %f\n", batt_soc);
     CU_ASSERT_DOUBLE_EQUAL(batt_soc, 100.0, SOC_TOLERANCE);
 }
 
@@ -321,12 +340,24 @@ void test_simu_speed_smallloop(void)
 void test_simu_speed_step(void)
 {
     // data_size=3
-    data_size = 3;
+    #define data_size_simu_test  7
+
+    #define STEP1 0
+    #define STEP2 1
+    #define STEP3 2
+    #define STEP4 3
+    #define STEP5 4
+    #define STEP6 5
+    #define STEP7 6
 
     // Populate vehicle_data
-    vehicle_data[0].speed = 0.0;
-    vehicle_data[1].speed = SPEED_LOW;
-    vehicle_data[2].speed = SPEED_MEDIUM;
+    vehicle_data[STEP1].speed = 0.0;
+    vehicle_data[STEP2].speed = SPEED_LOW;
+    vehicle_data[STEP3].speed = SPEED_MEDIUM;
+    vehicle_data[STEP4].speed = SPEED_MEDIUM;
+    vehicle_data[STEP5].speed = SPEED_LOW;
+    vehicle_data[STEP6].speed = 0.0;
+    vehicle_data[STEP7].speed = 0.0;
 
     // Mark the simulation as RUNNING
     simu_state = STATE_RUNNING;
@@ -334,12 +365,12 @@ void test_simu_speed_step(void)
     simu_order = ORDER_RUN;
 
     // Build arrays of pointers
-    double *speed[3];
-    int *accel[3];
-    int *brake[3];
-    int *gear[3];
+    double *speed[data_size_simu_test];
+    int *accel[data_size_simu_test];
+    int *brake[data_size_simu_test];
+    int *gear[data_size_simu_test];
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < data_size_simu_test; i++)
     {
         speed[i] = &vehicle_data[i].speed;
         accel[i] = &vehicle_data[i].accel;
@@ -349,35 +380,81 @@ void test_simu_speed_step(void)
 
     ControlData control_data = {speed, accel, brake, gear};
 
-    // 1) First call: index 0 => 1 => speed difference = (5.0 - 0.0) > 0 => accel=1, brake=0, gear=DRIVE
+    // 1) First call  => index 0 => 1 => speed difference = (5.0 - 0.0) > 0
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 0);
-    CU_ASSERT_EQUAL(*(accel[0]), 1); // note the * to dereference
-    CU_ASSERT_EQUAL(*(brake[0]), 0);
-    CU_ASSERT_EQUAL(*(gear[0]), DRIVE);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP1);
+    CU_ASSERT_EQUAL(*(accel[STEP1]), 1); // note the * to dereference
+    CU_ASSERT_EQUAL(*(brake[STEP1]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP1]), DRIVE);
 
     simu_curr_step++;
 
-    // 2) Second call => index 1 => 2 => (10.0 - 5.0) > 0 => accel=1, brake=0, gear=DRIVE
+    // 2) Second call => index 1 => 2 => (10.0 - 5.0) > 0 (accelerating)
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 1);
-    CU_ASSERT_EQUAL(*(accel[1]), 1);
-    CU_ASSERT_EQUAL(*(brake[1]), 0);
-    CU_ASSERT_EQUAL(*(gear[1]), DRIVE);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP2);
+    CU_ASSERT_EQUAL(*(accel[STEP2]), 1);
+    CU_ASSERT_EQUAL(*(brake[STEP2]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP2]), DRIVE);
 
     simu_curr_step++;
 
-    // 3) Third call => index 2 => if (2+1==3) => ORDER_STOP
+    // 3) Third call  => index 2 => 2 => 3 => (10.0 - 10.0) = 0 (constant speed)
+    // => accel=1, brake=0, gear=DRIVE
     simu_speed_step(vehicle_data, control_data);
 
-    CU_ASSERT_EQUAL(simu_curr_step, 2);
+    CU_ASSERT_EQUAL(simu_curr_step, STEP3);
+    CU_ASSERT_EQUAL(*(accel[STEP3]), 1);
+    CU_ASSERT_EQUAL(*(brake[STEP3]), 0);
+    CU_ASSERT_EQUAL(*(gear[STEP3]), DRIVE);
+
+    simu_curr_step++;
+
+    // 4) Fourth call  => index 3 => 3 => 4 => (5.0 - 10.0) = -5.0 (braking)
+    // => accel=0, brake=1, gear=DRIVE
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP4);
+    CU_ASSERT_EQUAL(*(accel[STEP4]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP4]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP4]), DRIVE);
+
+    simu_curr_step++;
+
+    // 5) Fifth call  => index 4 => 4 => 5 => (0.0 - 5.0) = -5.0 (stopped)
+    // => accel=0, brake=1, gear=DRIVE
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP5);
+    CU_ASSERT_EQUAL(*(accel[STEP5]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP5]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP5]), DRIVE);
+
+    simu_curr_step++;
+
+    // 6) Sixth call  => index 5 => 5 => 6 => (0.0 - 0.0) = 0 (stopped)
+    // => accel=0, brake=1, gear=PARKING
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP6);
+    CU_ASSERT_EQUAL(*(accel[STEP6]), 0);
+    CU_ASSERT_EQUAL(*(brake[STEP6]), 1);
+    CU_ASSERT_EQUAL(*(gear[STEP6]), PARKING);
+
+    simu_curr_step++;
+
+    // 7) Seventh call => index 6 => if (6+1==7) => ORDER_STOP
+    simu_speed_step(vehicle_data, control_data);
+
+    CU_ASSERT_EQUAL(simu_curr_step, STEP7);
     CU_ASSERT_EQUAL(simu_order, ORDER_STOP);
 }
 
 //-------------------------------------
-// 8) Battery sensor simulator for SOC update
+// 9) Battery sensor simulator for SOC update
 //-------------------------------------
 void test_sensor_battery_updates_soc_when_running(void)
 {
@@ -393,7 +470,7 @@ void test_sensor_battery_updates_soc_when_running(void)
 
     // Calculate expected SoC after one update
     float expected_iterations = TEST_EXPECTED_IT; // if THREAD_SLEEP_TIME * 2 allows 2 iterations
-    float expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
+    double expected_soc = batt_soc + (BATTERY_SOC_INCREMENT * expected_iterations);
     if (expected_soc > MAX_BATTERY_SOC)
     {
         expected_soc = MAX_BATTERY_SOC;
@@ -407,14 +484,14 @@ void test_sensor_battery_updates_soc_when_running(void)
     pthread_join(thread_id, NULL);
 
     // Get actual updated SoC
-    float actual_soc = (float)vehicle_data[0].batt_soc;
+    double actual_soc = vehicle_data[0].batt_soc;
 
     // Assert the SoC was updated as expected
     CU_ASSERT_DOUBLE_EQUAL(expected_soc, actual_soc, SOC_TOLERANCE);
 }
 
 //-------------------------------------
-// 9) Speed simulator thread
+// 10) Speed simulator thread
 //-------------------------------------
 void test_simu_speed_performs_control_update(void)
 {
@@ -451,6 +528,9 @@ void test_simu_speed_performs_control_update(void)
     CU_ASSERT_EQUAL(sim_data[0].gear, DRIVE); // assume DRIVE is a defined constant
 }
 
+//-------------------------------------
+// 11) Get time function
+//-------------------------------------
 void test_getCurrentTimeMsReal(void)
 {
     // Grab the initial time in ms.
@@ -465,6 +545,15 @@ void test_getCurrentTimeMsReal(void)
     CU_ASSERT_TRUE((after_ms - before_ms) >= 80);
 }
 
+//-------------------------------------
+// 12) Check health signals
+//-------------------------------------
+/**
+ * @test test_check_health_signals_immediate
+ * @brief Simulates a fault and check health signals to identify a fault immedeatly.
+ * @req SWR6.1
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_immediate(void)
 {
     // Reset global states
@@ -492,6 +581,15 @@ void test_check_health_signals_immediate(void)
     CU_ASSERT_EQUAL(simu_order, ORDER_RUN); // not stopped yet
 }
 
+/**
+ * @test test_check_health_signals_persisted
+ * @brief Simulates a fault in the tilt angle and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.1
+ * @req SWR6.2
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_persisted(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_persisted.log");
@@ -546,6 +644,13 @@ void test_check_health_signals_persisted(void)
     cleanup_logging_system();
 }
 
+/**
+ * @test test_check_health_signals_engine_temp
+ * @brief Simulates a fault in the engine temperature and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_engine_temp(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_engine_temp.log");
@@ -600,6 +705,13 @@ void test_check_health_signals_engine_temp(void)
     cleanup_logging_system();
 }
 
+/**
+ * @test test_check_health_signals_door_status
+ * @brief Simulates a fault in the door and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_door_status(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_door_status.log");
@@ -655,7 +767,7 @@ void test_check_health_signals_door_status(void)
 }
 
 //-------------------------------------
-// 10)  comms() bounded‑loop verification
+// 13)  comms() bounded‑loop verification
 //-------------------------------------
 void test_comms_thread_expected_iterations(void)
 {
@@ -686,6 +798,81 @@ void test_comms_thread_expected_iterations(void)
     sem_destroy(&sem_comms);
 }
 
+//-------------------------------------
+// 14) Function to verify the need for halting the simulation
+//-------------------------------------
+void test_check_system_disable(void)
+{
+    stub_can_reset();
+
+    mock_can_force_sys_disable(true);
+    
+    check_system_disable(MOCK_SOCKET);
+
+    mock_can_force_sys_disable(false);
+    
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 0);
+}
+
+static void test_invalid_can_id_branch(void)
+{
+    /* start with clean counters ---------------------------------------- */
+    stub_can_reset();
+
+    /*  tell the stub: on 1st receive() give me an *invalid* CAN-ID  ---- */
+    mock_can_force_invalid_id(true);
+
+    /* run the code under test ----------------------------------------- */
+    check_system_disable(MOCK_SOCKET);
+
+    /* reset to normal behaviour, so other tests keep original paths  */
+    mock_can_force_invalid_id(false);
+
+    /* we only wanted to exercise the branch – nothing should have been
+       sent on the bus, so send counter must still be zero              */
+    CU_ASSERT_EQUAL(stub_can_get_send_count(), 0);
+}
+
+static void test_system_disabled_path(void)
+{
+    stub_can_reset();
+    simu_state = STATE_RUNNING;
+    test_mode = false;
+
+    mock_can_force_sys_disable(true);
+
+    check_system_disable(MOCK_SOCKET);
+    
+    CU_ASSERT_EQUAL(simu_order, STATE_STOPPED);
+
+    mock_can_force_sys_disable(false);
+}
+
+void test_comms_reception_thread_expected_iterations(void)
+{
+    /* -------- Arrange ------------------------------------------------- */
+    sem_init(&sem_comms, 0, TEST_EXPECTED_IT_INT);   /* pre‑post semaphore    */
+    pthread_mutex_init(&mutex_bcm, NULL);
+
+    stub_can_reset();
+
+    simu_state     = STATE_RUNNING;
+    mock_can_force_sys_disable(true);
+
+    /* -------- Act ----------------------------------------------------- */
+    pthread_t tid;
+    pthread_create(&tid, NULL, comms_reception, NULL);
+    pthread_join(tid, NULL);
+
+    /* -------- Assert -------------------------------------------------- */
+
+    CU_ASSERT_EQUAL(simu_order, STATE_STOPPED);
+
+    /* -------- Cleanup ------------------------------------------------- */
+    mock_can_force_sys_disable(false);
+    pthread_mutex_destroy(&mutex_bcm);
+    sem_destroy(&sem_comms);
+}
 
 //-------------------------------------
 // Test main
@@ -723,6 +910,10 @@ int main(void)
     CU_add_test(suite, "check_health_signals_engine_temp", test_check_health_signals_engine_temp);
     CU_add_test(suite, "check_health_signals_door_status", test_check_health_signals_door_status);
     CU_add_test(suite, "comms expected iterations", test_comms_thread_expected_iterations);
+    CU_add_test(suite, "check_system_disable", test_check_system_disable);
+    CU_add_test(suite, "invalid_can_id_branch", test_invalid_can_id_branch);
+    CU_add_test(suite, "system_disabled_path", test_system_disabled_path);
+    CU_add_test(suite, "comms_reception_expected_iterations", test_comms_reception_thread_expected_iterations);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

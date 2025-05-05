@@ -1,6 +1,5 @@
 #include "can_socket.h"
 
-#define SOCKET_ERROR         (-1)
 #define OPERATION_SUCCESS    (0)
 #define MAX_INTERFACE_LEN    (IFNAMSIZ - 1U)
 #define CAN_FRAME_SIZE       (sizeof(struct can_frame))
@@ -86,20 +85,26 @@ int send_can_frame(int sock, const struct can_frame *frame)
 
 int receive_can_frame(int sock, struct can_frame *frame)
 {
-    const ssize_t received_bytes = read(sock, frame, CAN_FRAME_SIZE);
-    
-    if (received_bytes < 0)
-    {
-        perror("Error receiving frame");
+    ssize_t result;
+
+    // Auto-retry if error is EINTR
+    do {
+        result = read(sock, frame, CAN_FRAME_SIZE);
+    } while (result < 0 && errno == EINTR);
+
+    // Other errors debugging
+    if (result < 0) {
+        fprintf(stderr,
+                "receive_can_frame: %s\n", strerror(errno));
         return SOCKET_ERROR;
     }
-    
-    if (received_bytes != (ssize_t)CAN_FRAME_SIZE)
-    {
-        (void)fprintf(stderr, "Incomplete frame received\n");
+
+    if (result != (ssize_t)CAN_FRAME_SIZE) {
+        fprintf(stderr,
+                "receive_can_frame: incomplete frame (%zd bytes)\n", result);
         return SOCKET_ERROR;
     }
-  
+
     return OPERATION_SUCCESS;
 }
 
@@ -155,6 +160,10 @@ void decrypt_data(const unsigned char *input, char *output, int input_len)
     output[plaintext_len] = '\0';
 }
 
+/**
+ * @brief Sends an encrypted message via CAN socket.
+ * @requirement SWR1.4
+ */
 void send_encrypted_message(int sock, const char *message, int can_id) 
 {
     struct can_frame frame;

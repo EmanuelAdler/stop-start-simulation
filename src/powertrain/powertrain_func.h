@@ -18,6 +18,8 @@
 #include "can_comms.h"
 #include "globals.h"
 
+extern bool restart_trigger;
+
 extern pthread_mutex_t mutex_powertrain;
 extern int sock_sender;
 extern int sock_receiver;

@@ -13,17 +13,25 @@ static FILE *logFile = NULL;
 
 static pthread_mutex_t logMutex = PTHREAD_MUTEX_INITIALIZER;
 
-bool init_logging_system(void) {
+bool init_logging_system(void)
+{
     logFile = fopen(log_file_path, "a");
     return (logFile != NULL);
 }
 
-void set_log_file_path(const char *new_path) {
+void set_log_file_path(const char *new_path)
+{
     log_file_path = new_path;
 }
 
-void log_toggle_event(char* message) {
-    if (logFile == NULL) {
+/**
+ * @brief Log events in a file.
+ * @requirement SWR1.5
+ */
+void log_toggle_event(char* message)
+{
+    if (logFile == NULL)
+    {
         return;
     }
 
