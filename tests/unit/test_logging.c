@@ -102,6 +102,12 @@ static void *thread_logging_fn(void *arg)
     return NULL;
 }
 
+/**
+ * @test test_logging_concurrency
+ * @brief Verifies logging system under concurrent access.
+ * @req SWR1.5
+ * @file unit/test_logging.c
+ */
 void test_logging_concurrency(void)
 {
     const char *log_path = "/tmp/test_log_threads.log";
@@ -112,7 +118,7 @@ void test_logging_concurrency(void)
 
     // Spawn multiple threads, each logs a unique message
     pthread_t threads[NUM_THREADS];
-    long thread_ids[NUM_THREADS];  // Aloca IDs fixos para cada thread
+    long thread_ids[NUM_THREADS];
 
     for (long i = 0; i < NUM_THREADS; i++)
     {

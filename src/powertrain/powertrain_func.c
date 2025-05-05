@@ -104,6 +104,15 @@ static int evaluate_condition_with_logging(
 /* Main function */
 /**
  * @brief Check each condition for disable the engine.
+ * @requirement SWR2.2
+ * @requirement SWR2.3
+ * @requirement SWR2.4
+ * @requirement SWR2.6
+ * @requirement SWR2.7
+ * @requirement SWR2.8
+ * @requirement SWR2.9
+ * @requirement SWR4.3
+ * @requirement SWR4.4
  * @requirement SWR5.1
  */
 void check_disable_engine(VehicleData *ptr_rec_data)
@@ -188,6 +197,10 @@ void check_disable_engine(VehicleData *ptr_rec_data)
 /**
  * @brief Handle the engine restart logic.
  * @requirement SWR1.1
+ * @requirement SWR2.5
+ * @requirement SWR3.1
+ * @requirement SWR3.4
+ * @requirement SWR3.5
  */
 void handle_engine_restart_logic(
     VehicleData *data)

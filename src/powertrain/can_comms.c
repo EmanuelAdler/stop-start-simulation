@@ -19,6 +19,10 @@ bool check_is_valid_can_id_powertrain(canid_t can_id)
     return is_valid;
 }
 
+/**
+ * @brief Handle the inputs received via CAN.
+ * @requirement SWR1.2
+ */
 void parse_input_received_powertrain(char *input)
 {
     if (strcmp(input, "press_start_stop") == 0)

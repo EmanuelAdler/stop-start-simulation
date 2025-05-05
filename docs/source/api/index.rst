@@ -2,4 +2,4 @@ API Reference
 =============
 
 .. doxygenindex::
-   :project: myproject
+   :project: stopstartsimulation

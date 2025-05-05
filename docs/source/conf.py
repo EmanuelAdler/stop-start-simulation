@@ -7,8 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Stop-Start Simulation'
-copyright = '2025, EmanuelAdler'
-author = 'EmanuelAdler'
+copyright = '2025, EmanuelAdler, Igni-cin, joaovicnog, and p-r-m-n'
+author = 'Emanuel Pereira, Igor Inocencio, Joao de Souza, and Paulo Nunes'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -22,8 +22,8 @@ extensions = [
 templates_path = ['_templates']
 exclude_patterns = []
 
-breathe_projects = {"myproject": "../xml/"}
-breathe_default_project = "myproject"
+breathe_projects = {"stopstartsimulation": "../xml/"}
+breathe_default_project = "stopstartsimulation"
 breathe_domain_by_extension = { "c" : "cpp" }
 
 # -- Options for HTML output -------------------------------------------------
