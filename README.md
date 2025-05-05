@@ -1,7 +1,7 @@
 # Stop/Start (SS) Simulation
 
 ![Tests](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/auto-tests.yml/badge.svg)
-![Coverage](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/coverage.yml/badge.svg)
+![Docs and Coverage](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/docs-and-coverage.yml/badge.svg)
 ![Static Analysis](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/linting.yml/badge.svg)
 ![Deploy](https://github.com/EmanuelAdler/stop-start-simulation/actions/workflows/docker-build.yml/badge.svg)
 
@@ -158,7 +158,7 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 ### 5. Coverage Report Workflow
 **Purpose:** Automatically generates a test coverage report using GCC 14.2.0 and LCOV 2.3-1, including MC/DC and branch coverage.
 
-**Workflow File:** `.github/workflows/coverage.yml`
+**Workflow File:** `.github/workflows/docs-and-coverage.yml`
 
 **Triggers:**
 - Runs on every push to the `main` branch.
@@ -168,7 +168,45 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 - **Generate Coverage:** Uses `make coverage` to run tests and produce a report.
 - **Publish to GitHub Pages:** The report is deployed to the `gh-pages` branch and can be accessed online.
 
-📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation](https://emanueladler.github.io/stop-start-simulation)
+📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation/coverage/](https://emanueladler.github.io/stop-start-simulation/coverage/)
+
+### 6. Documentation Workflow
+**Purpose:** Automatically builds the full developer documentation — project reference (Doxygen) + user guide (Sphinx + Breathe) — and publishes it to GitHub Pages.
+
+**Workflow File:** `.github/workflows/docs-and-coverage.yml`
+
+**Triggers:**
+
+* Runs on every push to **`main`** and on PRs targeting this branch.
+
+**Key Steps:**
+
+1. **Install Toolchain**
+   - Doxygen **1.9.8** → generates XML from the C source code.
+   - Python + pip → installs **Sphinx 8.x**, **breathe**, **sphinx‑rtd‑theme**, **m2r2**.
+
+2. **Generate Doxygen XML**
+
+   ```bash
+   doxygen Doxyfile
+   ```
+
+3. **Build Sphinx Site**
+
+   ```bash
+   cd docs
+   make html
+   ```
+
+4. **Deploy to GitHub Pages**
+
+   * Uses **peaceiris/actions‑gh‑pages** to push everything in `docs/build/html/`
+     to the **`gh-pages`** branch.
+   * The site is published under the `docs/` path (kept separate from the LCOV
+     report, which lives in `coverage/`).
+
+📚 **Documentation URL:**
+[https://emanueladler.github.io/stop-start-simulation/docs/](https://emanueladler.github.io/stop-start-simulation/docs/)
 
 ## CAN Data Dictionary
 
