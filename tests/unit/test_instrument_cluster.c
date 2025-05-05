@@ -25,6 +25,13 @@ static int clean_suite(void) { return 0; }
 //-------------------------------------
 // Test 1: Use the command "press_start_stop"
 //-------------------------------------
+/**
+ * @test test_press_start_stop
+ * @brief Verifies that internal state updates when 'press_start_stop' is received
+ * @req SWR1.1
+ * @req SWR1.5
+ * @file unit/test_instrument_cluster.c
+ */
 void test_press_start_stop(void)
 {
     // Initialize logging just so we don't get an error

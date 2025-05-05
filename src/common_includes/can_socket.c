@@ -160,6 +160,10 @@ void decrypt_data(const unsigned char *input, char *output, int input_len)
     output[plaintext_len] = '\0';
 }
 
+/**
+ * @brief Sends an encrypted message via CAN socket.
+ * @requirement SWR1.4
+ */
 void send_encrypted_message(int sock, const char *message, int can_id) 
 {
     struct can_frame frame;

@@ -1,5 +1,5 @@
-API Reference
-=============
+Project Reference
+=====================
 
 .. doxygenindex::
-   :project: myproject
+   :project: stopstartsimulation

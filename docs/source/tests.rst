@@ -1,13 +1,68 @@
 Test Cases
 ==========
 
+Check Button press_start_stop Command
+---------------------------------------
+.. _test_press_start_stop:
+
+.. c:function:: static void test_press_start_stop(void)
+
+   Implements tests for :ref:`SWR1.1` and :ref:`SWR1.5`.
+   
+   This function tests if internal state updates when 'press_start_stop' is received.
+
+   File: ``unit/test_instrument_cluster.c``
+
+.. literalinclude:: ../../tests/unit/test_instrument_cluster.c
+   :language: c
+   :lines: 35-55
+   :caption: tests/unit/test_instrument_cluster.c (test_press_start_stop)
+
+
+Test Logging Under Concurrency
+---------------------------------------
+.. _test_logging_concurrency:
+
+.. c:function:: static void test_logging_concurrency(void)
+
+   Implements tests for :ref:`SWR1.5`.
+   
+   This function tests if logging works under under concurrent access.
+
+   File: ``unit/test_logging.c``
+
+.. literalinclude:: ../../tests/unit/test_logging.c
+   :language: c
+   :lines: 111-151
+   :caption: tests/unit/test_logging.c (test_logging_concurrency)
+
+
+Test Read CSV - Case Success
+---------------------------------------
+.. _test_read_csv_success:
+
+.. c:function:: static void test_read_csv_success(void)
+
+   Implements tests for :ref:`SWR2.1` and :ref:`SWR4.2`.
+   
+   This function tests if the csv file 
+   with the sensors readings is correctly loaded by the system.
+
+   File: ``unit/test_bcm.c``
+
+.. literalinclude:: ../../tests/unit/test_bcm.c
+   :language: c
+   :lines: 160-169
+   :caption: tests/unit/test_bcm.c (test_read_csv_success)
+
+
 Check Disable Engine - Case All OK
 -----------------------------------
 .. _test_check_disable_engine_all_ok:
 
 .. c:function:: static void test_check_disable_engine_all_ok(void)
 
-   Implements tests for :ref:`SWR2.2`, :ref:`SWR2.3`, :ref:`SWR2.4`, :ref:`SWR2.6`, :ref:`SWR2.7`, :ref:`SWR2.9`, :ref:`SWR4.3`, :ref:`SWR4.4`, :ref:`SWR4.5` and :ref:`SWR5.1`.
+   Implements tests for :ref:`SWR2.2`, :ref:`SWR2.3`, :ref:`SWR2.4`, :ref:`SWR2.6`, :ref:`SWR2.7`, :ref:`SWR2.9`, :ref:`SWR4.3`, :ref:`SWR4.4`, and :ref:`SWR5.1`.
    
    This function tests engine disable conditions based on sensor readings
    such as speed, acceleration, brake status, and temperature.
@@ -76,7 +131,7 @@ Test Check Disable Engine - Fail Cond3
    File: ``unit/test_powertrain.c``
 .. literalinclude:: ../../tests/unit/test_powertrain.c
    :language: c
-   :lines: 180-215
+   :lines: 269-303
    :caption: tests/unit/test_powertrain.c (test_check_disable_engine_fail_cond3_inactive)
 
 Test Check Disable Engine - Fail Cond4
@@ -152,7 +207,7 @@ Test Handle Engine Restart
    File: ``unit/test_powertrain.c``
 .. literalinclude:: ../../tests/unit/test_powertrain.c
    :language: c
-   :lines: 466-534
+   :lines: 466-537
    :caption: tests/unit/test_powertrain.c (test_handle_engine_restart)
 
 Test Function Start Stop
@@ -171,7 +226,7 @@ Test Function Start Stop
    File: ``unit/test_powertrain.c``
 .. literalinclude:: ../../tests/unit/test_powertrain.c
    :language: c
-   :lines: 540-633
+   :lines: 605-636
    :caption: tests/unit/test_powertrain.c (test_function_start_stop)
 
 
@@ -192,7 +247,7 @@ Test Parse Input Variants Powertrain
    File: ``unit/test_powertrain.c``
 .. literalinclude:: ../../tests/unit/test_powertrain.c
    :language: c
-   :lines: 642-705
+   :lines: 645-708
    :caption: tests/unit/test_powertrain.c (test_parse_input_variants_pw)
 
 Test Process Received Frame
@@ -209,25 +264,8 @@ Test Process Received Frame
    File: ``unit/test_dashboard.c``
 .. literalinclude:: ../../tests/unit/test_dashboard.c
    :language: c
-   :lines: 67-90
+   :lines: 78-101
    :caption: tests/unit/test_dashboard.c (test_process_received_frame)
-
-Test Print Dashboard Status
----------------------------
-.. _test_print_dashboard_status:
-
-.. c:function:: void test_print_dashboard_status(void)
-
-   Implements tests for :ref:`SWR5.2` and :ref:`SWR6.3`.
-
-   This function tests the output of dashboard status, ensuring
-   the correct status is displayed.
-
-   File: ``unit/test_dashboard.c``
-.. literalinclude:: ../../tests/unit/test_dashboard.c
-   :language: c
-   :lines: 101-150
-   :caption: tests/unit/test_dashboard.c (test_print_dashboard_status)
 
 Test Parse Input Variants
 -------------------------
@@ -244,5 +282,93 @@ Test Parse Input Variants
    File: ``unit/test_dashboard.c``
 .. literalinclude:: ../../tests/unit/test_dashboard.c
    :language: c
-   :lines: 165-273
+   :lines: 116-216
    :caption: tests/unit/test_dashboard.c (test_parse_input_variants)
+
+Test Send Encrypted Message
+----------------------------
+.. _test_send_encrypted_message:
+
+.. c:function:: void test_send_encrypted_message(void)
+
+   Implements tests for :ref:`SWR1.4`.
+
+   This function tests if a frame was received 
+   by the dashboard and triggers the activation 
+   of the start_stop_active variable.
+
+   File: ``unit/test_can_socket.c``
+.. literalinclude:: ../../tests/unit/test_can_socket.c
+   :language: c
+   :lines: 195-212
+   :caption: tests/unit/test_can_socket.c (test_send_encrypted_message)
+
+Test Check Health Signals - Immediate
+---------------------------------------
+.. _test_check_health_signals_immediate:
+
+.. c:function:: void test_check_health_signals_immediate(void)
+
+   Implements tests for :ref:`SWR6.1`.
+
+   This function tests a fault simulation and check health signals to identify the fault immedeatly.
+
+   File: ``unit/test_bcm.c``
+.. literalinclude:: ../../tests/unit/test_bcm.c
+   :language: c
+   :lines: 557-582
+   :caption: tests/unit/test_bcm.c (test_check_health_signals_immediate)
+
+Test Check Health Signals - Persisted
+---------------------------------------
+.. _test_check_health_signals_persisted:
+
+.. c:function:: void test_check_health_signals_persisted(void)
+
+   Implements tests for :ref:`SWR6.1`, :ref:`SWR6.2`, :ref:`SWR6.3`, and :ref:`SWR6.4`.
+
+   This function tests a fault simulation in the tilt angle
+   and check health signals, and after elapsing the safety time
+   send the system disabled warning.
+
+   File: ``unit/test_bcm.c``
+.. literalinclude:: ../../tests/unit/test_bcm.c
+   :language: c
+   :lines: 593-645
+   :caption: tests/unit/test_bcm.c (test_check_health_signals_persisted)
+
+Test Check Health Signals - Engine Temperature
+-----------------------------------------------
+.. _test_check_health_signals_engine_temp:
+
+.. c:function:: void test_check_health_signals_engine_temp(void)
+
+   Implements tests for :ref:`SWR6.3` and :ref:`SWR6.4`.
+
+   This function tests a fault simulation in the engine temperature
+   and check health signals, and after elapsing
+   the safety time send the system disabled warning.
+
+   File: ``unit/test_bcm.c``
+.. literalinclude:: ../../tests/unit/test_bcm.c
+   :language: c
+   :lines: 654-706
+   :caption: tests/unit/test_bcm.c (test_check_health_signals_engine_temp)
+
+Test Check Health Signals - Door Status
+------------------------------------------
+.. _test_check_health_signals_door_status:
+
+.. c:function:: void test_check_health_signals_door_status(void)
+
+   Implements tests for :ref:`SWR6.3` and :ref:`SWR6.4`.
+
+   This function tests a fault simulation in the door status
+   and check health signals, and after elapsing the safety time
+   send the system disabled warning.
+
+   File: ``unit/test_bcm.c``
+.. literalinclude:: ../../tests/unit/test_bcm.c
+   :language: c
+   :lines: 715-767
+   :caption: tests/unit/test_bcm.c (test_check_health_signals_door_status)

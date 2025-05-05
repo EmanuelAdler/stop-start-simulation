@@ -1,0 +1,128 @@
+name: Documentation and Coverage Report
+
+on:
+    push:
+      branches: [ main ]
+    pull_request:
+      branches: [ main, develop ]
+  
+
+jobs:
+###############################################################################
+  build:
+    runs-on: ubuntu-latest
+    env:
+      LCOV_VERSION: "2.3"
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    #------------------------------------------------------------
+    #  Tool‑chain + runtime
+    #------------------------------------------------------------
+    - name: Install build packages (gcc‑14, lcov, doxygen, graphviz, plantuml, cunit)
+      run: |
+        sudo apt update
+        sudo apt install -y software-properties-common
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt update
+        sudo apt install -y \
+          gcc-14 g++-14 \
+          make build-essential \
+          doxygen graphviz plantuml \
+          can-utils linux-modules-extra-$(uname -r) \
+          libcunit1-dev
+
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
+        sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-14 100
+
+        # -- LCOV 2.3 ----------------------------------------------------
+        sudo apt install -y cpanminus
+        sudo cpanm Capture::Tiny
+        sudo cpanm DateTime
+        curl -LO https://github.com/linux-test-project/lcov/releases/download/v${LCOV_VERSION}/lcov-${LCOV_VERSION}.tar.gz
+        tar -xzf lcov-${LCOV_VERSION}.tar.gz
+        cd lcov-${LCOV_VERSION} && sudo make install && cd ..
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install Python deps for docs
+      run: |
+        pip install -r docs/requirements.txt
+
+    #------------------------------------------------------------
+    #  Virtual CAN
+    #------------------------------------------------------------
+    - name: Setup virtual CAN interface
+      run: sudo ./setup_vcan.sh
+
+    #------------------------------------------------------------
+    #  Build – tests + coverage
+    #------------------------------------------------------------
+    - name: Run unit tests & generate coverage
+      run: |
+        cd tests
+        make coverage
+
+    #------------------------------------------------------------
+    #  Build – Doxygen
+    #------------------------------------------------------------
+    - name: Run Doxygen
+      run: |
+        doxygen Doxyfile
+
+    #------------------------------------------------------------
+    #  Build – documentation
+    #------------------------------------------------------------
+    - name: Build Sphinx documentation
+      env:
+        SPHINXOPTS: "-E"
+      run: |
+        cd docs
+        python generate_traceability.py
+        make html
+
+    #------------------------------------------------------------
+    #  Assemble site/
+    #------------------------------------------------------------
+    - name: Assemble site artefacts
+      run: |
+        mkdir site
+        # documentation on root
+        cp -r docs/build/html/* site/
+        # coverage report at /coverage
+        mkdir -p site/coverage
+        cp -r tests/coverage_report/* site/coverage/
+
+    #------------------------------------------------------------
+    #  Upload artefact
+    #------------------------------------------------------------
+    - name: Archive site as workflow artefact
+      uses: actions/upload-artifact@v4
+      with:
+        name: site
+        path: site
+
+###############################################################################
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download site artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          commit_message: "docs+coverage: ${{ github.sha }}"

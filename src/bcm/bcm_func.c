@@ -84,7 +84,11 @@ void read_csv_default(void)
     read_csv("../src/bcm/full_simu.csv");
 }
 
-// Read simulation data
+/**
+ * @brief Read simulation data.
+ * @requirement SWR2.1
+ * @requirement SWR4.2
+ */
 void read_csv(const char *path)
 {
     FILE *file = fopen(path, "r");
@@ -395,7 +399,13 @@ void check_system_disable(int sock)
     }
 }
 
-// Function to evaluate system health
+/**
+ * @brief Function to evaluate system health.
+ * @requirement SWR6.1
+ * @requirement SWR6.2
+ * @requirement SWR6.3
+ * @requirement SWR6.4
+ */
 void check_health_signals(void)
 {
     int doorVal         = vehicle_data[simu_curr_step].door_open;

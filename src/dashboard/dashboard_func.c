@@ -34,10 +34,14 @@ bool check_is_valid_can_id(canid_t can_id)
 
 /**
  * @brief Process the variants of inputs received by the dashboard.
+ * @requirement SWR1.2
  * @requirement SWR1.3
+ * @requirement SWR1.4
  * @requirement SWR4.5
  * @requirement SWR5.1
+ * @requirement SWR5.2
  * @requirement SWR5.3
+ * @requirement SWR6.3
  */
 void parse_input_received(char *input)
 {

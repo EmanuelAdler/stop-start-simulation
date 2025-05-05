@@ -150,6 +150,13 @@ void test_read_csv_fail(void)
 //-------------------------------------
 // 2) test_read_csv_success
 //-------------------------------------
+/**
+ * @test test_read_csv_success
+ * @brief Verifies if the csv file with the sensors readings is correctly loaded by the system.
+ * @req SWR2.1
+ * @req SWR4.2
+ * @file unit/test_bcm.c
+ */
 void test_read_csv_success(void)
 {
     // This test expects you to have a small CSV file at "../src/bcm/full_simu.csv"
@@ -541,6 +548,12 @@ void test_getCurrentTimeMsReal(void)
 //-------------------------------------
 // 12) Check health signals
 //-------------------------------------
+/**
+ * @test test_check_health_signals_immediate
+ * @brief Simulates a fault and check health signals to identify a fault immedeatly.
+ * @req SWR6.1
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_immediate(void)
 {
     // Reset global states
@@ -568,6 +581,15 @@ void test_check_health_signals_immediate(void)
     CU_ASSERT_EQUAL(simu_order, ORDER_RUN); // not stopped yet
 }
 
+/**
+ * @test test_check_health_signals_persisted
+ * @brief Simulates a fault in the tilt angle and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.1
+ * @req SWR6.2
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_persisted(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_persisted.log");
@@ -622,6 +644,13 @@ void test_check_health_signals_persisted(void)
     cleanup_logging_system();
 }
 
+/**
+ * @test test_check_health_signals_engine_temp
+ * @brief Simulates a fault in the engine temperature and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_engine_temp(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_engine_temp.log");
@@ -676,6 +705,13 @@ void test_check_health_signals_engine_temp(void)
     cleanup_logging_system();
 }
 
+/**
+ * @test test_check_health_signals_door_status
+ * @brief Simulates a fault in the door and check health signals and after elapsing the safety time send the system disabled warning.
+ * @req SWR6.3
+ * @req SWR6.4
+ * @file unit/test_bcm.c
+ */
 void test_check_health_signals_door_status(void)
 {
     set_log_file_path("/tmp/test_check_health_signals_door_status.log");
