@@ -202,11 +202,11 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 
    * Uses **peaceiris/actions‑gh‑pages** to push everything in `docs/build/html/`
      to the **`gh-pages`** branch.
-   * The site is published under the `docs/` path (kept separate from the LCOV
+   * The site is published under the root path (kept separate from the LCOV
      report, which lives in `coverage/`).
 
 📚 **Documentation URL:**
-[https://emanueladler.github.io/stop-start-simulation/docs/](https://emanueladler.github.io/stop-start-simulation/docs/)
+[https://emanueladler.github.io/stop-start-simulation/](https://emanueladler.github.io/stop-start-simulation/)
 
 ## CAN Data Dictionary
 
