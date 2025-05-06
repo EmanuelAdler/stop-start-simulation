@@ -327,13 +327,13 @@ to ensure the system responds correctly.</p>
 
 <div class="literal-block-wrapper docutils container" id="id13">
 <div class="code-block-caption"><span class="caption-text">parse_input_received function implementation</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">parse_input_received</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">)</span>
-<span class="p">{</span>
-<span class="w">    </span><span class="n">process_user_commands</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
-<span class="w">    </span><span class="n">process_engine_commands</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
-<span class="w">    </span><span class="n">process_sensor_readings</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
-<span class="w">    </span><span class="n">process_errors</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_valid</span><span class="p">;</span>
 <span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">parse_input_received</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">input</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

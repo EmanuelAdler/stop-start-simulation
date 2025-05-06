@@ -818,7 +818,8 @@ valid and invalid frames, ensuring proper logging and system state changes.</p>
 
 <div class="literal-block-wrapper docutils container" id="id26">
 <div class="code-block-caption"><span class="caption-text">tests/unit/test_dashboard.c (test_process_received_frame)</span><a class="headerlink" href="#id26" title="Link to this code"></a></div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_process_received_frame</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="o">*/</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">test_process_received_frame</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="c1">// 1) Setup logging so &quot;press_start_stop&quot; toggles system &amp; logs</span>
 <span class="w">    </span><span class="n">set_log_file_path</span><span class="p">(</span><span class="s">&quot;/tmp/test_dashboard_frame.log&quot;</span><span class="p">);</span>
@@ -826,22 +827,21 @@ valid and invalid frames, ensuring proper logging and system state changes.</p>
 
 <span class="w">    </span><span class="c1">// 2) We can ensure the actuators are initially off</span>
 <span class="w">    </span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="n">test_mode_dash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">// 3) Call the function once. It will loop until stub returns -1.</span>
-<span class="w">    </span><span class="n">process_received_frame</span><span class="p">(</span><span class="n">MOCK_SOCKET</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pthread_t</span><span class="w"> </span><span class="n">thd</span><span class="p">;</span>
+<span class="w">    </span><span class="n">pthread_t</span><span class="w"> </span><span class="n">thd2</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">// 4) Cleanup</span>
-<span class="w">    </span><span class="n">cleanup_logging_system</span><span class="p">();</span>
+<span class="w">    </span><span class="n">sock_dash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MOCK_SOCKET</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">// 5) Check the log for &quot;[INFO] System Activated&quot;</span>
-<span class="w">    </span><span class="c1">//    if parse_input_received toggled the system on.</span>
-<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">params_str</span><span class="p">;</span>
+<span class="w">    </span><span class="n">init_can_buffer</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">params_str</span><span class="p">.</span><span class="n">filepath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/tmp/test_dashboard_frame.log&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="n">params_str</span><span class="p">.</span><span class="n">substring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;[INFO] System Activated&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">thd</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">can_receiver_thread</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">thd2</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">process_frame_thread</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">params_str</span><span class="p">));</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
 </pre></div>
 </div>
 </div>
@@ -860,7 +860,22 @@ based on received commands and sensor data.</p>
 
 <div class="literal-block-wrapper docutils container" id="id27">
 <div class="code-block-caption"><span class="caption-text">tests/unit/test_dashboard.c (test_parse_input_variants)</span><a class="headerlink" href="#id27" title="Link to this code"></a></div>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">test_parse_input_variants</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">}</span>
+
+<span class="c1">//-------------------------------------</span>
+<span class="c1">// Test 2: Test the variants of inputs received by the dashboard</span>
+<span class="cm">/**</span>
+<span class="cm"> * @test test_parse_input_variants</span>
+<span class="cm"> * @brief Test the variants of inputs received by the dashboard</span>
+<span class="cm"> * @req SWR1.3</span>
+<span class="cm"> * @req SWR4.5</span>
+<span class="cm"> * @req SWR5.1</span>
+<span class="cm"> * @req SWR5.2</span>
+<span class="cm"> * @req SWR5.3</span>
+<span class="cm"> * @req SWR6.3</span>
+<span class="cm"> * @file unit/test_dashboard.c</span>
+<span class="cm"> */</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">test_parse_input_variants</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
@@ -946,21 +961,6 @@ based on received commands and sensor data.</p>
 <span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="s">&quot;[INFO] Engine Restart Failed Due to Battery Tension Drop&quot;</span><span class="p">};</span>
 <span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_drop</span><span class="p">));</span>
-
-<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;error_battery&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_low</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s">&quot;[INFO] Engine Restart Failed Due to Low Battery SoC or Tension Under the Threshold&quot;</span><span class="p">};</span>
-<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_low</span><span class="p">));</span>
-
-<span class="w">    </span><span class="n">parse_input_received</span><span class="p">(</span><span class="s">&quot;error_disabled&quot;</span><span class="p">);</span>
-<span class="w">    </span><span class="n">f_susbtring_data</span><span class="w"> </span><span class="n">err_disab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="s">&quot;/tmp/test_dashboard_variants.log&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s">&quot;[INFO] System Disabled Due to an Error&quot;</span><span class="p">};</span>
-<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">file_contains_substring</span><span class="p">(</span><span class="n">err_disab</span><span class="p">));</span>
-<span class="w">    </span><span class="n">CU_ASSERT_FALSE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">start_stop_active</span><span class="p">);</span>
-<span class="w">    </span><span class="n">CU_ASSERT_TRUE</span><span class="p">(</span><span class="n">actuators</span><span class="p">.</span><span class="n">error_system</span><span class="p">);</span>
-<span class="p">}</span>
 </pre></div>
 </div>
 </div>
