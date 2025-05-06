@@ -101,7 +101,7 @@ $(BIN_DIR)/dashboard_func.o: $(DASH_DIR)/dashboard_func.c \
                              $(COMMON_DIR)/logging.h
 	$(CC) $(CFLAGS) -I$(COMMON_DIR) -I$(DASH_DIR) -c $< -o $@
 
-# (b) dashboard_func.o (auxiliary logic)
+# (b) panels.o (auxiliary logic)
 $(BIN_DIR)/panels.o: $(DASH_DIR)/panels.c \
                      $(DASH_DIR)/panels.h \
                      $(COMMON_DIR)/logging.h

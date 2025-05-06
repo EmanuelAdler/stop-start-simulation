@@ -1,17 +1,34 @@
-#include "../common_includes/can_id_list.h"
-#include "../common_includes/can_socket.h"
-#include "../common_includes/logging.h"
 #include "dashboard_func.h"
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include <time.h>
 
 #define CAN_DATA_LENGTH (8)
+#define PROCESS_TIMEOUT (100000000L)
+#define NANO_TO_SEC (1000000000L)
 
 Actuators actuators = {0};
+
+// Shared buffer for CAN messages
+static CanBuffer can_buffer;
+
+int sock_dash;
+
+bool test_mode_dash = false;
+
+// Initialize buffer (call once at startup)
+void init_can_buffer(void) {
+    can_buffer.head = 0;
+    can_buffer.tail = 0;
+    sem_init(&can_buffer.sem, 0, 0);
+    pthread_mutex_init(&can_buffer.mutex, NULL);
+    pthread_cond_init(&can_buffer.cond, NULL);
+    memset(can_buffer.messages, 0, sizeof(can_buffer.messages));  // Clear all slots
+}
+
+// Cleanup (call before exit)
+void cleanup_can_buffer(void) {
+    sem_destroy(&can_buffer.sem);
+    pthread_mutex_destroy(&can_buffer.mutex);
+}
 
 bool check_is_valid_can_id(canid_t can_id)
 {
@@ -32,17 +49,6 @@ bool check_is_valid_can_id(canid_t can_id)
     return is_valid;
 }
 
-/**
- * @brief Process the variants of inputs received by the dashboard.
- * @requirement SWR1.2
- * @requirement SWR1.3
- * @requirement SWR1.4
- * @requirement SWR4.5
- * @requirement SWR5.1
- * @requirement SWR5.2
- * @requirement SWR5.3
- * @requirement SWR6.3
- */
 void parse_input_received(char *input)
 {
     process_user_commands(input);
@@ -123,8 +129,9 @@ void process_sensor_readings(char *input)
     /* Check if CAN message is door open */
     else if (sscanf(input, "door: %d", &actuators.door_status) == 1)
     {
-        snprintf(result, sizeof(result), "%s", actuators.door_status ? "Yes" : "No");
-        update_value_panel(panel_dash, DOOR_ROW, result, NORMAL_TEXT);
+        //snprintf(result, sizeof(result), "%d", actuators.door_status);
+        const char* door_status = actuators.door_status ? "Yes" : "No";
+        update_value_panel(panel_dash, DOOR_ROW, door_status, NORMAL_TEXT);
     }
     /* Check if CAN message is battery SoC */
     else if (sscanf(input, "batt_soc: %lf", &actuators.batt_soc) == 1)
@@ -147,14 +154,15 @@ void process_sensor_readings(char *input)
     /* Check if CAN message is gear */
     else if (sscanf(input, "gear: %d", &actuators.gear) == 1)
     {
-        if (actuators.speed > 0.0F)
+        /* if (actuators.speed > 0.0F)
         {
             strncpy(result, "D", sizeof(result));
         }
         else
         {
             strncpy(result, "P", sizeof(result));
-        }
+        } */
+        snprintf(result, sizeof(result), "%s", actuators.gear ? "D" : "P");
         update_value_panel(panel_dash, GEAR_ROW, result, NORMAL_TEXT);
     }
     /* Check if CAN message is acceleration sensor */
@@ -198,58 +206,106 @@ void process_errors(char *input)
     }
 }
 
-void process_received_frame(int sock)
-{
+void* process_frame_thread(void* arg) {
+    (void)arg;
+    struct timespec timeout;
+
+    while(!test_mode_dash) {
+        pthread_mutex_lock(&can_buffer.mutex);
+        
+        // Calculate absolute timeout
+        clock_gettime(CLOCK_REALTIME, &timeout);
+        timeout.tv_nsec += PROCESS_TIMEOUT;
+
+        // Handle overflow
+        if (timeout.tv_nsec >= NANO_TO_SEC)
+        {
+            timeout.tv_sec += timeout.tv_nsec / NANO_TO_SEC;
+            timeout.tv_nsec %= NANO_TO_SEC;
+        }
+
+        // Handle timeout
+        while (can_buffer.tail == can_buffer.head) {
+            if (pthread_cond_timedwait(&can_buffer.cond, &can_buffer.mutex, &timeout) != 0) {
+                // Timeout occurred
+                break;
+            }
+        }
+
+        // Process all available messages
+        while (can_buffer.tail != can_buffer.head) {
+            // Update panel_dash with the decoded data
+            parse_input_received(can_buffer.messages[can_buffer.tail].decrypted);
+
+            // Clear the processed message slot
+            memset(&can_buffer.messages[can_buffer.tail], 0, sizeof(CanMessage));
+            can_buffer.tail = (can_buffer.tail + 1) % MAX_PENDING_FRAMES;
+        }
+
+        pthread_mutex_unlock(&can_buffer.mutex);
+    }
+    return NULL;
+}
+
+void* can_receiver_thread(void* arg) {
+    (void)arg;
     struct can_frame frame;
     unsigned char encrypted_data[AES_BLOCK_SIZE];
-    char decrypted_message[AES_BLOCK_SIZE];
     int received_bytes = 0;
-    char frame_msg[MAX_MSG_WIDTH];
-    char error_log[MAX_MSG_WIDTH];
-
-#ifdef UNIT_TEST
-    while (true)
+    
+    #ifdef UNIT_TEST
+    while (!test_mode_dash)
 #else
     for (;;)
 #endif
     {
-        if (receive_can_frame(sock, &frame) == 0)
-        {
-            if (check_is_valid_can_id(frame.can_id))
+        if (receive_can_frame(sock_dash, &frame) == 0) {
+            if (check_is_valid_can_id(frame.can_id) && 
+                (frame.can_dlc == CAN_DATA_LENGTH)) 
             {
-                if (frame.can_dlc == CAN_DATA_LENGTH)
-                {
-                    memcpy(encrypted_data + received_bytes, frame.data, CAN_DATA_LENGTH);
-                    received_bytes += CAN_DATA_LENGTH;
+                // Accumulate data until we have a full block
+                memcpy(encrypted_data + received_bytes, frame.data, frame.can_dlc);
+                received_bytes += frame.can_dlc;
 
-                    if (received_bytes == AES_BLOCK_SIZE)
-                    {
-                        decrypt_data(encrypted_data, decrypted_message, received_bytes);
-                        parse_input_received(decrypted_message);
-                        received_bytes = 0;
-
-                        /* Add received frame to log panel */
-                        int offset = snprintf(frame_msg, sizeof(frame_msg), "Receive:");
-
-                        for (size_t i = 0; i < frame.can_dlc; i++)
-                        {
-                            offset += snprintf(frame_msg + offset, sizeof(frame_msg) - offset, " %02X", frame.data[i]);
-                        }
-                        add_to_log(panel_log, frame_msg);
+                if (received_bytes >= AES_BLOCK_SIZE) {
+                    pthread_mutex_lock(&can_buffer.mutex);
+                    // Overwrite oldest message if buffer is full
+                    if ((can_buffer.head + 1) % MAX_PENDING_FRAMES == can_buffer.tail) {
+                        can_buffer.tail = (can_buffer.tail + 1) % MAX_PENDING_FRAMES;
+                        add_to_log(panel_log, "WARN: Buffer full - dropped oldest frame");
                     }
-                }
-                else
-                {
-                    snprintf(error_log, sizeof(error_log), "Warn: Frame ignored (size %u bytes > 8).", frame.can_dlc);
-                    add_to_log(panel_log, error_log);
+
+                    // Store the new message
+                    can_buffer.messages[can_buffer.head].frame = frame;
+                    decrypt_data(encrypted_data, 
+                               can_buffer.messages[can_buffer.head].decrypted, 
+                               AES_BLOCK_SIZE);
+
+                    // Update head and notify main thread
+                    can_buffer.head = (can_buffer.head + 1) % MAX_PENDING_FRAMES;
+                    sem_post(&can_buffer.sem);
+
+                    // Log raw frame (to panel_log)
+                    char log_msg[MAX_MSG_WIDTH];
+                    int offset = snprintf(log_msg, sizeof(log_msg), "RCV: ");
+                    for (int i = 0; i < frame.can_dlc; i++) {
+                        offset += snprintf(log_msg + offset, sizeof(log_msg) - offset,
+                                 " %02X", frame.data[i]);
+                    }
+                    add_to_log(panel_log, log_msg);
+
+                    pthread_mutex_unlock(&can_buffer.mutex);
+                    received_bytes = 0;  // Reset for next frame
                 }
             }
         }
-#ifdef UNIT_TEST
+        #ifdef UNIT_TEST
         else
         {
             break;
         }
 #endif
     }
+    return NULL;
 }
+
