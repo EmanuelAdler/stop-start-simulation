@@ -15,6 +15,7 @@
 #define MOCK_SOCKET (999)
 #define FILE_LINE_SIZE (256)
 #define CAN_ID_MOCK (0x7A0U)
+#define SLEEP_TIME_US_TEST (200000)
 
 static const double kDelta = 0.001;
 static const double kSpeedReceived = 48.0;
@@ -83,11 +84,25 @@ void test_process_received_frame(void)
 
     // 2) We can ensure the actuators are initially off
     actuators.start_stop_active = false;
+    test_mode_dash = false;
 
     // 3) Call the function once. It will loop until stub returns -1.
-    process_received_frame(MOCK_SOCKET);
+    pthread_t thd;
+    pthread_t thd2;
+
+    sock_dash = MOCK_SOCKET;
+
+    init_can_buffer();
+
+    pthread_create(&thd, NULL, can_receiver_thread, NULL);
+    pthread_create(&thd2, NULL, process_frame_thread, NULL);
+
+    sleep(1);
+
+    test_mode_dash = true;
 
     // 4) Cleanup
+    cleanup_can_buffer();
     cleanup_logging_system();
 
     // 5) Check the log for "[INFO] System Activated"

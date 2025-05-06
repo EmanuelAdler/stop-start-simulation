@@ -9,8 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
 
 #define MAX_VALUE_LENGTH 32
+#define MAX_PENDING_FRAMES 64
 
 // ncurses UI
 #include "panels.h"
@@ -18,6 +22,23 @@
 #define MSG_LOG_PANEL_OFFSET 42
 
 static int num_deactivs = 0;
+extern int sock_dash;
+extern bool test_mode_dash;
+
+typedef struct {
+    struct can_frame frame;
+    char decrypted[AES_BLOCK_SIZE];
+} CanMessage;
+
+// Thread communication structure
+typedef struct {
+    CanMessage messages[MAX_PENDING_FRAMES];
+    uint8_t head;
+    uint8_t tail;
+    pthread_cond_t cond;
+    sem_t sem;
+    pthread_mutex_t mutex;
+} CanBuffer;
 
 typedef struct
 {
@@ -39,7 +60,6 @@ typedef struct
 
 extern Actuators actuators;
 
-void process_received_frame(int sock);
 bool check_is_valid_can_id(canid_t can_id);
 void parse_input_received(char *input);
 void process_user_commands(char *input);
@@ -47,5 +67,10 @@ void process_engine_commands(char *input);
 void process_sensor_readings(char *input);
 void process_errors(char *input);
 void sleep_microseconds(long int microseconds);
+
+void init_can_buffer(void);
+void cleanup_can_buffer(void);
+void* can_receiver_thread(void* arg);
+void* process_frame_thread(void* arg);
 
 #endif

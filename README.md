@@ -170,7 +170,7 @@ Our project utilizes GitHub Actions to automate various aspects of development a
 
 📄 **Coverage Report URL:** [https://emanueladler.github.io/stop-start-simulation/coverage/](https://emanueladler.github.io/stop-start-simulation/coverage/)
 
-### 6. Documentation Workflow
+### 6. Documentation Workflow
 **Purpose:** Automatically builds the full developer documentation — project reference (Doxygen) + user guide (Sphinx + Breathe) — and publishes it to GitHub Pages.
 
 **Workflow File:** `.github/workflows/docs-and-coverage.yml`
